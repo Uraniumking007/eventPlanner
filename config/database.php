@@ -1,14 +1,17 @@
 <?php
 /**
- * Database Configuration
- * Event Planner Application
+ * Database connection (PDO)
+ *
+ * Usage:
+ *   require_once __DIR__ . '/database.php';
+ *   $pdo = getDBConnection();
  */
 
-// Database configuration
-define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-define('DB_NAME', getenv('DB_NAME') ?: 'event_planner');
-define('DB_USER', getenv('DB_USER') ?: 'root');
-define('DB_PASS', getenv('DB_PASS') ?: '');
+// Configuration via environment variables (with sensible defaults)
+define('DB_HOST', getenv('DB_HOST') ?: '66.135.17.31');
+define('DB_NAME', getenv('DB_NAME') ?: 'konfhubclone');
+define('DB_USER', getenv('DB_USER') ?: 'konfhudadmin');
+define('DB_PASS', getenv('DB_PASS') ?: 'asagfdbfvbef');
 define('DB_CHARSET', 'utf8mb4');
 
 // PDO options
@@ -19,27 +22,28 @@ define('PDO_OPTIONS', [
 ]);
 
 /**
- * Get database connection
+ * Get singleton PDO connection
  * @return PDO
+ * @throws Exception
  */
 function getDBConnection() {
     static $pdo = null;
-    
+
     if ($pdo === null) {
         try {
-            $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
+            $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=' . DB_CHARSET;
             $pdo = new PDO($dsn, DB_USER, DB_PASS, PDO_OPTIONS);
         } catch (PDOException $e) {
-            error_log("Database connection failed: " . $e->getMessage());
-            throw new Exception("Database connection failed");
+            error_log('Database connection failed: ' . $e->getMessage());
+            throw new Exception('Database connection failed');
         }
     }
-    
+
     return $pdo;
 }
 
 /**
- * Execute a query with parameters
+ * Execute a prepared statement
  * @param string $sql
  * @param array $params
  * @return PDOStatement
@@ -52,29 +56,27 @@ function executeQuery($sql, $params = []) {
 }
 
 /**
- * Fetch all rows from a query
+ * Fetch all rows
  * @param string $sql
  * @param array $params
  * @return array
  */
 function fetchAll($sql, $params = []) {
-    $stmt = executeQuery($sql, $params);
-    return $stmt->fetchAll();
+    return executeQuery($sql, $params)->fetchAll();
 }
 
 /**
- * Fetch a single row from a query
+ * Fetch one row
  * @param string $sql
  * @param array $params
  * @return array|false
  */
 function fetchOne($sql, $params = []) {
-    $stmt = executeQuery($sql, $params);
-    return $stmt->fetch();
+    return executeQuery($sql, $params)->fetch();
 }
 
 /**
- * Insert data and return the last insert ID
+ * Insert helper (returns last insert id)
  * @param string $sql
  * @param array $params
  * @return int
@@ -83,27 +85,27 @@ function insert($sql, $params = []) {
     $pdo = getDBConnection();
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
-    return $pdo->lastInsertId();
+    return (int) $pdo->lastInsertId();
 }
 
 /**
- * Update data and return the number of affected rows
+ * Update/Delete helper (returns affected rows)
  * @param string $sql
  * @param array $params
  * @return int
  */
 function update($sql, $params = []) {
-    $stmt = executeQuery($sql, $params);
-    return $stmt->rowCount();
+    return executeQuery($sql, $params)->rowCount();
 }
 
 /**
- * Delete data and return the number of affected rows
+ * Alias for update when semantically deleting
  * @param string $sql
  * @param array $params
  * @return int
  */
 function delete($sql, $params = []) {
-    $stmt = executeQuery($sql, $params);
-    return $stmt->rowCount();
+    return update($sql, $params);
 }
+
+
