@@ -12,7 +12,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
     <!-- Navigation -->
     <nav class="bg-gray-900 text-white navbar shadow">
         <div class="max-w-8xl mx-auto px-4 flex items-center justify-between">
@@ -34,43 +34,43 @@
     </nav>
 
     <!-- Register -->
-    <div class="max-w-lg mx-auto p-4 sm:p-8 bg-white/80 backdrop-blur rounded-2xl shadow-xl mt-10 sm:mt-16 mx-4">
+    <div class="max-w-full sm:max-w-md md:max-w-lg mx-auto p-4 sm:p-6 md:p-8 bg-white/80 backdrop-blur rounded-2xl shadow-xl mt-8 sm:mt-12 md:mt-16 mx-4">
         <div class="text-center mb-6">
             <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-green-100 to-emerald-200 text-emerald-700 mb-3 shadow">
                 <i class="fas fa-user-plus"></i>
             </div>
-            <h1 class="text-3xl font-extrabold tracking-tight">Create your account</h1>
-            <p class="text-gray-600 text-sm mt-1">Join and start planning or attending events.</p>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Create your account</h1>
+            <p class="text-gray-600 text-xs sm:text-sm mt-1">Join and start planning or attending events.</p>
         </div>
         <form id="registerForm" class="space-y-4">
             <div class="text-left">
                 <label class="block text-sm font-medium mb-1">Username</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i class="fas fa-user"></i></span>
-                    <input class="w-full border rounded-lg pl-10 pr-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-400" type="text" name="username" placeholder="Jane Doe" required>
+                    <input class="w-full border rounded-lg pl-10 pr-3 py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-400" type="text" name="username" placeholder="Jane Doe" autocomplete="username" required>
                 </div>
             </div>
             <div class="text-left">
                 <label class="block text-sm font-medium mb-1">Email</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i class="fas fa-envelope"></i></span>
-                    <input class="w-full border rounded-lg pl-10 pr-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-400" type="email" name="email" placeholder="you@example.com" required>
+                    <input class="w-full border rounded-lg pl-10 pr-3 py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-400" type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
                 </div>
             </div>
             <div class="text-left">
                 <label class="block text-sm font-medium mb-1">Password</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i class="fas fa-lock"></i></span>
-                    <input id="passwordInput" class="w-full border rounded-lg pl-10 pr-10 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-400" type="password" name="password" minlength="6" placeholder="At least 6 characters" required>
+                    <input id="passwordInput" class="w-full border rounded-lg pl-10 pr-10 py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-400" type="password" name="password" minlength="6" placeholder="At least 6 characters" autocomplete="new-password" required>
                     <button type="button" id="togglePwd" class="absolute inset-y-0 right-0 pr-3 text-gray-400 hover:text-gray-600"><i class="fas fa-eye"></i></button>
                 </div>
                 <div id="pwdHint" class="text-xs text-gray-500 mt-1">Use 6+ characters with a mix of letters and numbers.</div>
             </div>
             <div class="text-left">
                 <label class="block text-sm font-medium mb-1">Role</label>
-                <div class="grid grid-cols-2 gap-2" role="group" aria-label="Select role">
-                    <button type="button" data-role="attendee" class="role-btn px-3 py-2 rounded-lg border text-sm font-medium bg-gray-50 border-gray-200 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-400">Attendee</button>
-                    <button type="button" data-role="organizer" class="role-btn px-3 py-2 rounded-lg border text-sm font-medium bg-gray-50 border-gray-200 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-400">Organizer</button>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" role="group" aria-label="Select role">
+                    <button type="button" data-role="attendee" class="role-btn w-full px-3 py-3 rounded-lg border text-sm font-medium bg-gray-50 border-gray-200 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-400">Attendee</button>
+                    <button type="button" data-role="organizer" class="role-btn w-full px-3 py-3 rounded-lg border text-sm font-medium bg-gray-50 border-gray-200 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-400">Organizer</button>
                 </div>
                 <input type="hidden" name="role" id="roleInput" value="attendee">
             </div>
@@ -79,7 +79,7 @@
                 <label for="terms">I agree to the <a class="text-emerald-700 hover:underline" href="#">Terms</a> and <a class="text-emerald-700 hover:underline" href="#">Privacy Policy</a>.</label>
             </div>
             <div class="submit mt-2">
-                <input id="submitBtn" class="bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-300 text-white px-4 py-2 rounded-lg cursor-pointer text-sm sm:text-base w-full transition" type="submit" value="Create Account" disabled>
+                <input id="submitBtn" class="bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-300 text-white px-4 py-3 rounded-lg cursor-pointer text-sm sm:text-base w-full transition" type="submit" value="Create Account" disabled>
             </div>
             <p id="registerError" class="text-center text-red-600 hidden text-sm">Registration failed. Try a different email.</p>
         </form>
@@ -89,7 +89,7 @@
         </div>
     </div>
 
-    <footer class="bg-gray-900 text-white py-6 mt-10">
+    <footer class="bg-gray-900 text-white py-6 mt-auto">
         <div class="max-w-7xl mx-auto px-4">
             <div class="grid md:grid-cols-2 gap-6 items-center">
                 <div>
