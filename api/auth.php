@@ -7,6 +7,7 @@ $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 // POST /api/auth.php?action=login { email, password }
 // GET  /api/auth.php?action=me
 // POST /api/auth.php?action=logout
+// POST /api/auth.php?action=register { username, email, password, role? }
 
 $action = $_GET['action'] ?? ($method === 'GET' ? 'me' : '');
 
@@ -44,6 +45,30 @@ switch ($action) {
         }
         session_destroy();
         json_response(['ok' => true]);
+        break;
+
+    case 'register':
+        if ($method !== 'POST') json_response(['error' => 'Method not allowed'], 405);
+        $body = read_json_body();
+        $username = trim((string)($body['username'] ?? ''));
+        $email = trim((string)($body['email'] ?? ''));
+        $password = (string)($body['password'] ?? '');
+        $role = (string)($body['role'] ?? 'attendee');
+        if ($username === '' || $email === '' || $password === '') {
+            json_response(['error' => 'username, email, password required'], 422);
+        }
+        if ($role !== 'organizer' && $role !== 'attendee') {
+            $role = 'attendee';
+        }
+        $existing = fetchOne('SELECT id FROM users WHERE email = ?', [$email]);
+        if ($existing) {
+            json_response(['error' => 'Email already in use'], 409);
+        }
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $newId = insert('INSERT INTO users (username, email, password_hash, role) VALUES (?, ?, ?, ?)', [$username, $email, $hash, $role]);
+        $user = fetchOne('SELECT id, username, email, role, created_at FROM users WHERE id = ?', [$newId]);
+        $_SESSION['user'] = $user;
+        json_response(['user' => $user], 201);
         break;
 
     default:
