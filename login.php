@@ -34,8 +34,14 @@
     </nav>
 
     <!-- Login -->
-    <div class="Login-box max-w-sm sm:max-w-md mx-auto p-4 sm:p-6 bg-white rounded-lg shadow mt-8 sm:mt-10 mx-4">
-        <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-center">Welcome back</h2>
+    <div class="Login-box max-w-sm sm:max-w-md mx-auto p-4 sm:p-6 bg-white rounded-xl shadow-lg mt-8 sm:mt-12 mx-4">
+        <div class="text-center mb-4">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-700 mb-2">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h2 class="text-2xl font-bold">Sign in to your account</h2>
+            <p class="text-gray-600 text-sm mt-1">Welcome back! Please enter your details.</p>
+        </div>
         <form id="loginForm" class="login space-y-4">
             <div class="input-item text-left">
                 <label class="block text-sm font-medium mb-1">Email</label>
@@ -45,11 +51,20 @@
                 <label class="block text-sm font-medium mb-1">Password</label>
                 <input class="w-full border rounded px-3 py-2 text-sm sm:text-base" type="password" name="password" required>
             </div>
-            <div class="submit text-center">
-                <input class="bg-gray-900 text-white px-4 py-2 rounded hover:bg-black cursor-pointer text-sm sm:text-base w-full sm:w-auto" type="submit" value="Log In">
+            <div class="flex items-center justify-between">
+                <div class="text-sm">
+                    <a class="text-blue-700 hover:underline" href="#">Forgot password?</a>
+                </div>
+            </div>
+            <div class="submit text-center mt-2">
+                <input class="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-black cursor-pointer text-sm sm:text-base w-full" type="submit" value="Sign In">
             </div>
             <p id="loginError" class="text-center text-red-600 hidden text-sm">Invalid email or password.</p>
         </form>
+        <div class="text-center mt-4 text-sm text-gray-700">
+            Don't have an account?
+            <a class="text-blue-700 font-medium hover:underline" href="/register.php">Create one</a>
+        </div>
     </div>
 
     <!-- Footer -->
