@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Planner</title>
+    <title>Login - Event Planner</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -12,7 +12,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
     <!-- Navigation -->
     <nav class="bg-gray-900 text-white navbar shadow">
         <div class="max-w-8xl mx-auto px-4 flex items-center justify-between">
@@ -34,41 +34,42 @@
     </nav>
 
     <!-- Login -->
-    <div class="Login-box max-w-sm sm:max-w-md mx-auto p-4 sm:p-6 bg-white rounded-xl shadow-lg mt-8 sm:mt-12 mx-4">
-        <div class="text-center mb-4">
-            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-700 mb-2">
-                <i class="fas fa-lock"></i>
+    <div class="max-w-full sm:max-w-md md:max-w-lg mx-auto p-4 sm:p-6 md:p-8 bg-white/80 backdrop-blur rounded-2xl shadow-xl mt-8 sm:mt-12 md:mt-16 mx-4">
+        <div class="text-center mb-6">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-green-100 to-emerald-200 text-emerald-700 mb-3 shadow">
+                <i class="fas fa-right-to-bracket"></i>
             </div>
-            <h2 class="text-2xl font-bold">Sign in to your account</h2>
-            <p class="text-gray-600 text-sm mt-1">Welcome back! Please enter your details.</p>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Sign in to your account</h1>
+            <p class="text-gray-600 text-xs sm:text-sm mt-1">Welcome back. Please enter your details.</p>
         </div>
-        <form id="loginForm" class="login space-y-4">
-            <div class="input-item text-left">
+        <form id="loginForm" class="space-y-4">
+            <div class="text-left">
                 <label class="block text-sm font-medium mb-1">Email</label>
-                <input class="w-full border rounded px-3 py-2 text-sm sm:text-base" type="email" name="email" required>
-            </div>
-            <div class="input-item text-left">
-                <label class="block text-sm font-medium mb-1">Password</label>
-                <input class="w-full border rounded px-3 py-2 text-sm sm:text-base" type="password" name="password" required>
-            </div>
-            <div class="flex items-center justify-between">
-                <div class="text-sm">
-                    <a class="text-blue-700 hover:underline" href="#">Forgot password?</a>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i class="fas fa-envelope"></i></span>
+                    <input class="w-full border rounded-lg pl-10 pr-3 py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-400" type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
                 </div>
             </div>
-            <div class="submit text-center mt-2">
-                <input class="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-black cursor-pointer text-sm sm:text-base w-full" type="submit" value="Sign In">
+            <div class="text-left">
+                <label class="block text-sm font-medium mb-1">Password</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i class="fas fa-lock"></i></span>
+                    <input id="passwordInput" class="w-full border rounded-lg pl-10 pr-10 py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-400" type="password" name="password" placeholder="Your password" autocomplete="current-password" required>
+                    <button type="button" id="togglePwd" class="absolute inset-y-0 right-0 pr-3 text-gray-400 hover:text-gray-600"><i class="fas fa-eye"></i></button>
+                </div>
             </div>
-            <p id="loginError" class="text-center text-red-600 hidden text-sm">Invalid email or password.</p>
+            <div class="submit mt-2">
+                <input id="submitBtn" class="bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-300 text-white px-4 py-3 rounded-lg cursor-pointer text-sm sm:text-base w-full transition" type="submit" value="Sign in" disabled>
+            </div>
+            <p id="loginError" class="text-center text-red-600 hidden text-sm">Login failed. Check your email and password.</p>
         </form>
-        <div class="text-center mt-4 text-sm text-gray-700">
+        <div class="text-center mt-5 text-sm text-gray-700">
             Don't have an account?
-            <a class="text-blue-700 font-medium hover:underline" href="/register.php">Create one</a>
+            <a class="text-emerald-700 font-medium hover:underline" href="/register.php">Create one</a>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-6">
+    <footer class="bg-gray-900 text-white py-6 mt-auto">
         <div class="max-w-7xl mx-auto px-4">
             <div class="grid md:grid-cols-2 gap-6 items-center">
                 <div>
@@ -94,6 +95,25 @@
 
         const form = document.getElementById('loginForm');
         const errorEl = document.getElementById('loginError');
+        const submitBtn = document.getElementById('submitBtn');
+        const togglePwd = document.getElementById('togglePwd');
+        const pwdInput = document.getElementById('passwordInput');
+
+        togglePwd.addEventListener('click', () => {
+            const isPwd = pwdInput.type === 'password';
+            pwdInput.type = isPwd ? 'text' : 'password';
+            togglePwd.innerHTML = isPwd ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
+        });
+
+        function validateForm() {
+            const fd = new FormData(form);
+            const ok = fd.get('email') && (fd.get('password') || '').length > 0;
+            submitBtn.disabled = !ok;
+        }
+
+        form.addEventListener('input', validateForm);
+        validateForm();
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             errorEl.classList.add('hidden');
@@ -120,3 +140,5 @@
     </script>
 </body>
 </html>
+
+
