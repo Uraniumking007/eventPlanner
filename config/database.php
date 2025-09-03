@@ -8,10 +8,11 @@
  */
 
 // Configuration via environment variables (with sensible defaults)
-define('DB_HOST', getenv('DB_HOST') ?: '66.135.17.31');
-define('DB_NAME', getenv('DB_NAME') ?: 'konfhubclone');
-define('DB_USER', getenv('DB_USER') ?: 'konfhudadmin');
-define('DB_PASS', getenv('DB_PASS') ?: 'asagfdbfvbef');
+// Default to internal Docker network service `db` and local credentials defined in docker-compose.yml
+define('DB_HOST', getenv('DB_HOST') ?: 'db');
+define('DB_NAME', getenv('DB_NAME') ?: 'event_planner');
+define('DB_USER', getenv('DB_USER') ?: 'eventplanner');
+define('DB_PASS', getenv('DB_PASS') ?: 'eventplanner123');
 define('DB_CHARSET', 'utf8mb4');
 
 // PDO options
