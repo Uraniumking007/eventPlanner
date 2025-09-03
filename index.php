@@ -268,10 +268,15 @@
         const dots = document.querySelectorAll('.dot');
 
         let currentIndex = 0;
-        const slideWidth = slideItems[0].clientWidth;
+
+        function getSlideWidth() {
+            const first = slideItems[0];
+            return first ? first.clientWidth : 0;
+        }
 
         function updateSliderPosition() {
-            sliderWrapper.style.transform = `translateX(${-currentIndex * slideWidth}px)`;
+            const width = getSlideWidth();
+            sliderWrapper.style.transform = `translateX(${-currentIndex * width}px)`;
             updateDots();
         }
 
@@ -327,8 +332,18 @@
             }, 4000);
         });
 
-        // Initialize dots
+        // Recalculate on image load and window resize to ensure correct widths
+        const slideImages = document.querySelectorAll('.slide-item img');
+        slideImages.forEach(img => {
+            if (img.complete) return; // if already loaded, skip
+            img.addEventListener('load', updateSliderPosition);
+        });
+
+        window.addEventListener('resize', updateSliderPosition);
+
+        // Initialize dots and position
         updateDots();
+        updateSliderPosition();
 
         // Load dynamic stats
         (async function loadStats() {
