@@ -34,42 +34,58 @@
     </nav>
 
     <!-- Register -->
-    <div class="max-w-sm sm:max-w-md mx-auto p-4 sm:p-6 bg-white rounded-xl shadow-lg mt-8 sm:mt-12 mx-4">
-        <div class="text-center mb-4">
-            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 text-green-700 mb-2">
+    <div class="max-w-lg mx-auto p-4 sm:p-8 bg-white/80 backdrop-blur rounded-2xl shadow-xl mt-10 sm:mt-16 mx-4">
+        <div class="text-center mb-6">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-green-100 to-emerald-200 text-emerald-700 mb-3 shadow">
                 <i class="fas fa-user-plus"></i>
             </div>
-            <h2 class="text-2xl font-bold">Create your account</h2>
+            <h1 class="text-3xl font-extrabold tracking-tight">Create your account</h1>
             <p class="text-gray-600 text-sm mt-1">Join and start planning or attending events.</p>
         </div>
         <form id="registerForm" class="space-y-4">
             <div class="text-left">
                 <label class="block text-sm font-medium mb-1">Username</label>
-                <input class="w-full border rounded px-3 py-2 text-sm sm:text-base" type="text" name="username" required>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i class="fas fa-user"></i></span>
+                    <input class="w-full border rounded-lg pl-10 pr-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-400" type="text" name="username" placeholder="Jane Doe" required>
+                </div>
             </div>
             <div class="text-left">
                 <label class="block text-sm font-medium mb-1">Email</label>
-                <input class="w-full border rounded px-3 py-2 text-sm sm:text-base" type="email" name="email" required>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i class="fas fa-envelope"></i></span>
+                    <input class="w-full border rounded-lg pl-10 pr-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-400" type="email" name="email" placeholder="you@example.com" required>
+                </div>
             </div>
             <div class="text-left">
                 <label class="block text-sm font-medium mb-1">Password</label>
-                <input class="w-full border rounded px-3 py-2 text-sm sm:text-base" type="password" name="password" minlength="6" required>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i class="fas fa-lock"></i></span>
+                    <input id="passwordInput" class="w-full border rounded-lg pl-10 pr-10 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-400" type="password" name="password" minlength="6" placeholder="At least 6 characters" required>
+                    <button type="button" id="togglePwd" class="absolute inset-y-0 right-0 pr-3 text-gray-400 hover:text-gray-600"><i class="fas fa-eye"></i></button>
+                </div>
+                <div id="pwdHint" class="text-xs text-gray-500 mt-1">Use 6+ characters with a mix of letters and numbers.</div>
             </div>
             <div class="text-left">
                 <label class="block text-sm font-medium mb-1">Role</label>
-                <select class="w-full border rounded px-3 py-2 text-sm sm:text-base" name="role">
-                    <option value="attendee">Attendee</option>
-                    <option value="organizer">Organizer</option>
-                </select>
+                <div class="grid grid-cols-2 gap-2" role="group" aria-label="Select role">
+                    <button type="button" data-role="attendee" class="role-btn px-3 py-2 rounded-lg border text-sm font-medium bg-gray-50 border-gray-200 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-400">Attendee</button>
+                    <button type="button" data-role="organizer" class="role-btn px-3 py-2 rounded-lg border text-sm font-medium bg-gray-50 border-gray-200 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-400">Organizer</button>
+                </div>
+                <input type="hidden" name="role" id="roleInput" value="attendee">
             </div>
-            <div class="submit text-center mt-2">
-                <input class="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-black cursor-pointer text-sm sm:text-base w-full" type="submit" value="Create Account">
+            <div class="flex items-start gap-2 text-sm text-gray-600">
+                <input id="terms" type="checkbox" class="mt-1" required>
+                <label for="terms">I agree to the <a class="text-emerald-700 hover:underline" href="#">Terms</a> and <a class="text-emerald-700 hover:underline" href="#">Privacy Policy</a>.</label>
+            </div>
+            <div class="submit mt-2">
+                <input id="submitBtn" class="bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-300 text-white px-4 py-2 rounded-lg cursor-pointer text-sm sm:text-base w-full transition" type="submit" value="Create Account" disabled>
             </div>
             <p id="registerError" class="text-center text-red-600 hidden text-sm">Registration failed. Try a different email.</p>
         </form>
-        <div class="text-center mt-4 text-sm text-gray-700">
+        <div class="text-center mt-5 text-sm text-gray-700">
             Already have an account?
-            <a class="text-blue-700 font-medium hover:underline" href="/login.php">Sign in</a>
+            <a class="text-emerald-700 font-medium hover:underline" href="/login.php">Sign in</a>
         </div>
     </div>
 
@@ -99,6 +115,37 @@
 
         const form = document.getElementById('registerForm');
         const errorEl = document.getElementById('registerError');
+        const submitBtn = document.getElementById('submitBtn');
+        const terms = document.getElementById('terms');
+        const roleInput = document.getElementById('roleInput');
+        const roleBtns = document.querySelectorAll('.role-btn');
+        const togglePwd = document.getElementById('togglePwd');
+        const pwdInput = document.getElementById('passwordInput');
+
+        roleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                roleBtns.forEach(b => b.classList.remove('ring-2','ring-emerald-400','bg-emerald-50','border-emerald-300'));
+                btn.classList.add('ring-2','ring-emerald-400','bg-emerald-50','border-emerald-300');
+                roleInput.value = btn.getAttribute('data-role');
+            });
+        });
+
+        togglePwd.addEventListener('click', () => {
+            const isPwd = pwdInput.type === 'password';
+            pwdInput.type = isPwd ? 'text' : 'password';
+            togglePwd.innerHTML = isPwd ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
+        });
+
+        function validateForm() {
+            const fd = new FormData(form);
+            const ok = fd.get('username') && fd.get('email') && (fd.get('password') || '').length >= 6 && terms.checked;
+            submitBtn.disabled = !ok;
+        }
+
+        form.addEventListener('input', validateForm);
+        terms.addEventListener('change', validateForm);
+        validateForm();
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             errorEl.classList.add('hidden');
