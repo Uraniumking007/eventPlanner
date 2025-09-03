@@ -33,4 +33,13 @@ Write-Host "Press Ctrl+C to stop the development environment" -ForegroundColor Y
 Write-Host ""
 
 # Start with watch plugin
+Write-Host "🔍 Starting Docker Compose with watch plugin..." -ForegroundColor Green
 docker compose watch
+
+# If watch plugin fails, provide fallback
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "⚠️  Watch plugin failed, trying regular compose..." -ForegroundColor Yellow
+    docker compose up -d
+    Write-Host "📝 To see logs: docker compose logs -f app" -ForegroundColor Cyan
+    Write-Host "🛑 To stop: docker compose down" -ForegroundColor Cyan
+}

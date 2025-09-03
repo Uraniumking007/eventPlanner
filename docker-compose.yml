@@ -21,22 +21,7 @@ services:
       - db
     networks:
       - eventplanner_network
-    develop:
-      watch:
-        - action: sync
-          path: .
-          target: /var/www/html
-          ignore:
-            - .git/
-            - node_modules/
-            - .env
-            - docker/
-            - uploads/
-            - logs/
-        - action: rebuild
-          path: Dockerfile
-        - action: rebuild
-          path: docker-compose.yml
+
 
   # MySQL Database
   db:
