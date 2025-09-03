@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Planner</title>
+    <title>Event Not Planner</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -87,19 +87,19 @@
                         </a>
                     </div>
                     
-                    <!-- Stats -->
+                    <!-- Stats (dynamic) -->
                     <div class="grid grid-cols-3 gap-8 max-w-2xl mx-auto mt-12 pt-8 border-t border-gray-200">
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-gray-900">500+</div>
-                            <div class="text-sm text-gray-600">Events Created</div>
+                            <div id="statEvents" class="text-2xl font-bold text-gray-900">0</div>
+                            <div class="text-sm text-gray-600">Events</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-gray-900">10K+</div>
+                            <div id="statAttendees" class="text-2xl font-bold text-gray-900">0</div>
                             <div class="text-sm text-gray-600">Attendees</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-gray-900">98%</div>
-                            <div class="text-sm text-gray-600">Satisfaction</div>
+                            <div id="statVisits" class="text-2xl font-bold text-gray-900">0</div>
+                            <div class="text-sm text-gray-600">Visits</div>
                         </div>
                     </div>
                 </div>
@@ -329,6 +329,24 @@
 
         // Initialize dots
         updateDots();
+
+        // Load dynamic stats
+        (async function loadStats() {
+            try {
+                const res = await fetch('/api/stats.php');
+                if (!res.ok) return;
+                const s = await res.json();
+                const fmt = (n) => new Intl.NumberFormat().format(Number(n || 0));
+                const eventsEl = document.getElementById('statEvents');
+                const attendeesEl = document.getElementById('statAttendees');
+                const visitsEl = document.getElementById('statVisits');
+                if (eventsEl) eventsEl.textContent = fmt(s.events);
+                if (attendeesEl) attendeesEl.textContent = fmt(s.attendees);
+                if (visitsEl) visitsEl.textContent = fmt(s.visits);
+            } catch (e) {
+                // no-op
+            }
+        })();
     </script>
 </body>
 </html>
