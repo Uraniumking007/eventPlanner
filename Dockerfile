@@ -22,12 +22,8 @@ RUN a2enmod rewrite headers
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy application files
-COPY . /var/www/html/
-
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+# Copy configuration files first (for better layer caching)
+COPY docker/apache.conf /etc/apache2/sites-available/000-default.conf
 
 # Create necessary directories
 RUN mkdir -p /var/www/html/logs \
@@ -35,8 +31,8 @@ RUN mkdir -p /var/www/html/logs \
     && chown -R www-data:www-data /var/www/html/logs \
     && chown -R www-data:www-data /var/www/html/uploads
 
-# Configure Apache
-COPY docker/apache.conf /etc/apache2/sites-available/000-default.conf
+# Set permissions for www-data user
+RUN chown -R www-data:www-data /var/www/html
 
 # Expose port 80
 EXPOSE 80
