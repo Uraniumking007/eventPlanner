@@ -21,6 +21,22 @@ services:
       - db
     networks:
       - eventplanner_network
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /var/www/html
+          ignore:
+            - .git/
+            - node_modules/
+            - .env
+            - docker/
+            - uploads/
+            - logs/
+        - action: rebuild
+          path: Dockerfile
+        - action: rebuild
+          path: docker-compose.yml
 
   # MySQL Database
   db:
@@ -32,11 +48,10 @@ services:
       MYSQL_USER: eventplanner
       MYSQL_PASSWORD: eventplanner123
       MYSQL_ROOT_PASSWORD: rootpassword123
-    ports:
-      - "3306:3306"
+    # Do not expose MySQL to host; access within Docker network only
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./docker/init.sql:/docker-entrypoint-initdb.d
     networks:
       - eventplanner_network
 
@@ -49,7 +64,7 @@ services:
       - "8081:80"
     environment:
       PMA_HOST: db
-      PMA_PORT: 3308
+      PMA_PORT: 3306
       PMA_USER: eventplanner
       PMA_PASSWORD: eventplanner123
     depends_on:
