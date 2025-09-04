@@ -78,9 +78,9 @@ tmp/
 temp/
 
 # Database files
-*.sql
-*.sqlite
-*.db
+# *.sql
+# *.sqlite
+# *.db
 
 # Configuration files with sensitive data
 config/config.local.php
