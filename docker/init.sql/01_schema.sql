@@ -1,0 +1,64 @@
+-- Database initialization for event_planner
+-- Creates database and required tables
+
+CREATE DATABASE IF NOT EXISTS `event_planner` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `event_planner`;
+
+-- Table to store user information (both organizers and attendees)
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(50) NOT NULL,
+  `email` VARCHAR(255) NOT NULL UNIQUE,
+  `password_hash` VARCHAR(255) NOT NULL,
+  `role` ENUM('organizer', 'attendee') NOT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Table to store event details
+CREATE TABLE IF NOT EXISTS `events` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `organizer_id` INT(11) NOT NULL,
+  `title` VARCHAR(255) NOT NULL,
+  `description` TEXT,
+  `event_date` DATE NOT NULL,
+  `location` VARCHAR(255) NOT NULL,
+  `image_path` VARCHAR(255) DEFAULT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`organizer_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Table to store attendee registrations for events
+CREATE TABLE IF NOT EXISTS `registrations` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `user_id` INT(11) NOT NULL,
+  `event_id` INT(11) NOT NULL,
+  `registered_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`event_id`) REFERENCES `events`(`id`) ON DELETE CASCADE,
+  UNIQUE KEY `user_event_unique` (`user_id`, `event_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Table for storing feedback or contact form submissions
+CREATE TABLE IF NOT EXISTS `feedback` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(100) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `message` TEXT NOT NULL,
+  `submitted_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Table for tracking website visits for basic analytics
+CREATE TABLE IF NOT EXISTS `visits` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `session_id` VARCHAR(255) NOT NULL,
+  `ip_address` VARCHAR(45) NOT NULL,
+  `visit_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `page_url` VARCHAR(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
