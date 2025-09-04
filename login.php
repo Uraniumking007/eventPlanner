@@ -132,7 +132,8 @@
                 if (!res.ok) throw new Error('Login failed');
                 const data = await res.json();
                 if (!data.user) throw new Error('Login failed');
-                window.location.href = '/events.php';
+                const dest = data.user.role === 'organizer' ? '/dashboard.php' : '/events.php';
+                window.location.href = dest;
             } catch (err) {
                 errorEl.classList.remove('hidden');
             }

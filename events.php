@@ -121,8 +121,10 @@
                 const area = document.getElementById('userArea');
                 const mobileArea = document.getElementById('mobileUserArea');
                 if (user) {
-                    area.innerHTML = `<span class="hidden sm:inline">Hello, ${user.username || user.email}</span> <button id="logoutBtn" class="ml-3 px-3 py-1 rounded bg-white/10 hover:bg-white/20">Logout</button>`;
-                    mobileArea.innerHTML = `<div class="text-sm text-gray-400 mb-2">Hello, ${user.username || user.email}</div><button id="mobileLogoutBtn" class="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-white/10 rounded-md">Logout</button>`;
+                    const dashLink = user.role === 'organizer' ? '<a href="/dashboard.php" class="ml-3 px-3 py-1 rounded bg-white/10 hover:bg-white/20">Dashboard</a>' : '';
+                    area.innerHTML = `<span class="hidden sm:inline">Hello, ${user.username || user.email}</span> ${dashLink} <button id=\"logoutBtn\" class=\"ml-3 px-3 py-1 rounded bg-white/10 hover:bg-white/20\">Logout</button>`;
+                    const mobileDashLink = user.role === 'organizer' ? '<a href="/dashboard.php" class="block px-3 py-2 text-sm text-gray-300 hover:bg-white/10 rounded-md">Dashboard</a>' : '';
+                    mobileArea.innerHTML = `<div class=\"text-sm text-gray-400 mb-2\">Hello, ${user.username || user.email}</div>${mobileDashLink}<button id=\"mobileLogoutBtn\" class=\"w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-white/10 rounded-md\">Logout</button>`;
                     
                     document.getElementById('logoutBtn').addEventListener('click', async () => {
                         await fetch('/api/auth.php?action=logout', { method: 'POST', credentials: 'same-origin' });
