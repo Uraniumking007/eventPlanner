@@ -21,9 +21,13 @@
     <main class="flex-1">
     <div class="max-w-8xl mx-auto px-4 py-6 lg:py-10">
         <div class="mb-6 lg:mb-8">
-            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900">Explore Events</h1>
-            <p class="text-gray-600 text-sm sm:text-base mt-1">Find and register for upcoming events that match your interests.</p>
-            <div class="text-xs sm:text-sm text-gray-500 mt-2">Showing <span id="eventsCount">0</span> events</div>
+            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 p-[1px] shadow">
+                <div class="rounded-2xl bg-white/95 backdrop-blur px-4 py-5">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900">Explore Events</h1>
+                    <p class="text-gray-600 text-sm sm:text-base mt-1">Find and register for upcoming events that match your interests.</p>
+                    <div class="text-xs sm:text-sm text-gray-500 mt-2">Showing <span id="eventsCount">0</span> events</div>
+                </div>
+            </div>
         </div>
         <!-- Filters -->
         <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -117,9 +121,10 @@
                 : `<span class=\"px-2 py-1 text-xs rounded bg-red-100 text-red-700\">Closed</span>`;
             const badge = dLeft != null ? `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700">${dLeft >= 0 ? dLeft + ' days left' : 'Closed'}</span>` : '';
             return `
-                <div class="border rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition">
-                    ${evt.image_path ? `<img src="${evt.image_path}" alt="${evt.title}" class="w-full h-40 object-cover">` : ''}
-                    <div class="p-4">
+                <div class="p-[1px] rounded-xl bg-gradient-to-r from-gray-200/60 to-gray-100/60 shadow hover:shadow-md transition">
+                    <div class="border rounded-xl overflow-hidden bg-white">
+                        ${evt.image_path ? `<img src="${evt.image_path}" alt="${evt.title}" class="w-full h-40 object-cover">` : ''}
+                        <div class="p-4">
                         <div class="flex items-center justify-between mb-1">
                             <h3 class="font-semibold text-lg">${evt.title}</h3>
                             <div class="flex items-center gap-2">
@@ -131,6 +136,7 @@
                         <div class="text-xs text-gray-500 mb-2">Registrations: <span class="font-medium reg-count" data-event-id="${evt.id}">${count}</span></div>
                         <p class="text-gray-800 text-sm mb-4 line-clamp-3">${evt.description || 'No description available.'}</p>
                         <div class="flex flex-wrap gap-2">${actions.join(' ')}</div>
+                        </div>
                     </div>
                 </div>
             `;
