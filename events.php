@@ -9,6 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- jQuery for AJAX (4.2 requirement) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/style.css?v=<?php echo time(); ?>">
 </head>
@@ -113,18 +115,13 @@
             } catch { return null; }
         }
         function eventCard(evt, user) {
-            const canManage = user && user.role === 'organizer' && Number(user.id) === Number(evt.organizer_id);
             const actions = [];
-            if (!user) {
-                actions.push('<a class="text-blue-600 underline text-sm" href="/login.php">Log in to register</a>');
-            } else if (user.role === 'attendee') {
-                actions.push(`<button class="px-3 py-1 bg-gray-900 text-white rounded text-sm hover:bg-black transition" data-action="register" data-id="${evt.id}">Register</button>`);
-                actions.push(`<button class="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700 transition" data-action="unregister" data-id="${evt.id}">Unregister</button>`);
-            } else if (canManage) {
-                actions.push('<span class="text-sm text-gray-600">You are the organizer</span>');
-            }
+            actions.push(`<a href="/event.php?id=${evt.id}" class="px-3 py-1 border border-gray-300 text-gray-800 rounded text-sm hover:bg-gray-50 transition">More info</a>`);
             const count = Number(evt.registration_count || 0);
             const dLeft = daysUntil(evt.event_date);
+            const statusLabel = dLeft != null && dLeft >= 0
+                ? `<span class=\"px-2 py-1 text-xs rounded bg-emerald-100 text-emerald-700\">Open</span>`
+                : `<span class=\"px-2 py-1 text-xs rounded bg-red-100 text-red-700\">Closed</span>`;
             const badge = dLeft != null ? `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700">${dLeft >= 0 ? dLeft + ' days left' : 'Closed'}</span>` : '';
             return `
                 <div class="border rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition">
@@ -132,10 +129,13 @@
                     <div class="p-4">
                         <div class="flex items-center justify-between mb-1">
                             <h3 class="font-semibold text-lg">${evt.title}</h3>
-                            ${evt.category ? `<span class=\"px-2 py-1 text-xs rounded bg-gray-100 text-gray-700\">${evt.category}</span>` : ''}
+                            <div class="flex items-center gap-2">
+                                ${evt.category ? `<span class=\"px-2 py-1 text-xs rounded bg-gray-100 text-gray-700\">${evt.category}</span>` : ''}
+                                ${statusLabel}
+                            </div>
                         </div>
                         <p class="text-sm text-gray-600 mb-2">${formatDate(evt.event_date)} • ${evt.location} ${badge}</p>
-                        <div class="text-xs text-gray-500 mb-2">Registrations: <span class="font-medium">${count}</span></div>
+                        <div class="text-xs text-gray-500 mb-2">Registrations: <span class="font-medium reg-count" data-event-id="${evt.id}">${count}</span></div>
                         <p class="text-gray-800 text-sm mb-4 line-clamp-3">${evt.description || 'No description available.'}</p>
                         <div class="flex flex-wrap gap-2">${actions.join(' ')}</div>
                     </div>
@@ -187,6 +187,38 @@
         // Track visit
         fetch('/api/visits.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ page_url: window.location.pathname }) });
         render();
+
+        // Live Reg Count Update using jQuery + AJAX (4.2)
+        (function setupLiveRegistrationCounts() {
+            function updateCountsOnce() {
+                // Collect visible event IDs from DOM
+                const ids = new Set();
+                $('.reg-count').each(function () {
+                    const id = Number($(this).data('event-id'));
+                    if (!Number.isNaN(id)) ids.add(id);
+                });
+                if (ids.size === 0) return;
+                // Fetch each event's latest count and update span
+                ids.forEach((id) => {
+                    $.getJSON(`/api/events.php?id=${id}`)
+                        .done((data) => {
+                            const count = Number(data?.event?.registration_count || 0);
+                            $(`.reg-count[data-event-id="${id}"]`).text(String(count));
+                        });
+                });
+            }
+            // Initial after first render
+            setTimeout(updateCountsOnce, 600);
+            // Poll every 10 seconds
+            setInterval(updateCountsOnce, 10000);
+            // Nudge an update shortly after user actions
+            document.addEventListener('click', (e) => {
+                const t = e.target;
+                if (t && t.matches && t.matches('button[data-action="register"], button[data-action="unregister"]')) {
+                    setTimeout(updateCountsOnce, 1200);
+                }
+            });
+        })();
     </script>
 </body>
 </html>
