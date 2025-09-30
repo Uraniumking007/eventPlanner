@@ -13,28 +13,38 @@
 
     <main class="flex-1">
     <div class="max-w-8xl mx-auto px-4 py-6 lg:py-10">
-        <div class="mb-6 lg:mb-8 flex items-start justify-between gap-4 flex-wrap">
-            <div>
-                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900">Organizer Dashboard</h1>
-                <p class="text-gray-600 text-sm sm:text-base mt-1">Create and manage your events, view attendees, and see stats.</p>
-            </div>
-            <div class="flex items-center gap-2">
-                <button id="newEventBtn" class="inline-flex items-center px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"><i class="fas fa-plus mr-2"></i>New Event</button>
+        <div class="mb-6 lg:mb-8">
+            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 p-[1px] shadow-lg">
+                <div class="rounded-2xl bg-white/90 backdrop-blur-sm px-5 py-5 lg:px-7 lg:py-6 flex items-start justify-between gap-4 flex-wrap">
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900">Organizer Dashboard</h1>
+                        <p class="text-gray-600 text-sm sm:text-base mt-1">Create and manage your events, view attendees, and see stats.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button id="newEventBtn" class="inline-flex items-center px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-black transition shadow"><i class="fas fa-plus mr-2"></i>New Event</button>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <div class="p-5 rounded-xl bg-white shadow border border-gray-100">
-                <div class="text-gray-500 text-sm">My Events</div>
-                <div id="statMyEvents" class="text-3xl font-bold text-gray-900">0</div>
+            <div class="p-[1px] rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 shadow">
+                <div class="p-5 rounded-2xl bg-white">
+                    <div class="text-gray-500 text-sm">My Events</div>
+                    <div id="statMyEvents" class="text-3xl font-extrabold text-gray-900">0</div>
+                </div>
             </div>
-            <div class="p-5 rounded-xl bg-white shadow border border-gray-100">
-                <div class="text-gray-500 text-sm">Total Registrations</div>
-                <div id="statMyRegistrations" class="text-3xl font-bold text-gray-900">0</div>
+            <div class="p-[1px] rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 shadow">
+                <div class="p-5 rounded-2xl bg-white">
+                    <div class="text-gray-500 text-sm">Total Registrations</div>
+                    <div id="statMyRegistrations" class="text-3xl font-extrabold text-gray-900">0</div>
+                </div>
             </div>
-            <div class="p-5 rounded-xl bg-white shadow border border-gray-100">
-                <div class="text-gray-500 text-sm">Recent Visits (site-wide)</div>
-                <div id="statVisits" class="text-3xl font-bold text-gray-900">0</div>
+            <div class="p-[1px] rounded-2xl bg-gradient-to-r from-amber-500 to-rose-500 shadow">
+                <div class="p-5 rounded-2xl bg-white">
+                    <div class="text-gray-500 text-sm">Recent Visits (site-wide)</div>
+                    <div id="statVisits" class="text-3xl font-extrabold text-gray-900">0</div>
+                </div>
             </div>
         </div>
 
@@ -50,7 +60,7 @@
                     <h2 class="text-lg font-semibold text-gray-900">Attendees</h2>
                     <select id="attendeesEventSelect" class="border rounded-md px-2 py-1 text-sm"></select>
                 </div>
-                <div id="attendeesList" class="bg-white rounded-xl border border-gray-100 shadow divide-y"></div>
+                <div id="attendeesList" class="bg-white rounded-2xl border border-gray-100 shadow divide-y"></div>
             </div>
         </div>
     </div>
@@ -59,7 +69,7 @@
     <?php include __DIR__ . '/includes/footer.php'; ?>
 
     <div id="eventModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg border">
             <div class="flex items-center justify-between px-5 py-4 border-b">
                 <h3 id="modalTitle" class="font-semibold text-gray-900">New Event</h3>
                 <button id="modalClose" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
@@ -68,27 +78,27 @@
                 <input type="hidden" name="id" />
                 <div>
                     <label class="block text-sm mb-1">Title</label>
-                    <input name="title" class="w-full border rounded-lg px-3 py-2" required />
+                    <input name="title" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required />
                 </div>
                 <div>
                     <label class="block text-sm mb-1">Date</label>
-                    <input name="event_date" type="datetime-local" class="w-full border rounded-lg px-3 py-2" required />
+                    <input name="event_date" type="datetime-local" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required />
                 </div>
                 <div>
                     <label class="block text-sm mb-1">Location</label>
-                    <input name="location" class="w-full border rounded-lg px-3 py-2" required />
+                    <input name="location" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required />
                 </div>
                 <div>
                     <label class="block text-sm mb-1">Image URL</label>
-                    <input name="image_path" class="w-full border rounded-lg px-3 py-2" />
+                    <input name="image_path" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
                 </div>
                 <div>
                     <label class="block text-sm mb-1">Description</label>
-                    <textarea name="description" rows="3" class="w-full border rounded-lg px-3 py-2"></textarea>
+                    <textarea name="description" rows="3" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
                 </div>
                 <div class="flex items-center justify-end gap-2 pt-2">
-                    <button type="button" id="modalCancel" class="px-3 py-2 rounded border">Cancel</button>
-                    <button type="submit" class="px-4 py-2 rounded bg-emerald-600 text-white">Save</button>
+                    <button type="button" id="modalCancel" class="px-3 py-2 rounded border hover:bg-gray-50">Cancel</button>
+                    <button type="submit" class="px-4 py-2 rounded bg-gray-900 text-white hover:bg-black">Save</button>
                 </div>
             </form>
         </div>
