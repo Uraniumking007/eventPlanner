@@ -14,24 +14,7 @@
 </head>
 <body class="min-h-screen flex flex-col">
     <!-- Navigation -->
-    <nav class="bg-gray-900 text-white navbar shadow">
-        <div class="max-w-8xl mx-auto px-4 flex items-center justify-between">
-            <div class="flex items-center h-16">
-                <a class="flex items-center gap-2 font-semibold" href="/index.php">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span class="hidden sm:inline">Event Planner</span>
-                    <span class="sm:hidden">EP</span>
-                </a>
-            </div>
-            <div class="endpoints flex items-center gap-1 md:gap-2">
-                <a id="navHome" href="/" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white">Home</a>
-                <a id="navEvents" href="/events.php" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white">Events</a>
-            </div>
-            <div id="userArea" class="text-sm">
-                <a href="/login.php" class="px-3 py-1 rounded bg-white/10 hover:bg-white/20">Log in</a>
-            </div>
-        </div>
-    </nav>
+    <?php include __DIR__ . '/includes/navbar.php'; ?>
 
     <!-- Login -->
     <div class="max-w-full sm:max-w-md md:max-w-lg mx-auto p-4 sm:p-6 md:p-8 bg-white/80 backdrop-blur rounded-2xl shadow-xl mt-8 sm:mt-12 md:mt-16 mx-4">
@@ -74,19 +57,7 @@
         </div>
     </div>
 
-    <footer class="bg-gray-900 text-white py-6 mt-auto">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="grid md:grid-cols-2 gap-6 items-center">
-                <div>
-                    <h5 class="text-lg font-semibold">Event Planner</h5>
-                    <p class="m-0 text-white/80">Making event planning simple and efficient.</p>
-                </div>
-                <div class="text-left md:text-right">
-                    <p class="m-0 text-white/80">&copy; <?php echo date('Y'); ?> Event Planner. All rights reserved.</p>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <?php include __DIR__ . '/includes/footer.php'; ?>
 
     <script>
         // Navbar active state
