@@ -63,14 +63,7 @@
             const res = await fetch('/api/auth.php?action=me', { credentials: 'same-origin' });
             return res.ok ? res.json() : { user: null };
         }
-        const dummyEvents = [
-            { id: 1, title: 'Tech Meetup 2025', event_date: new Date(Date.now() + 86400000 * 2).toISOString(), location: 'San Francisco, CA', description: 'Network with developers and discuss the latest in AI.', organizer_id: 1, category: 'Tech', image: 'assets/images/slide3.png' },
-            { id: 2, title: 'Corporate Strategy Summit', event_date: new Date(Date.now() + 86400000 * 10).toISOString(), location: 'New York, NY', description: 'Insights into corporate planning and leadership.', organizer_id: 2, category: 'Corporate', image: 'assets/images/slide1.jpg' },
-            { id: 3, title: 'Community Social Night', event_date: new Date(Date.now() + 86400000 * 5).toISOString(), location: 'Austin, TX', description: 'An evening of fun, games, and community bonding.', organizer_id: 3, category: 'Social', image: 'assets/images/slide2.jpeg' },
-            { id: 4, title: 'Hands-on Workshop: Web Security', event_date: new Date(Date.now() + 86400000 * 15).toISOString(), location: 'Remote', description: 'Practical security techniques for modern web apps.', organizer_id: 1, category: 'Workshop', image: 'assets/images/slide4.jpg' },
-            { id: 5, title: 'Design Thinking Bootcamp', event_date: new Date(Date.now() + 86400000 * 20).toISOString(), location: 'Chicago, IL', description: 'Learn to solve problems creatively with design thinking.', organizer_id: 2, category: 'Workshop', image: 'assets/images/slide5.jpg' },
-            { id: 6, title: 'Startup Social Mixer', event_date: new Date(Date.now() + 86400000 * 7).toISOString(), location: 'Los Angeles, CA', description: 'Meet fellow founders and potential collaborators.', organizer_id: 3, category: 'Social', image: 'assets/images/images.jpg' }
-        ];
+        // Removed dummyEvents; page uses dynamic data from /api/events.php
 
         async function fetchEvents() {
             const res = await fetch('/api/events.php');
