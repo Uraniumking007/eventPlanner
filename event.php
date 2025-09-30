@@ -26,51 +26,66 @@ declare(strict_types=1);
         <a href="/events.php" class="inline-flex items-center text-sm text-gray-600 hover:text-gray-800 mb-4">
             <i class="fas fa-arrow-left mr-2"></i> Back to events
         </a>
+        <div id="stickyHeader" class="sticky top-16 z-30 hidden">
+            <div class="p-[1px] rounded-xl bg-gradient-to-r from-blue-600/40 to-purple-600/40 shadow">
+                <div class="rounded-xl bg-white/95 backdrop-blur border border-white/50 px-4 py-3 flex items-center justify-between gap-3">
+                    <div class="truncate">
+                        <div id="stickyTitle" class="truncate text-sm sm:text-base font-semibold text-gray-900">Event</div>
+                        <div id="stickyMeta" class="hidden sm:block text-xs text-gray-600"></div>
+                    </div>
+                    <div id="stickyStatus"></div>
+                </div>
+            </div>
+        </div>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2">
-                <div id="eventContainer" class="bg-white border rounded-xl overflow-hidden shadow">
-                    <div id="eventImage"></div>
-                    <div class="p-6">
+                <div class="p-[1px] rounded-2xl bg-gradient-to-r from-blue-600/40 to-purple-600/40 shadow">
+                    <div id="eventContainer" class="rounded-2xl overflow-hidden bg-white/95 backdrop-blur border border-white/50">
+                        <div id="eventImage"></div>
+                        <div class="p-6">
                         <div class="flex items-start justify-between gap-3">
                             <div class="flex items-center gap-3">
-                                <h1 id="eventTitle" class="text-2xl font-bold text-gray-900">Loading...</h1>
+                                <h1 id="eventTitle" class="text-2xl font-extrabold text-gray-900 tracking-tight">Loading...</h1>
                                 <span id="eventCategory"></span>
                             </div>
-                            <div id="eventStatus"></div>
+                            <div id="eventStatus" class="shrink-0"></div>
                         </div>
-                        <div class="mt-2 text-sm text-gray-600 flex flex-wrap items-center gap-3" id="eventMeta"></div>
-                        <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="mt-2 text-sm text-gray-600 flex flex-wrap items-center gap-3" id="eventMeta"></div>
+                            <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="space-y-2">
                                 <div class="text-sm text-gray-500">Organizer</div>
-                                <div id="eventOrganizer" class="inline-flex items-center gap-2 px-2.5 py-1.5 rounded bg-gray-100 text-gray-800 text-sm"></div>
+                                    <div id="eventOrganizer" class="inline-flex items-center gap-2 px-2.5 py-1.5 rounded bg-gray-100 text-gray-800 text-sm"></div>
                             </div>
                             <div class="space-y-2">
                                 <div class="text-sm text-gray-500">Registrations</div>
-                                <div class="text-gray-900"><span id="eventRegCount" class="font-semibold">0</span></div>
+                                    <div class="text-gray-900"><span id="eventRegCount" class="font-semibold">0</span></div>
                             </div>
                         </div>
                         <div class="mt-6">
                             <h2 class="text-lg font-semibold text-gray-900 mb-2">About this event</h2>
                             <p id="eventDescription" class="text-gray-800 whitespace-pre-line"></p>
                         </div>
-                        <div class="mt-6 flex flex-wrap gap-3" id="actionArea"></div>
+                            <div class="mt-6 flex flex-wrap gap-3" id="actionArea"></div>
                         <div class="mt-6">
                             <h2 class="text-lg font-semibold text-gray-900 mb-2">Location map</h2>
                             <div id="eventMap" class="mt-2">
                                 <!-- map embed injected by render() -->
                             </div>
                         </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="lg:col-span-1 mt-8 lg:mt-0">
-                <div class="bg-white border rounded-xl overflow-hidden shadow">
+                <div class="p-[1px] rounded-2xl bg-gradient-to-r from-gray-200/60 to-gray-100/60 shadow">
+                    <div class="bg-white rounded-2xl overflow-hidden">
                     <div class="p-6">
                         <div class="flex items-center justify-between mb-4">
                             <h2 class="text-lg font-semibold text-gray-900">Attendees</h2>
                             <div class="text-sm text-gray-500" id="attendeeCount">0</div>
                         </div>
                         <div id="attendeesContainer" class="divide-y"></div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -160,6 +175,8 @@ declare(strict_types=1);
             document.getElementById('eventImage').innerHTML = img;
             // Title, meta
             document.getElementById('eventTitle').textContent = evt.title;
+            const stickyTitle = document.getElementById('stickyTitle');
+            if (stickyTitle) stickyTitle.textContent = evt.title;
             document.getElementById('eventCategory').innerHTML = evt.category ? `<span class="px-2 py-1 text-xs rounded bg-gray-100 text-gray-700">${evt.category}</span>` : '';
             const dLeft = daysUntil(evt.event_date);
             const statusLabel = dLeft != null && dLeft >= 0
@@ -172,6 +189,10 @@ declare(strict_types=1);
                 <span class="inline-flex items-center gap-2"><i class="fa-regular fa-calendar"></i> ${formatDate(evt.event_date)} ${badge ? '• ' + badge : ''}</span>
                 <span class="inline-flex items-center gap-2"><i class="fa-solid fa-location-dot"></i> ${evt.location} • <a class="text-blue-600 hover:underline" href="${mapHref}" target="_blank" rel="noopener">View on map</a></span>
             `;
+            const stickyMeta = document.getElementById('stickyMeta');
+            if (stickyMeta) stickyMeta.innerHTML = `${formatDate(evt.event_date)} • ${evt.location}`;
+            const stickyStatus = document.getElementById('stickyStatus');
+            if (stickyStatus) stickyStatus.innerHTML = statusLabel;
             document.getElementById('eventRegCount').textContent = String(Number(evt.registration_count || 0));
             document.getElementById('eventDescription').textContent = evt.description || 'No description available.';
             document.getElementById('eventOrganizer').textContent = evt.organizer_name ? `@${evt.organizer_name}` : 'Unknown';
@@ -310,6 +331,24 @@ declare(strict_types=1);
         setInterval(refreshAttendees, 15000);
         // Poll open/closed status every 60s
         setInterval(refreshStatus, 60000);
+
+        // Sticky header visibility on scroll
+        (function setupStickyHeader(){
+            const sticky = document.getElementById('stickyHeader');
+            const container = document.getElementById('eventContainer');
+            function onScroll(){
+                if (!sticky || !container) return;
+                const threshold = container.getBoundingClientRect().top + window.scrollY + 200;
+                if (window.scrollY > threshold) {
+                    sticky.classList.remove('hidden');
+                } else {
+                    sticky.classList.add('hidden');
+                }
+            }
+            window.addEventListener('scroll', onScroll, { passive: true });
+            window.addEventListener('resize', onScroll);
+            setTimeout(onScroll, 0);
+        })();
     </script>
 </body>
 </html>
