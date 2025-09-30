@@ -14,40 +14,7 @@
 </head>
 <body class="min-h-screen flex flex-col">
     <!-- Navigation -->
-    <nav class="bg-gray-900 text-white navbar shadow">
-        <div class="max-w-8xl mx-auto px-4 flex items-center justify-between">
-            <div class="flex items-center h-16">
-                <a class="flex items-center gap-2 font-semibold" href="/index.php">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span class="hidden sm:inline">Event Planner</span>
-                    <span class="sm:hidden">EP</span>
-                </a>
-            </div>
-            
-            <!-- Desktop Navigation -->
-            <div class="hidden md:flex items-center gap-1 md:gap-2">
-                <a id="navHome" href="/" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white">Home</a>
-                <a id="navEvents" href="/events.php" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white">Events</a>
-            </div>
-            
-            <!-- Mobile Menu Button -->
-            <button id="mobileMenuBtn" class="md:hidden p-2 rounded-md text-gray-300 hover:bg-white/10 hover:text-white">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-            <!-- Desktop User Area -->
-            <div id="userArea" class="hidden md:block text-sm"></div>
-        </div>
-        
-        <!-- Mobile Navigation Menu -->
-        <div id="mobileMenu" class="md:hidden hidden bg-gray-800 border-t border-gray-700">
-            <div class="px-4 py-2 space-y-1">
-                <a href="/" class="block px-3 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white rounded-md">Home</a>
-                <a href="/events.php" class="block px-3 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white rounded-md">Events</a>
-                <div id="mobileUserArea" class="px-3 py-2"></div>
-            </div>
-        </div>
-    </nav>
+    <?php include __DIR__ . '/includes/navbar.php'; ?>
 
     <main class="flex-1">
     <div class="max-w-8xl mx-auto px-4 py-6 lg:py-10">
@@ -85,61 +52,10 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-6 mt-auto">
-        <div class="max-w-8xl mx-auto px-4">
-            <div class="grid md:grid-cols-2 gap-6 items-center">
-                <div>
-                    <h5 class="text-lg font-semibold">Event Planner</h5>
-                    <p class="m-0 text-white/80">Making event planning simple and efficient.</p>
-                </div>
-                <div class="text-left md:text-right">
-                    <p class="m-0 text-white/80">&copy; <?php echo date('Y'); ?> Event Planner. All rights reserved.</p>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <?php include __DIR__ . '/includes/footer.php'; ?>
 
     <script>
-        // Mobile menu toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        // Navbar active + user area
-        (async function initNavbar(){
-            const path = window.location.pathname;
-            const home = document.getElementById('navHome');
-            const events = document.getElementById('navEvents');
-            if (path === '/' || path.endsWith('index.php')) home.classList.add('bg-white/10','text-white');
-            if (path.endsWith('events.php')) events.classList.add('bg-white/10','text-white');
-            try {
-                const res = await fetch('/api/auth.php?action=me', { credentials: 'same-origin' });
-                const data = res.ok ? await res.json() : { user: null };
-                const user = data.user;
-                const area = document.getElementById('userArea');
-                const mobileArea = document.getElementById('mobileUserArea');
-                if (user) {
-                    const dashLink = user.role === 'organizer' ? '<a href="/dashboard.php" class="ml-3 px-3 py-1 rounded bg-white/10 hover:bg-white/20">Dashboard</a>' : '';
-                    area.innerHTML = `<span class="hidden sm:inline">Hello, ${user.username || user.email}</span> ${dashLink} <button id=\"logoutBtn\" class=\"ml-3 px-3 py-1 rounded bg-white/10 hover:bg-white/20\">Logout</button>`;
-                    const mobileDashLink = user.role === 'organizer' ? '<a href="/dashboard.php" class="block px-3 py-2 text-sm text-gray-300 hover:bg-white/10 rounded-md">Dashboard</a>' : '';
-                    mobileArea.innerHTML = `<div class=\"text-sm text-gray-400 mb-2\">Hello, ${user.username || user.email}</div>${mobileDashLink}<button id=\"mobileLogoutBtn\" class=\"w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-white/10 rounded-md\">Logout</button>`;
-                    
-                    document.getElementById('logoutBtn').addEventListener('click', async () => {
-                        await fetch('/api/auth.php?action=logout', { method: 'POST', credentials: 'same-origin' });
-                        window.location.reload();
-                    });
-                    document.getElementById('mobileLogoutBtn').addEventListener('click', async () => {
-                        await fetch('/api/auth.php?action=logout', { method: 'POST', credentials: 'same-origin' });
-                        window.location.reload();
-                    });
-                } else {
-                    area.innerHTML = `<a href="/login.php" class="px-3 py-1 rounded bg-white/10 hover:bg-white/20">Log in</a>`;
-                    mobileArea.innerHTML = `<a href="/login.php" class="block px-3 py-2 text-sm text-gray-300 hover:bg-white/10 rounded-md">Log in</a>`;
-                }
-            } catch {}
-        })();
+        // Navbar behavior (mobile toggle, active link, avatar menu) is handled in includes/navbar.php
 
         async function fetchMe() {
             const res = await fetch('/api/auth.php?action=me', { credentials: 'same-origin' });
@@ -155,15 +71,10 @@
         ];
 
         async function fetchEvents() {
-            try {
-                const res = await fetch('/api/events.php');
-                if (!res.ok) throw new Error('Failed');
-                const data = await res.json();
-                const apiEvents = data.events || [];
-                return apiEvents.length ? apiEvents : dummyEvents;
-            } catch {
-                return dummyEvents;
-            }
+            const res = await fetch('/api/events.php');
+            if (!res.ok) throw new Error('Failed to load events');
+            const data = await res.json();
+            return data.events || [];
         }
         async function register(eventId) {
             const res = await fetch('/api/registrations.php', {
@@ -192,6 +103,15 @@
         function formatDate(dateStr) {
             try { return new Date(dateStr).toLocaleDateString(); } catch { return dateStr; }
         }
+        function daysUntil(dateStr) {
+            try {
+                const now = new Date();
+                const end = new Date(dateStr);
+                const ms = end.setHours(23,59,59,999) - now.getTime();
+                const days = Math.ceil(ms / (1000 * 60 * 60 * 24));
+                return isNaN(days) ? null : days;
+            } catch { return null; }
+        }
         function eventCard(evt, user) {
             const canManage = user && user.role === 'organizer' && Number(user.id) === Number(evt.organizer_id);
             const actions = [];
@@ -203,15 +123,19 @@
             } else if (canManage) {
                 actions.push('<span class="text-sm text-gray-600">You are the organizer</span>');
             }
+            const count = Number(evt.registration_count || 0);
+            const dLeft = daysUntil(evt.event_date);
+            const badge = dLeft != null ? `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700">${dLeft >= 0 ? dLeft + ' days left' : 'Closed'}</span>` : '';
             return `
                 <div class="border rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition">
-                    ${evt.image ? `<img src="${evt.image}" alt="${evt.title}" class="w-full h-40 object-cover">` : ''}
+                    ${evt.image_path ? `<img src="${evt.image_path}" alt="${evt.title}" class="w-full h-40 object-cover">` : ''}
                     <div class="p-4">
                         <div class="flex items-center justify-between mb-1">
                             <h3 class="font-semibold text-lg">${evt.title}</h3>
                             ${evt.category ? `<span class=\"px-2 py-1 text-xs rounded bg-gray-100 text-gray-700\">${evt.category}</span>` : ''}
                         </div>
-                        <p class="text-sm text-gray-600 mb-2">${formatDate(evt.event_date)} • ${evt.location}</p>
+                        <p class="text-sm text-gray-600 mb-2">${formatDate(evt.event_date)} • ${evt.location} ${badge}</p>
+                        <div class="text-xs text-gray-500 mb-2">Registrations: <span class="font-medium">${count}</span></div>
                         <p class="text-gray-800 text-sm mb-4 line-clamp-3">${evt.description || 'No description available.'}</p>
                         <div class="flex flex-wrap gap-2">${actions.join(' ')}</div>
                     </div>
