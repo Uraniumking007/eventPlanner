@@ -82,6 +82,7 @@ declare(strict_types=1);
     <?php include __DIR__ . '/includes/footer.php'; ?>
 
     <script>
+        let mapInitialized = false;
         async function fetchMe() {
             const res = await fetch('/api/auth.php?action=me', { credentials: 'same-origin' });
             return res.ok ? res.json() : { user: null };
@@ -174,13 +175,14 @@ declare(strict_types=1);
             document.getElementById('eventRegCount').textContent = String(Number(evt.registration_count || 0));
             document.getElementById('eventDescription').textContent = evt.description || 'No description available.';
             document.getElementById('eventOrganizer').textContent = evt.organizer_name ? `@${evt.organizer_name}` : 'Unknown';
-            // Map embed
+            // Map embed (only once)
             const mapEmbedSrc = `https://www.google.com/maps?q=${encodeURIComponent(evt.location || '')}&output=embed`;
             const mapContainer = document.getElementById('eventMap');
-            if (mapContainer) {
-                mapContainer.innerHTML = `<div class=\"w-full overflow-hidden rounded-lg border\">
-                    <iframe class=\"w-full h-64 md:h-80\" src=\"${mapEmbedSrc}\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\" allowfullscreen></iframe>
+            if (mapContainer && !mapInitialized) {
+                mapContainer.innerHTML = `<div class="w-full overflow-hidden rounded-lg border">
+                    <iframe class="w-full h-64 md:h-80" src="${mapEmbedSrc}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
                 </div>`;
+                mapInitialized = true;
             }
 
             // Actions
@@ -192,9 +194,9 @@ declare(strict_types=1);
                 const isClosed = dLeft == null || dLeft < 0;
                 const registered = await isUserRegistered(id);
                 if (!registered) {
-                    actions.push(`<button id=\"btnRegister\" class=\"px-4 py-2 ${isClosed ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-900 hover:bg-black'} text-white rounded transition\" data-id=\"${evt.id}\" ${isClosed ? 'disabled' : ''}>Register now</button>`);
+                    actions.push(`<button id="btnRegister" class="px-4 py-2 ${isClosed ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-900 hover:bg-black'} text-white rounded transition" data-id="${evt.id}" ${isClosed ? 'disabled' : ''}>Register now</button>`);
                 } else {
-                    actions.push(`<button id=\"btnUnregister\" class=\"px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition\" data-id=\"${evt.id}\">Unregister</button>`);
+                    actions.push(`<button id="btnUnregister" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition" data-id="${evt.id}">Unregister</button>`);
                 }
             } else if (user.role === 'organizer' && Number(user.id) === Number(evt.organizer_id)) {
                 actions.push('<span class="text-sm text-gray-600">You are the organizer</span>');
@@ -219,7 +221,11 @@ declare(strict_types=1);
                     container.innerHTML = '<div class="text-sm text-gray-500">No attendees yet.</div>';
                 } else {
                     container.innerHTML = attendees.map(a => `
-                        <div class=\"py-3 flex items-center justify-between\">\n                            <div class=\"text-sm\">\n                                <div class=\"font-medium text-gray-900\">${a.username}</div>\n                            </div>\n                        </div>
+                        <div class="py-3 flex items-center justify-between">
+                            <div class="text-sm">
+                                <div class="font-medium text-gray-900">${a.username}</div>
+                            </div>
+                        </div>
                     `).join('');
                 }
             } catch {}
@@ -240,7 +246,11 @@ declare(strict_types=1);
                         container.innerHTML = '<div class="text-sm text-gray-500">No attendees yet.</div>';
                     } else {
                         container.innerHTML = attendees.map(a => `
-                            <div class=\"py-3 flex items-center justify-between\">\n                                <div class=\"text-sm\">\n                                    <div class=\"font-medium text-gray-900\">${a.username}</div>\n                                </div>\n                            </div>
+                            <div class="py-3 flex items-center justify-between">
+                                <div class="text-sm">
+                                    <div class="font-medium text-gray-900">${a.username}</div>
+                                </div>
+                            </div>
                         `).join('');
                     }
                 })
@@ -266,16 +276,16 @@ declare(strict_types=1);
                     if (!evt) return;
                     const dLeft = daysUntil(evt.event_date);
                     const statusLabel = dLeft != null && dLeft >= 0
-                        ? `<span class=\"px-2 py-1 text-xs rounded bg-emerald-100 text-emerald-700\">Open</span>`
-                        : `<span class=\"px-2 py-1 text-xs rounded bg-red-100 text-red-700\">Closed</span>`;
-                    const badge = dLeft != null ? `<span class=\"inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700\">${dLeft >= 0 ? dLeft + ' days left' : 'Closed'}</span>` : '';
+                        ? `<span class="px-2 py-1 text-xs rounded bg-emerald-100 text-emerald-700">Open</span>`
+                        : `<span class="px-2 py-1 text-xs rounded bg-red-100 text-red-700">Closed</span>`;
+                    const badge = dLeft != null ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700">${dLeft >= 0 ? dLeft + ' days left' : 'Closed'}</span>` : '';
                     const mapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(evt.location || '')}`;
                     const statusEl = document.getElementById('eventStatus');
                     const metaEl = document.getElementById('eventMeta');
                     if (statusEl) statusEl.innerHTML = statusLabel;
                     if (metaEl) metaEl.innerHTML = `
-                        <span class=\"inline-flex items-center gap-2\"><i class=\"fa-regular fa-calendar\"></i> ${formatDate(evt.event_date)} ${badge ? '• ' + badge : ''}</span>
-                        <span class=\"inline-flex items-center gap-2\"><i class=\"fa-solid fa-location-dot\"></i> ${evt.location} • <a class=\"text-blue-600 hover:underline\" href=\"${mapHref}\" target=\"_blank\" rel=\"noopener\">View on map</a></span>
+                        <span class="inline-flex items-center gap-2"><i class="fa-regular fa-calendar"></i> ${formatDate(evt.event_date)} ${badge ? '• ' + badge : ''}</span>
+                        <span class="inline-flex items-center gap-2"><i class="fa-solid fa-location-dot"></i> ${evt.location} • <a class="text-blue-600 hover:underline" href="${mapHref}" target="_blank" rel="noopener">View on map</a></span>
                     `;
                     const isClosed = dLeft == null || dLeft < 0;
                     const btnRegister = document.getElementById('btnRegister');
