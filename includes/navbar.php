@@ -1,25 +1,27 @@
 <?php
 // Reusable Navbar include
 ?>
-<nav class="bg-gray-900 text-white navbar shadow">
-    <div class="max-w-8xl mx-auto px-4 flex items-center justify-between">
-        <div class="flex items-center h-16">
-            <a class="flex items-center gap-2 font-semibold" href="/index.php">
-                <i class="fas fa-calendar-alt"></i>
+<nav class="sticky top-0 left-0 right-0 w-full z-40 bg-gray-900/95 backdrop-blur border-b border-white/10 text-white shadow-lg">
+    <div class="px-4 h-16 flex items-center justify-between w-full">
+        <div class="flex items-center">
+            <a class="flex items-center gap-2 font-semibold tracking-wide" href="/index.php">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 text-white shadow ring-1 ring-white/10"><i class="fas fa-calendar-alt"></i></span>
                 <span class="hidden sm:inline">Event Planner</span>
                 <span class="sm:hidden">EP</span>
             </a>
         </div>
-        <div id="navLinks" class="hidden md:flex items-center gap-1 md:gap-2">
-            <a id="navHome" href="/" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white">Home</a>
-            <a id="navEvents" href="/events.php" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white">Events</a>
+        <div id="navLinks" class="relative hidden md:flex items-center gap-1 md:gap-2">
+            <a id="navHome" href="/" class="relative rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition">Home</a>
+            <a id="navEvents" href="/events.php" class="relative rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition">Events</a>
+            <a id="navProfile" href="/profile.php" class="relative rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition">Profile</a>
+            <span id="activeIndicator" class="absolute -bottom-1 h-[2px] bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-300" style="left:0;width:0"></span>
         </div>
         <button id="mobileMenuBtn" class="md:hidden p-2 rounded-md text-gray-300 hover:bg-white/10 hover:text-white">
             <i class="fas fa-bars"></i>
         </button>
         <div id="userArea" class="hidden md:block text-sm"></div>
     </div>
-    <div id="mobileMenu" class="md:hidden hidden bg-gray-800 border-t border-gray-700">
+    <div id="mobileMenu" class="md:hidden hidden bg-gray-900/95 backdrop-blur border-t border-white/10">
         <div id="mobileNavLinks" class="px-4 py-2 space-y-1">
             <a href="/" class="block px-3 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white rounded-md">Home</a>
             <a href="/events.php" class="block px-3 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white rounded-md">Events</a>
@@ -38,15 +40,34 @@
         }
     })();
 
-    // Active nav highlight
+    // Active nav highlight + animated indicator
     (function(){
         const path = window.location.pathname || '';
         const home = document.getElementById('navHome');
         const events = document.getElementById('navEvents');
+        const profile = document.getElementById('navProfile');
         const dash = document.getElementById('navDashboard');
-        if (home && (path === '/' || path.endsWith('index.php'))) home.classList.add('bg-white/10','text-white');
-        if (events && path.endsWith('events.php')) events.classList.add('bg-white/10','text-white');
-        if (dash && path.endsWith('dashboard.php')) dash.classList.add('bg-white/10','text-white');
+        const markActive = (el) => { if (!el) return; el.classList.add('bg-white/10','text-white'); };
+        if (home && (path === '/' || path.endsWith('index.php'))) markActive(home);
+        if (events && path.endsWith('events.php')) markActive(events);
+        if (profile && path.endsWith('profile.php')) markActive(profile);
+        if (dash && path.endsWith('dashboard.php')) markActive(dash);
+
+        // Animated underline indicator
+        const indicator = document.getElementById('activeIndicator');
+        const container = document.getElementById('navLinks');
+        function positionIndicator() {
+            if (!indicator || !container) return;
+            const current = container.querySelector('a.bg-white\\/10');
+            if (!current) { indicator.style.width = '0px'; return; }
+            const rect = current.getBoundingClientRect();
+            const parentRect = container.getBoundingClientRect();
+            const left = rect.left - parentRect.left + container.scrollLeft;
+            indicator.style.left = left + 'px';
+            indicator.style.width = rect.width + 'px';
+        }
+        window.addEventListener('resize', positionIndicator);
+        setTimeout(positionIndicator, 0);
     })();
 
     // Populate user area (desktop + mobile) and handle logout
