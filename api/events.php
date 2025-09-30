@@ -8,11 +8,15 @@ $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
 switch ($method) {
     case 'GET':
         if ($id) {
-            $event = fetchOne('SELECT e.*, u.username AS organizer_name FROM events e JOIN users u ON e.organizer_id = u.id WHERE e.id = ?', [$id]);
+            $event = fetchOne('SELECT e.*, u.username AS organizer_name,
+                (SELECT COUNT(*) FROM registrations r WHERE r.event_id = e.id) AS registration_count
+            FROM events e JOIN users u ON e.organizer_id = u.id WHERE e.id = ?', [$id]);
             if (!$event) json_response(['error' => 'Not found'], 404);
             json_response(['event' => $event]);
         } else {
-            $events = fetchAll('SELECT e.*, u.username AS organizer_name FROM events e JOIN users u ON e.organizer_id = u.id ORDER BY e.event_date DESC');
+            $events = fetchAll('SELECT e.*, u.username AS organizer_name,
+                (SELECT COUNT(*) FROM registrations r WHERE r.event_id = e.id) AS registration_count
+            FROM events e JOIN users u ON e.organizer_id = u.id ORDER BY e.event_date DESC');
             json_response(['events' => $events]);
         }
         break;
