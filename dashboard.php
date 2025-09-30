@@ -9,34 +9,7 @@
     <link rel="stylesheet" href="assets/css/style.css?v=<?php echo time(); ?>">
 </head>
 <body class="min-h-screen flex flex-col">
-    <nav class="bg-gray-900 text-white navbar shadow">
-        <div class="max-w-8xl mx-auto px-4 flex items-center justify-between">
-            <div class="flex items-center h-16">
-                <a class="flex items-center gap-2 font-semibold" href="/index.php">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span class="hidden sm:inline">Event Planner</span>
-                    <span class="sm:hidden">EP</span>
-                </a>
-            </div>
-            <div class="hidden md:flex items-center gap-1 md:gap-2">
-                <a id="navHome" href="/" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white">Home</a>
-                <a id="navEvents" href="/events.php" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white">Events</a>
-                <a id="navDashboard" href="/dashboard.php" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white">Dashboard</a>
-            </div>
-            <button id="mobileMenuBtn" class="md:hidden p-2 rounded-md text-gray-300 hover:bg-white/10 hover:text-white">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div id="userArea" class="hidden md:block text-sm"></div>
-        </div>
-        <div id="mobileMenu" class="md:hidden hidden bg-gray-800 border-t border-gray-700">
-            <div class="px-4 py-2 space-y-1">
-                <a href="/" class="block px-3 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white rounded-md">Home</a>
-                <a href="/events.php" class="block px-3 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white rounded-md">Events</a>
-                <a href="/dashboard.php" class="block px-3 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white rounded-md">Dashboard</a>
-                <div id="mobileUserArea" class="px-3 py-2"></div>
-            </div>
-        </div>
-    </nav>
+    <?php $showDashboardLink = true; include __DIR__ . '/includes/navbar.php'; ?>
 
     <main class="flex-1">
     <div class="max-w-8xl mx-auto px-4 py-6 lg:py-10">
@@ -83,19 +56,7 @@
     </div>
     </main>
 
-    <footer class="bg-gray-900 text-white py-6 mt-auto">
-        <div class="max-w-8xl mx-auto px-4">
-            <div class="grid md:grid-cols-2 gap-6 items-center">
-                <div>
-                    <h5 class="text-lg font-semibold">Event Planner</h5>
-                    <p class="m-0 text-white/80">Making event planning simple and efficient.</p>
-                </div>
-                <div class="text-left md:text-right">
-                    <p class="m-0 text-white/80">&copy; <?php echo date('Y'); ?> Event Planner. All rights reserved.</p>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <?php include __DIR__ . '/includes/footer.php'; ?>
 
     <div id="eventModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg">
