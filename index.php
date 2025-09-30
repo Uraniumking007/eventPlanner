@@ -74,43 +74,7 @@
                 <!-- Modern Slider -->
                 <div class="slider-container px-4 pb-8">
                     <div class="relative">
-                        <div class="slider-wrapper rounded-2xl overflow-hidden shadow-2xl bg-white">
-                            <div class="slide-item">
-                                <img class="w-full h-auto object-cover" src="assets/images/slide1.jpg" alt="Slide 1">
-                                <div class="slide-content bg-gradient-to-t from-black/80 to-transparent">
-                                    <h3 class="text-white font-semibold text-lg sm:text-xl">Corporate Events</h3>
-                                    <p class="text-white/90 text-sm sm:text-base">Professional conferences and workshops</p>
-                                </div>
-                            </div>
-                            <div class="slide-item">
-                                <img class="w-full h-auto object-cover" src="assets/images/slide2.jpeg" alt="Slide 2">
-                                <div class="slide-content bg-gradient-to-t from-black/80 to-transparent">
-                                    <h3 class="text-white font-semibold text-lg sm:text-xl">Social Gatherings</h3>
-                                    <p class="text-white/90 text-sm sm:text-base">Celebrations and meetups</p>
-                                </div>
-                            </div>
-                            <div class="slide-item">
-                                <img class="w-full h-auto object-cover" src="assets/images/slide3.png" alt="Slide 3">
-                                <div class="slide-content bg-gradient-to-t from-black/80 to-transparent">
-                                    <h3 class="text-white font-semibold text-lg sm:text-xl">Tech Meetups</h3>
-                                    <p class="text-white/90 text-sm sm:text-base">Innovation and networking</p>
-                                </div>
-                            </div>
-                            <div class="slide-item">
-                                <img class="w-full h-auto object-cover" src="assets/images/slide4.jpg" alt="Slide 4">
-                                <div class="slide-content bg-gradient-to-t from-black/80 to-transparent">
-                                    <h3 class="text-white font-semibold text-lg sm:text-xl">Workshops</h3>
-                                    <p class="text-white/90 text-sm sm:text-base">Learning and skill development</p>
-                                </div>
-                            </div>
-                            <div class="slide-item">
-                                <img class="w-full h-auto object-cover" src="assets/images/slide5.jpg" alt="Slide 5">
-                                <div class="slide-content bg-gradient-to-t from-black/80 to-transparent">
-                                    <h3 class="text-white font-semibold text-lg sm:text-xl">Exhibitions</h3>
-                                    <p class="text-white/90 text-sm sm:text-base">Showcasing creativity</p>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="slider-wrapper rounded-2xl overflow-hidden shadow-2xl bg-white"></div>
                         
                         <!-- Modern Navigation Buttons -->
                         <button class="prev-button absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white text-gray-800 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center backdrop-blur-sm" aria-label="Previous">
@@ -121,13 +85,7 @@
                         </button>
                         
                         <!-- Dots indicator -->
-                        <div class="flex justify-center mt-6 space-x-2">
-                            <div class="dot active w-3 h-3 bg-blue-600 rounded-full cursor-pointer transition-all duration-300"></div>
-                            <div class="dot w-3 h-3 bg-gray-300 rounded-full cursor-pointer transition-all duration-300"></div>
-                            <div class="dot w-3 h-3 bg-gray-300 rounded-full cursor-pointer transition-all duration-300"></div>
-                            <div class="dot w-3 h-3 bg-gray-300 rounded-full cursor-pointer transition-all duration-300"></div>
-                            <div class="dot w-3 h-3 bg-gray-300 rounded-full cursor-pointer transition-all duration-300"></div>
-                        </div>
+                        <div id="sliderDots" class="flex justify-center mt-6 space-x-2"></div>
                     </div>
                 </div>
             </div>
@@ -185,88 +143,100 @@
         // Navbar behavior (mobile toggle, active link, user area) is handled in includes/navbar.php
 
         const sliderWrapper = document.querySelector('.slider-wrapper');
-        const slideItems = document.querySelectorAll('.slide-item');
         const prevButton = document.querySelector('.prev-button');
         const nextButton = document.querySelector('.next-button');
-        const dots = document.querySelectorAll('.dot');
+        const dotsContainer = document.getElementById('sliderDots');
 
         let currentIndex = 0;
+        let slides = [];
+
+        async function loadSlides() {
+            try {
+                const res = await fetch('/api/events.php');
+                if (!res.ok) return [];
+                const data = await res.json();
+                const events = (data.events || []).filter(e => !!e.image_path);
+                return events.slice(0, 5); // limit to 5 slides
+            } catch {
+                return [];
+            }
+        }
+
+        function renderSlides(items) {
+            sliderWrapper.innerHTML = items.map((e, idx) => `
+                <div class=\"slide-item\" style=\"float:left; width:100%\">\n                    <a href=\"/event.php?id=${e.id}\">\n                        <img class=\"w-full h-auto object-cover\" src=\"${e.image_path}\" alt=\"${e.title}\">\n                        <div class=\"slide-content bg-gradient-to-t from-black/80 to-transparent\">\n                            <h3 class=\"text-white font-semibold text-lg sm:text-xl\">${e.title}</h3>\n                            <p class=\"text-white/90 text-sm sm:text-base\">${e.location || ''}</p>\n                        </div>\n                    </a>\n                </div>
+            `).join('');
+            slides = Array.from(sliderWrapper.querySelectorAll('.slide-item'));
+            renderDots(slides.length);
+            updateSliderPosition();
+        }
+
+        function renderDots(n) {
+            if (!dotsContainer) return;
+            dotsContainer.innerHTML = Array.from({ length: n }).map((_, i) => `
+                <div class=\"dot ${i === currentIndex ? 'bg-blue-600' : 'bg-gray-300'} w-3 h-3 rounded-full cursor-pointer transition-all duration-300\"></div>
+            `).join('');
+            Array.from(dotsContainer.children).forEach((dot, i) => {
+                dot.addEventListener('click', () => goToSlide(i));
+            });
+        }
 
         function getSlideWidth() {
-            const first = slideItems[0];
+            const first = slides[0];
             return first ? first.clientWidth : 0;
         }
 
-        function updateSliderPosition() {
-            const width = getSlideWidth();
-            sliderWrapper.style.transform = `translateX(${-currentIndex * width}px)`;
-            updateDots();
-        }
-
         function updateDots() {
-            dots.forEach((dot, index) => {
-                if (index === currentIndex) {
-                    dot.classList.add('active', 'bg-blue-600');
+            if (!dotsContainer) return;
+            Array.from(dotsContainer.children).forEach((dot, i) => {
+                if (i === currentIndex) {
+                    dot.classList.add('bg-blue-600');
                     dot.classList.remove('bg-gray-300');
                 } else {
-                    dot.classList.remove('active', 'bg-blue-600');
+                    dot.classList.remove('bg-blue-600');
                     dot.classList.add('bg-gray-300');
                 }
             });
         }
 
+        function updateSliderPosition() {
+            const width = getSlideWidth();
+            sliderWrapper.style.whiteSpace = 'nowrap';
+            sliderWrapper.style.transform = `translateX(${-currentIndex * width}px)`;
+            sliderWrapper.style.transition = 'transform 400ms ease';
+            updateDots();
+        }
+
         function goToSlide(index) {
+            if (!slides.length) return;
             currentIndex = index;
+            if (currentIndex < 0) currentIndex = slides.length - 1;
+            if (currentIndex > slides.length - 1) currentIndex = 0;
             updateSliderPosition();
         }
 
-        nextButton.addEventListener('click', () => {
-            currentIndex++;
-            if (currentIndex > slideItems.length - 1) {
-                currentIndex = 0;
-            }
-            updateSliderPosition();
-        });
+        nextButton.addEventListener('click', () => goToSlide(currentIndex + 1));
+        prevButton.addEventListener('click', () => goToSlide(currentIndex - 1));
 
-        prevButton.addEventListener('click', () => {
-            currentIndex--;
-            if (currentIndex < 0) {
-                currentIndex = slideItems.length - 1;
-            }
-            updateSliderPosition();
-        });
+        let autoPlayInterval = null;
+        function startAutoPlay() {
+            stopAutoPlay();
+            autoPlayInterval = setInterval(() => goToSlide(currentIndex + 1), 4000);
+        }
+        function stopAutoPlay() {
+            if (autoPlayInterval) clearInterval(autoPlayInterval);
+        }
 
-        // Add click handlers for dots
-        dots.forEach((dot, index) => {
-            dot.addEventListener('click', () => goToSlide(index));
-        });
-
-        let autoPlayInterval = setInterval(() => {
-            nextButton.click();
-        }, 4000);
-
-        sliderWrapper.addEventListener('mouseenter', () => {
-            clearInterval(autoPlayInterval);
-        });
-
-        sliderWrapper.addEventListener('mouseleave', () => {
-            autoPlayInterval = setInterval(() => {
-                nextButton.click();
-            }, 4000);
-        });
-
-        // Recalculate on image load and window resize to ensure correct widths
-        const slideImages = document.querySelectorAll('.slide-item img');
-        slideImages.forEach(img => {
-            if (img.complete) return; // if already loaded, skip
-            img.addEventListener('load', updateSliderPosition);
-        });
-
+        sliderWrapper.addEventListener('mouseenter', stopAutoPlay);
+        sliderWrapper.addEventListener('mouseleave', startAutoPlay);
         window.addEventListener('resize', updateSliderPosition);
 
-        // Initialize dots and position
-        updateDots();
-        updateSliderPosition();
+        (async function initSlider() {
+            const items = await loadSlides();
+            if (!items.length) return; // keep static layout if no images
+            renderSlides(items);
+            startAutoPlay();
+        })();
 
         // Load dynamic stats
         (async function loadStats() {
