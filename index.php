@@ -22,6 +22,8 @@
         <div class="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50"></div>
         
         <div class="relative max-w-8xl mx-auto px-4">
+            <div class="pointer-events-none absolute -top-24 -right-24 w-72 h-72 bg-gradient-to-br from-blue-200/40 to-purple-200/40 rounded-full blur-3xl"></div>
+            <div class="pointer-events-none absolute -bottom-24 -left-24 w-72 h-72 bg-gradient-to-br from-purple-200/40 to-pink-200/40 rounded-full blur-3xl"></div>
             <div class="grid grid-cols-1 items-center justify-center text-center min-h-[85vh] lg:min-h-[90vh]">
                 <div class="py-8 md:py-12 px-4 space-y-6">
                     <!-- Badge -->
@@ -43,30 +45,36 @@
                     </p>
                     
                     <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                        <a href="/events.php" class="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                        <a href="/events.php" class="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl ring-1 ring-white/10">
                             <i class="fas fa-calendar-plus mr-3 text-lg"></i>
                             Browse Events
                             <i class="fas fa-arrow-right ml-3 group-hover:translate-x-1 transition-transform"></i>
                         </a>
-                        <a href="/login.php" class="inline-flex items-center px-8 py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:border-gray-400 hover:bg-gray-50 transition-all duration-300">
+                        <a href="/login.php" class="inline-flex items-center px-8 py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:border-gray-400 hover:bg-gray-50 transition-all duration-300 bg-white/60 backdrop-blur">
                             <i class="fas fa-user mr-3"></i>
                             Get Started
                         </a>
                     </div>
                     
                     <!-- Stats (dynamic) -->
-                    <div class="grid grid-cols-3 gap-8 max-w-2xl mx-auto mt-12 pt-8 border-t border-gray-200">
-                        <div class="text-center">
-                            <div id="statEvents" class="text-2xl font-bold text-gray-900">0</div>
-                            <div class="text-sm text-gray-600">Events</div>
+                    <div class="grid grid-cols-3 gap-6 max-w-2xl mx-auto mt-12 pt-8 border-t border-gray-200">
+                        <div class="p-[1px] rounded-xl bg-gradient-to-r from-blue-600/60 to-purple-600/60">
+                            <div class="rounded-xl bg-white p-4 text-center">
+                                <div id="statEvents" class="text-2xl font-extrabold text-gray-900">0</div>
+                                <div class="text-sm text-gray-600">Events</div>
+                            </div>
                         </div>
-                        <div class="text-center">
-                            <div id="statAttendees" class="text-2xl font-bold text-gray-900">0</div>
-                            <div class="text-sm text-gray-600">Attendees</div>
+                        <div class="p-[1px] rounded-xl bg-gradient-to-r from-emerald-500/60 to-teal-500/60">
+                            <div class="rounded-xl bg-white p-4 text-center">
+                                <div id="statAttendees" class="text-2xl font-extrabold text-gray-900">0</div>
+                                <div class="text-sm text-gray-600">Attendees</div>
+                            </div>
                         </div>
-                        <div class="text-center">
-                            <div id="statVisits" class="text-2xl font-bold text-gray-900">0</div>
-                            <div class="text-sm text-gray-600">Visits</div>
+                        <div class="p-[1px] rounded-xl bg-gradient-to-r from-amber-500/60 to-rose-500/60">
+                            <div class="rounded-xl bg-white p-4 text-center">
+                                <div id="statVisits" class="text-2xl font-extrabold text-gray-900">0</div>
+                                <div class="text-sm text-gray-600">Visits</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -77,10 +85,10 @@
                         <div class="slider-wrapper rounded-2xl overflow-hidden shadow-2xl bg-white"></div>
                         
                         <!-- Modern Navigation Buttons -->
-                        <button class="prev-button absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white text-gray-800 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center backdrop-blur-sm" aria-label="Previous">
+                        <button class="prev-button absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white text-gray-800 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center backdrop-blur-sm ring-1 ring-gray-200" aria-label="Previous">
                             <i class="fas fa-chevron-left"></i>
                         </button>
-                        <button class="next-button absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white text-gray-800 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center backdrop-blur-sm" aria-label="Next">
+                        <button class="next-button absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white text-gray-800 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center backdrop-blur-sm ring-1 ring-gray-200" aria-label="Next">
                             <i class="fas fa-chevron-right"></i>
                         </button>
                         
