@@ -78,10 +78,15 @@
                 <input id="terms" type="checkbox" class="mt-1" required>
                 <label for="terms">I agree to the <a class="text-emerald-700 hover:underline" href="#">Terms</a> and <a class="text-emerald-700 hover:underline" href="#">Privacy Policy</a>.</label>
             </div>
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+                <input id="remember" name="remember" type="checkbox" class="mt-1">
+                <label for="remember">Remember me on this device</label>
+            </div>
             <div class="submit mt-2">
                 <input id="submitBtn" class="bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-300 text-white px-4 py-3 rounded-lg cursor-pointer text-sm sm:text-base w-full transition" type="submit" value="Create Account" disabled>
             </div>
             <p id="registerError" class="text-center text-red-600 hidden text-sm">Registration failed. Try a different email.</p>
+            <p id="registerErrorMsg" class="text-center text-red-600 hidden text-xs"></p>
         </form>
         <div class="text-center mt-5 text-sm text-gray-700">
             Already have an account?
@@ -121,6 +126,8 @@
         const roleBtns = document.querySelectorAll('.role-btn');
         const togglePwd = document.getElementById('togglePwd');
         const pwdInput = document.getElementById('passwordInput');
+        const remember = document.getElementById('remember');
+        const registerErrorMsg = document.getElementById('registerErrorMsg');
 
         roleBtns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -149,12 +156,15 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             errorEl.classList.add('hidden');
+            registerErrorMsg.classList.add('hidden');
+            registerErrorMsg.textContent = '';
             const formData = new FormData(form);
             const payload = {
                 username: formData.get('username'),
                 email: formData.get('email'),
                 password: formData.get('password'),
-                role: formData.get('role')
+                role: formData.get('role'),
+                remember: remember.checked
             };
             try {
                 const res = await fetch('/api/auth.php?action=register', {
@@ -163,12 +173,14 @@
                     body: JSON.stringify(payload),
                     credentials: 'same-origin'
                 });
-                if (!res.ok) throw new Error('Register failed');
                 const data = await res.json();
+                if (!res.ok) throw new Error(data?.error || 'Register failed');
                 if (!data.user) throw new Error('Register failed');
                 window.location.href = '/events.php';
             } catch (err) {
                 errorEl.classList.remove('hidden');
+                registerErrorMsg.textContent = String(err?.message || 'Register failed');
+                registerErrorMsg.classList.remove('hidden');
             }
         });
     </script>

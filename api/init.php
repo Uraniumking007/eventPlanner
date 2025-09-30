@@ -20,6 +20,36 @@ if (session_status() === PHP_SESSION_NONE) {
 // Include DB
 require_once __DIR__ . '/../config/database.php';
 
+// Remember-me auto login
+// Cookie format: userId:expires:signature where signature = HMAC_SHA256(userId|expires, SECRET)
+// SECRET from env REMEMBER_ME_SECRET or fallback to DB_PASS (kept simple for this project)
+if (!isset($_SESSION['user'])) {
+    $cookieName = 'remember_me';
+    $cookie = $_COOKIE[$cookieName] ?? null;
+    $secret = getenv('REMEMBER_ME_SECRET') ?: (defined('DB_PASS') ? DB_PASS : 'change-me-secret');
+    if ($cookie && $secret) {
+        $parts = explode(':', $cookie, 3);
+        if (count($parts) === 3) {
+            [$uid, $exp, $sig] = $parts;
+            $uid = (int) $uid;
+            $exp = (int) $exp;
+            if ($uid > 0 && $exp > time()) {
+                $expected = hash_hmac('sha256', $uid . '|' . $exp, $secret);
+                if (hash_equals($expected, $sig)) {
+                    try {
+                        $user = fetchOne('SELECT id, username, email, role, created_at FROM users WHERE id = ?', [$uid]);
+                        if ($user) {
+                            $_SESSION['user'] = $user;
+                        }
+                    } catch (Exception $e) {
+                        // ignore auto-login errors
+                    }
+                }
+            }
+        }
+    }
+}
+
 function json_response($data, int $status = 200): void {
     http_response_code($status);
     header('Content-Type: application/json');

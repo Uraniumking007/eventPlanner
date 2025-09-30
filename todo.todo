@@ -1,0 +1,67 @@
+# 📅 Event Website Project: Comprehensive Action Plan
+
+This plan breaks the project into phases, ensuring all required technologies and features from the GTU syllabus are addressed. Use this as your group's master checklist.
+
+## Phase 1: Setup and Foundation (Tech Check & Security)
+
+| ID | Task | Feature Covered | Notes | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **1.1** | **Environment Setup** | Docker / Laragon Installation | Ensure consistent setup across all team members (Windows/Mac). | Done |
+| **1.2** | **Database Creation** | MySQL / MariaDB | Create the `event_website_db` and execute the schema SQL script. | Done |
+| **1.3** | **Project Structure** | Organized Codebase | Set up folders: `/assets`, `/includes`, `/uploads`, `/admin`, `/organizer`. | Done |
+| **1.4** | **Database Connection** | PHP `mysqli` or `PDO` | Write and test `includes/db_connection.php`. **Required Technology: Database connectivity using PHP** | Done |
+| **1.5** | **Basic Templates** | HTML, Basic CSS | Create reusable `header.php` and `footer.php` files for site consistency. | Done |
+| **1.6** | **Core Styling** | **Basic CSS**, **Navigations using CSS** | Apply initial styling (Bootstrap recommended) and design the main navigation menu. | Done |
+| **1.7** | **Secure Hashing** | Password Security | Implement PHP's `password_hash()` for user registration. | Done |
+
+## Phase 2: User Management & Authentication (Required Sessions)
+
+| ID | Task | Feature Covered | Technology Required | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **2.1** | **Registration Form** | Account Creation | HTML forms using the **`POST` method**. | Done |
+| **2.2** | **Client Validation** | Input checks (Required fields, email format) | **JavaScript Validation** | Done |
+| **2.3** | **Server-Side Registration**| User table population | PHP and SQL **Data insertion in database** | Done |
+| **2.4** | **User Login Logic** | Authentication & Hashing verification | PHP `password_verify()` | Done |
+| **2.5** | **Session Setup** | User authorization | **Session** management to track logged-in users. | Done |
+| **2.6** | **Role-Based Redirects** | Organizer vs. Attendee access | PHP Session variables to restrict page access. | Done |
+| **2.7** | **"Remember Me" Cookie** | Persistent Login Option | **Cookie** creation and checking for automatic login. | Done |
+
+## Phase 3: Core Event Management (CRUD)
+
+| ID | Task | Feature Covered | Technology Required | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **3.1** | **Organizer Dashboard** | Organizer landing page | PHP Session required. | Done |
+| **3.2** | **Create Event Form** | Event details submission | HTML forms using the **`POST` method**. | Done |
+| **3.3** | **Event Poster Upload** | Media Handling | **File Upload** via PHP and saving path to database. | ☐ |
+| **3.4** | **Insert Event Data** | Storing new events | PHP and SQL **Data insertion in database** | Done |
+| **3.5** | **Event Listing Page** | Read all events on Homepage | PHP script uses `SELECT` query (**post and get method** use for fetching) | Done |
+| **3.6** | **Edit Event Form** | Pre-filling data for updates | PHP and SQL **Data updation in database** | Done |
+| **3.7** | **Delete Event Function**| Event removal | PHP and SQL **Data deletion in database** | Done |
+| **3.8** | **Media Styling** | Displaying event images/videos | **Adding Image/ Video using CSS** (e.g., responsive image sizing) | Done |
+
+## Phase 4: Interactivity & Feedback (Syllabus Requirements)
+
+| ID | Task | Feature Covered | Technology Required | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **4.1** | **Event Registration** | Attendee signs up | **Data insertion** into `registrations` table. | Done |
+| **4.2** | **Live Reg Count Update** | Dynamic interaction | **AJAX** + **Jquery** to update attendance count on event page. | ☐ |
+| **4.3** | **Contact Form Page** | HTML form for feedback | **HTML**, **JavaScript Validation** | ☐ |
+| **4.4** | **Feedback Submission** | Storing message | PHP **Data insertion** to `feedback` table. | ☐ |
+| **4.5** | **Email Notification** | Automated response/alert | **Feedback/contact form with email functionality** (using PHP `mail()` or a service). | ☐ |
+
+## Phase 5: Analytics & Additional Modules (Advanced Features)
+
+| ID | Task | Feature Covered | Technology Required | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **5.1** | **Visitor Tracking Logic**| Logging unique sessions/IPs | PHP **Session** and **Cookie** checks; **Data insertion** into `visits`. | Done |
+| **5.2** | **Analytics Display** | **Number of users visited** | PHP retrieves aggregate data from `visits` table. | Done |
+| **5.3** | **Module 1: Search & Filter**| Dynamic event filtering | **AJAX** + **Jquery** for live search without page reload. | ☐ |
+| **5.4** | **Module 2: Admin Panel** | Full Site Oversight | PHP/SQL for **Data deletion/updation** of any user/event/feedback record. | ☐ |
+
+## Phase 6: Finalization
+
+| ID | Task | Feature Covered | Notes | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **6.1** | **Security Review** | Input Sanitation | Check all form inputs for proper sanitation before database queries. | ☐ |
+| **6.2** | **Responsive Testing** | Cross-device compatibility | Verify display on mobile, tablet, and desktop browsers. | ☐ |
+| **6.3** | **Project Documentation** | Final report | Write up project details, architecture, and technology stack used. | ☐ |

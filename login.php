@@ -58,10 +58,15 @@
                     <button type="button" id="togglePwd" class="absolute inset-y-0 right-0 pr-3 text-gray-400 hover:text-gray-600"><i class="fas fa-eye"></i></button>
                 </div>
             </div>
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+                <input id="remember" name="remember" type="checkbox" class="mt-1">
+                <label for="remember">Remember me on this device</label>
+            </div>
             <div class="submit mt-2">
                 <input id="submitBtn" class="bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-300 text-white px-4 py-3 rounded-lg cursor-pointer text-sm sm:text-base w-full transition" type="submit" value="Sign in" disabled>
             </div>
             <p id="loginError" class="text-center text-red-600 hidden text-sm">Login failed. Check your email and password.</p>
+            <p id="loginErrorMsg" class="text-center text-red-600 hidden text-xs"></p>
         </form>
         <div class="text-center mt-5 text-sm text-gray-700">
             Don't have an account?
@@ -98,6 +103,8 @@
         const submitBtn = document.getElementById('submitBtn');
         const togglePwd = document.getElementById('togglePwd');
         const pwdInput = document.getElementById('passwordInput');
+        const remember = document.getElementById('remember');
+        const loginErrorMsg = document.getElementById('loginErrorMsg');
 
         togglePwd.addEventListener('click', () => {
             const isPwd = pwdInput.type === 'password';
@@ -117,10 +124,13 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             errorEl.classList.add('hidden');
+            loginErrorMsg.classList.add('hidden');
+            loginErrorMsg.textContent = '';
             const formData = new FormData(form);
             const payload = {
                 email: formData.get('email'),
-                password: formData.get('password')
+                password: formData.get('password'),
+                remember: remember.checked
             };
             try {
                 const res = await fetch('/api/auth.php?action=login', {
@@ -129,13 +139,15 @@
                     body: JSON.stringify(payload),
                     credentials: 'same-origin'
                 });
-                if (!res.ok) throw new Error('Login failed');
                 const data = await res.json();
+                if (!res.ok) throw new Error(data?.error || 'Login failed');
                 if (!data.user) throw new Error('Login failed');
                 const dest = data.user.role === 'organizer' ? '/dashboard.php' : '/events.php';
                 window.location.href = dest;
             } catch (err) {
                 errorEl.classList.remove('hidden');
+                loginErrorMsg.textContent = String(err?.message || 'Login failed');
+                loginErrorMsg.classList.remove('hidden');
             }
         });
     </script>
