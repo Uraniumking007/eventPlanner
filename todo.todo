@@ -44,7 +44,7 @@ This plan breaks the project into phases, ensuring all required technologies and
 | ID | Task | Feature Covered | Technology Required | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **4.1** | **Event Registration** | Attendee signs up | **Data insertion** into `registrations` table. | Done |
-| **4.2** | **Live Reg Count Update** | Dynamic interaction | **AJAX** + **Jquery** to update attendance count on event page. | ☐ |
+| **4.2** | **Live Reg Count Update** | Dynamic interaction | **AJAX** + **Jquery** to update attendance count on event page. | Done |
 | **4.3** | **Contact Form Page** | HTML form for feedback | **HTML**, **JavaScript Validation** | ☐ |
 | **4.4** | **Feedback Submission** | Storing message | PHP **Data insertion** to `feedback` table. | ☐ |
 | **4.5** | **Email Notification** | Automated response/alert | **Feedback/contact form with email functionality** (using PHP `mail()` or a service). | ☐ |
