@@ -131,9 +131,12 @@
             actions.push(`<a href="/event.php?id=${evt.id}" class="btn btn-sm btn-outline-secondary">More info</a>`);
             const count = Number(evt.registration_count || 0);
             const dLeft = daysUntil(evt.event_date);
-            const statusLabel = dLeft != null && dLeft >= 0
-                ? `<span class=\"badge text-bg-success\">Open</span>`
-                : `<span class=\"badge text-bg-danger\">Closed</span>`;
+            const isSuspended = Number(evt.suspended || 0) === 1;
+            const statusLabel = isSuspended
+                ? `<span class=\"badge text-bg-warning\">Suspended</span>`
+                : (dLeft != null && dLeft >= 0
+                    ? `<span class=\"badge text-bg-success\">Open</span>`
+                    : `<span class=\"badge text-bg-danger\">Closed</span>`);
             const badge = dLeft != null ? `<span class=\"badge rounded-pill text-bg-secondary ms-2\">${dLeft >= 0 ? dLeft + ' days left' : 'Closed'}</span>` : '';
             return `
                 <div class="col-12 col-sm-6 col-lg-4">
@@ -148,6 +151,7 @@
                                 </div>
                             </div>
                             <p class="text-secondary small mb-2">${formatDate(evt.event_date)} • ${evt.location} ${badge}</p>
+                            ${isSuspended ? `<div class=\"alert alert-warning py-2 small mb-2\"><strong>Suspended</strong>${evt.suspend_reason ? ` — Reason: ${evt.suspend_reason}` : ''}</div>` : ''}
                             <div class="text-muted small mb-2">Registrations: <span class="fw-medium reg-count" data-event-id="${evt.id}">${count}</span></div>
                             <p class="mb-3 small">${evt.description || 'No description available.'}</p>
                             <div class="d-flex flex-wrap gap-2">${actions.join(' ')}</div>
