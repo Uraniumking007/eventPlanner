@@ -37,9 +37,11 @@ if (!isset($_SESSION['user'])) {
                 $expected = hash_hmac('sha256', $uid . '|' . $exp, $secret);
                 if (hash_equals($expected, $sig)) {
                     try {
-                        $user = fetchOne('SELECT id, username, email, role, created_at FROM users WHERE id = ?', [$uid]);
+                        $user = fetchOne('SELECT id, username, email, role, suspended, created_at FROM users WHERE id = ?', [$uid]);
                         if ($user) {
-                            $_SESSION['user'] = $user;
+                            if (empty($user['suspended'])) {
+                                $_SESSION['user'] = $user;
+                            }
                         }
                     } catch (Exception $e) {
                         // ignore auto-login errors
