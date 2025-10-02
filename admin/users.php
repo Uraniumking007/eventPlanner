@@ -69,6 +69,29 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
 
     <?php include __DIR__ . '/../includes/footer.php'; ?>
 
+    <!-- Reset Password Modal -->
+    <div class="modal fade" id="resetPwModal" tabindex="-1" aria-labelledby="resetPwModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resetPwModalLabel">Reset Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">New Password <span class="text-danger">(min 6 chars)</span></label>
+                        <input type="password" id="newPassword" class="form-control" placeholder="Enter new password">
+                        <div id="pwError" class="text-danger small mt-2 d-none">Password must be at least 6 characters.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" id="resetPwConfirm" class="btn btn-primary">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const api = {
             async list() {
@@ -142,14 +165,23 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
                     try { await api.setSuspended(id, makeSuspended); load(); } catch { alert('Failed to update status'); }
                 });
             });
+            const pwModalEl = document.getElementById('resetPwModal');
+            const pwModal = pwModalEl ? new bootstrap.Modal(pwModalEl) : null;
+            const pwInput = document.getElementById('newPassword');
+            const pwError = document.getElementById('pwError');
+            let currentUserId = null;
+            document.getElementById('resetPwConfirm')?.addEventListener('click', async () => {
+                const pw = String(pwInput.value || '');
+                if (pw.length < 6) { pwError.classList.remove('d-none'); return; }
+                try { await api.resetPassword(currentUserId, pw); pwModal?.hide(); } catch { pwError.textContent = 'Failed to reset password.'; pwError.classList.remove('d-none'); }
+            });
             tbody.querySelectorAll('button.reset').forEach(btn => {
-                btn.addEventListener('click', async (e) => {
+                btn.addEventListener('click', (e) => {
                     const tr = e.target.closest('tr');
-                    const id = Number(tr.getAttribute('data-id'));
-                    const pw = prompt('Enter a new password (min 6 chars):');
-                    if (!pw) return;
-                    if (pw.length < 6) { alert('Password too short'); return; }
-                    try { await api.resetPassword(id, pw); alert('Password updated'); } catch { alert('Failed to reset password'); }
+                    currentUserId = Number(tr.getAttribute('data-id'));
+                    pwInput.value = '';
+                    pwError.classList.add('d-none');
+                    pwModal?.show();
                 });
             });
         }
