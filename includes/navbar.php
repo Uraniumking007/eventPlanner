@@ -1,195 +1,85 @@
 <?php
-// Reusable Navbar include
+// Reusable Navbar include (Bootstrap 5)
 ?>
-<nav class="sticky top-0 left-0 right-0 w-full z-40 bg-gray-900/95 backdrop-blur border-b border-white/10 text-white shadow-lg">
-    <div class="px-4 h-16 flex items-center justify-between w-full">
-        <div class="flex items-center">
-            <a class="flex items-center gap-2 font-semibold tracking-wide" href="/index.php">
-                <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 text-white shadow ring-1 ring-white/10"><i class="fas fa-calendar-alt"></i></span>
-                <span class="hidden sm:inline">Event Planner</span>
-                <span class="sm:hidden">EP</span>
-            </a>
-        </div>
-        <div id="navLinks" class="relative hidden md:flex items-center gap-1 md:gap-2">
-            <a id="navHome" href="/" class="relative rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition">Home</a>
-            <a id="navEvents" href="/events.php" class="relative rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition">Events</a>
-            <a id="navProfile" href="/profile.php" class="relative rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white transition">Profile</a>
-            <span id="activeIndicator" class="absolute -bottom-1 h-[2px] bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-300" style="left:0;width:0"></span>
-        </div>
-        <button id="mobileMenuBtn" class="md:hidden p-2 rounded-md text-gray-300 hover:bg-white/10 hover:text-white">
-            <i class="fas fa-bars"></i>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top shadow-sm">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="/index.php">
+            <span class="d-inline-flex align-items-center justify-content-center rounded bg-primary text-white p-1" style="width:32px;height:32px"><i class="fas fa-calendar-alt"></i></span>
+            <span class="d-none d-sm-inline">Event Planner</span>
+            <span class="d-sm-none">EP</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
         </button>
-        <div id="userArea" class="hidden md:block text-sm"></div>
-    </div>
-    <div id="mobileMenu" class="md:hidden hidden bg-gray-900/95 backdrop-blur border-t border-white/10">
-        <div id="mobileNavLinks" class="px-4 py-2 space-y-1">
-            <a href="/" class="block px-3 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white rounded-md">Home</a>
-            <a href="/events.php" class="block px-3 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white rounded-md">Events</a>
-            <div id="mobileUserArea" class="px-3 py-2"></div>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0" id="navLinks">
+                <li class="nav-item"><a id="navHome" class="nav-link" href="/">Home</a></li>
+                <li class="nav-item"><a id="navEvents" class="nav-link" href="/events.php">Events</a></li>
+                <li class="nav-item"><a id="navProfile" class="nav-link" href="/profile.php">Profile</a></li>
+            </ul>
+            <div id="userArea" class="d-none d-md-block"></div>
+            <div id="mobileUserArea" class="d-md-none w-100 mt-3"></div>
         </div>
     </div>
+    <script>
+        (function highlightActive(){
+            const path = window.location.pathname || '';
+            const setActive = (id, match) => { const el = document.getElementById(id); if (el && match) el.classList.add('active'); };
+            setActive('navHome', path === '/' || path.endsWith('index.php'));
+            setActive('navEvents', path.endsWith('events.php'));
+            setActive('navProfile', path.endsWith('profile.php'));
+        })();
+        (async function initUserArea(){
+            try {
+                const res = await fetch('/api/auth.php?action=me', { credentials: 'same-origin' });
+                const data = res.ok ? await res.json() : { user: null };
+                const user = data.user;
+                const desktop = document.getElementById('userArea');
+                const mobile = document.getElementById('mobileUserArea');
+                if (!desktop || !mobile) return;
+                if (user) {
+                    const showDash = user.role === 'organizer';
+                    const displayName = String(user.username || user.email || '').trim();
+                    desktop.innerHTML = `
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light dropdown-toggle" type="button" id="userMenuBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-2"></i>${displayName}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuBtn">
+                                <li><h6 class="dropdown-header">Signed in</h6></li>
+                                <li><a class="dropdown-item" href="/profile.php">Profile</a></li>
+                                ${showDash ? '<li><a class="dropdown-item" href="/dashboard.php">Dashboard</a></li>' : ''}
+                                <li><a class="dropdown-item" href="/events.php">Events</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><button class="dropdown-item text-danger" id="logoutBtn">Logout</button></li>
+                            </ul>
+                        </div>`;
+                    mobile.innerHTML = `
+                        <div class="alert alert-secondary d-flex align-items-center justify-content-between" role="alert">
+                            <div><i class="fas fa-user me-2"></i>Hello, ${displayName}</div>
+                            <button class="btn btn-sm btn-outline-danger" id="mobileLogoutBtn">Logout</button>
+                        </div>
+                        <div class="list-group">
+                            <a class="list-group-item list-group-item-action" href="/profile.php">Profile</a>
+                            ${showDash ? '<a class="list-group-item list-group-item-action" href="/dashboard.php">Dashboard</a>' : ''}
+                            <a class="list-group-item list-group-item-action" href="/events.php">Events</a>
+                        </div>`;
+                    const doLogout = async () => { try { await fetch('/api/auth.php?action=logout', { method: 'POST', credentials: 'same-origin' }); window.location.reload(); } catch { window.location.reload(); } };
+                    document.getElementById('logoutBtn')?.addEventListener('click', doLogout);
+                    document.getElementById('mobileLogoutBtn')?.addEventListener('click', doLogout);
+                } else {
+                    desktop.innerHTML = `
+                        <div class="d-flex align-items-center gap-2">
+                            <a class="btn btn-outline-light btn-sm" href="/login.php">Log in</a>
+                            <a class="btn btn-primary btn-sm" href="/register.php">Register</a>
+                        </div>`;
+                    mobile.innerHTML = `
+                        <div class="d-grid gap-2">
+                            <a class="btn btn-outline-secondary" href="/login.php">Log in</a>
+                            <a class="btn btn-primary" href="/register.php">Register</a>
+                        </div>`;
+                }
+            } catch (e) {}
+        })();
+    </script>
 </nav>
-
-<script>
-    // Mobile menu toggle
-    (function(){
-        const btn = document.getElementById('mobileMenuBtn');
-        const menu = document.getElementById('mobileMenu');
-        if (btn && menu) {
-            btn.addEventListener('click', () => menu.classList.toggle('hidden'));
-        }
-    })();
-
-    // Active nav highlight + animated indicator
-    (function(){
-        const path = window.location.pathname || '';
-        const home = document.getElementById('navHome');
-        const events = document.getElementById('navEvents');
-        const profile = document.getElementById('navProfile');
-        const dash = document.getElementById('navDashboard');
-        const markActive = (el) => { if (!el) return; el.classList.add('bg-white/10','text-white'); };
-        if (home && (path === '/' || path.endsWith('index.php'))) markActive(home);
-        if (events && path.endsWith('events.php')) markActive(events);
-        if (profile && path.endsWith('profile.php')) markActive(profile);
-        if (dash && path.endsWith('dashboard.php')) markActive(dash);
-
-        // Animated underline indicator
-        const indicator = document.getElementById('activeIndicator');
-        const container = document.getElementById('navLinks');
-        function positionIndicator() {
-            if (!indicator || !container) return;
-            const current = container.querySelector('a.bg-white\\/10');
-            if (!current) { indicator.style.width = '0px'; return; }
-            const rect = current.getBoundingClientRect();
-            const parentRect = container.getBoundingClientRect();
-            const left = rect.left - parentRect.left + container.scrollLeft;
-            indicator.style.left = left + 'px';
-            indicator.style.width = rect.width + 'px';
-        }
-        window.addEventListener('resize', positionIndicator);
-        setTimeout(positionIndicator, 0);
-    })();
-
-    // Populate user area (desktop + mobile) and handle logout
-    (async function initUserArea(){
-        try {
-            const res = await fetch('/api/auth.php?action=me', { credentials: 'same-origin' });
-            const data = res.ok ? await res.json() : { user: null };
-            const user = data.user;
-            const area = document.getElementById('userArea');
-            const navLinks = document.getElementById('navLinks');
-            const mobileArea = document.getElementById('mobileUserArea');
-            const mobileNavLinks = document.getElementById('mobileNavLinks');
-            if (!area || !mobileArea) return;
-            if (user) {
-                const showDash = user.role === 'organizer';
-                const displayName = String(user.username || user.email || '').trim();
-                const initials = (function(name){
-                    if (!name) return 'U';
-                    const parts = name.replace(/@.*/, '').split(/\s+/).filter(Boolean);
-                    const first = parts[0]?.[0] || name[0];
-                    const second = parts[1]?.[0] || '';
-                    return (first + second).toUpperCase();
-                })(displayName);
-                area.innerHTML = `
-                    <div class="relative">
-                        <button id="avatarBtn" class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-white/40" aria-haspopup="true" aria-expanded="false">${initials}</button>
-                        <div id="avatarMenu" class="absolute right-0 mt-2 w-44 bg-white text-gray-800 rounded-lg shadow-lg border border-gray-100 py-1 hidden z-50">
-                            <div class="px-3 py-2 text-xs text-gray-500">Signed in as<br><span class="font-medium">${displayName}</span></div>
-                            <a href="/profile.php" class="block px-3 py-2 text-sm hover:bg-gray-50">Profile</a>
-                            ${showDash ? '<a href="/dashboard.php" class="block px-3 py-2 text-sm hover:bg-gray-50">Dashboard</a>' : ''}
-                            <a href="/events.php" class="block px-3 py-2 text-sm hover:bg-gray-50">Events</a>
-                            <button id="logoutBtn" class="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50">Logout</button>
-                        </div>
-                    </div>
-                `;
-                const mobileDashLink = showDash ? '<a href="/dashboard.php" class="block px-3 py-2 text-sm hover:bg-gray-50">Dashboard</a>' : '';
-                // Mobile avatar + dropdown inside mobile menu panel (for all logged-in users)
-                mobileArea.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <div class="text-sm text-gray-400">Hello, ${displayName}</div>
-                        <button id="avatarMobileBtn" class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-white/20">${initials}</button>
-                    </div>
-                    <div id="avatarMobileMenu" class="mt-2 w-full bg-white text-gray-800 rounded-lg shadow-lg border border-gray-100 py-1 hidden">
-                        <div class="px-3 py-2 text-xs text-gray-500">Signed in as<br><span class="font-medium">${displayName}</span></div>
-                        <a href="/profile.php" class="block px-3 py-2 text-sm hover:bg-gray-50">Profile</a>
-                        ${mobileDashLink}
-                        <a href="/events.php" class="block px-3 py-2 text-sm hover:bg-gray-50">Events</a>
-                        <button id="mobileLogoutBtn" class="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50">Logout</button>
-                    </div>
-                `;
-                const doLogout = async () => { try { await fetch('/api/auth.php?action=logout', { method: 'POST', credentials: 'same-origin' }); window.location.reload(); } catch { window.location.reload(); } };
-                document.getElementById('logoutBtn')?.addEventListener('click', doLogout);
-                document.getElementById('mobileLogoutBtn')?.addEventListener('click', doLogout);
-
-                // Mobile avatar dropdown interactions
-                const avatarMobileBtn = document.getElementById('avatarMobileBtn');
-                const avatarMobileMenu = document.getElementById('avatarMobileMenu');
-                if (avatarMobileBtn && avatarMobileMenu) {
-                    const closeMobileMenu = () => { avatarMobileMenu.classList.add('hidden'); };
-                    const toggleMobileMenu = (e) => { e.stopPropagation(); avatarMobileMenu.classList.toggle('hidden'); };
-                    avatarMobileBtn.addEventListener('click', toggleMobileMenu);
-                    document.addEventListener('click', (e) => { if (!avatarMobileMenu.contains(e.target) && e.target !== avatarMobileBtn) closeMobileMenu(); });
-                    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMobileMenu(); });
-                }
-
-                // Avatar dropdown interactions
-                const avatarBtn = document.getElementById('avatarBtn');
-                const avatarMenu = document.getElementById('avatarMenu');
-                if (avatarBtn && avatarMenu) {
-                    const closeMenu = () => { avatarMenu.classList.add('hidden'); avatarBtn.setAttribute('aria-expanded', 'false'); };
-                    const toggleMenu = (e) => { e.stopPropagation(); const isHidden = avatarMenu.classList.contains('hidden'); if (isHidden) { avatarMenu.classList.remove('hidden'); avatarBtn.setAttribute('aria-expanded', 'true'); } else { closeMenu(); } };
-                    avatarBtn.addEventListener('click', toggleMenu);
-                    document.addEventListener('click', (e) => { if (!avatarMenu.contains(e.target) && e.target !== avatarBtn) closeMenu(); });
-                    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
-                }
-            } else {
-                // Guest avatar + dropdown (visible for all users)
-                const guestInitials = 'G';
-                area.innerHTML = `
-                    <div class="relative">
-                        <button id="guestAvatarBtn" class="w-8 h-8 rounded-full bg-gray-700 text-white flex items-center justify-center text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-white/40" aria-haspopup="true" aria-expanded="false">${guestInitials}</button>
-                        <div id="guestAvatarMenu" class="absolute right-0 mt-2 w-40 bg-white text-gray-800 rounded-lg shadow-lg border border-gray-100 py-1 hidden z-50">
-                            <div class="px-3 py-2 text-xs text-gray-500">You are browsing as<br><span class="font-medium">Guest</span></div>
-                            <a href="/login.php" class="block px-3 py-2 text-sm hover:bg-gray-50">Log in</a>
-                            <a href="/register.php" class="block px-3 py-2 text-sm hover:bg-gray-50">Register</a>
-                        </div>
-                    </div>
-                `;
-                mobileArea.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <div class="text-sm text-gray-400">Hello, Guest</div>
-                        <button id="guestAvatarMobileBtn" class="w-8 h-8 rounded-full bg-gray-700 text-white flex items-center justify-center text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-white/20">${guestInitials}</button>
-                    </div>
-                    <div id="guestAvatarMobileMenu" class="mt-2 w-full bg-white text-gray-800 rounded-lg shadow-lg border border-gray-100 py-1 hidden">
-                        <a href="/login.php" class="block px-3 py-2 text-sm hover:bg-gray-50">Log in</a>
-                        <a href="/register.php" class="block px-3 py-2 text-sm hover:bg-gray-50">Register</a>
-                    </div>
-                `;
-                // Guest avatar interactions
-                const guestAvatarBtn = document.getElementById('guestAvatarBtn');
-                const guestAvatarMenu = document.getElementById('guestAvatarMenu');
-                if (guestAvatarBtn && guestAvatarMenu) {
-                    const closeGuestMenu = () => { guestAvatarMenu.classList.add('hidden'); guestAvatarBtn.setAttribute('aria-expanded', 'false'); };
-                    const toggleGuestMenu = (e) => { e.stopPropagation(); const isHidden = guestAvatarMenu.classList.contains('hidden'); if (isHidden) { guestAvatarMenu.classList.remove('hidden'); guestAvatarBtn.setAttribute('aria-expanded', 'true'); } else { closeGuestMenu(); } };
-                    guestAvatarBtn.addEventListener('click', toggleGuestMenu);
-                    document.addEventListener('click', (e) => { if (!guestAvatarMenu.contains(e.target) && e.target !== guestAvatarBtn) closeGuestMenu(); });
-                    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeGuestMenu(); });
-                }
-                const guestAvatarMobileBtn = document.getElementById('guestAvatarMobileBtn');
-                const guestAvatarMobileMenu = document.getElementById('guestAvatarMobileMenu');
-                if (guestAvatarMobileBtn && guestAvatarMobileMenu) {
-                    const closeGuestMobile = () => { guestAvatarMobileMenu.classList.add('hidden'); };
-                    const toggleGuestMobile = (e) => { e.stopPropagation(); guestAvatarMobileMenu.classList.toggle('hidden'); };
-                    guestAvatarMobileBtn.addEventListener('click', toggleGuestMobile);
-                    document.addEventListener('click', (e) => { if (!guestAvatarMobileMenu.contains(e.target) && e.target !== guestAvatarMobileBtn) closeGuestMobile(); });
-                    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeGuestMobile(); });
-                }
-            }
-        } catch (e) {
-            // no-op on failure
-        }
-    })();
-</script>
-
-
