@@ -16,6 +16,17 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Audit logs for admin actions on events
+CREATE TABLE IF NOT EXISTS `event_audit_logs` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `event_id` INT(11) DEFAULT NULL,
+  `admin_user_id` INT(11) NOT NULL,
+  `action` ENUM('create','update','delete') NOT NULL,
+  `reason` TEXT,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- Table to store event details
 CREATE TABLE IF NOT EXISTS `events` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
