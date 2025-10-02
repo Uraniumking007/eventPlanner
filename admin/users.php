@@ -69,6 +69,29 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
 
     <?php include __DIR__ . '/../includes/footer.php'; ?>
 
+    <!-- Suspend/Unsuspend Modal -->
+    <div class="modal fade" id="suspendUserModal" tabindex="-1" aria-labelledby="suspendUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="suspendUserModalLabel">Update User Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Reason <span class="text-danger">(required)</span></label>
+                        <textarea id="suspendUserReason" class="form-control" rows="3" placeholder="Enter the reason"></textarea>
+                        <div id="suspendUserError" class="text-danger small mt-2 d-none">Reason is required.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" id="suspendUserConfirm" class="btn btn-primary">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Reset Password Modal -->
     <div class="modal fade" id="resetPwModal" tabindex="-1" aria-labelledby="resetPwModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -104,8 +127,8 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
                 if (!res.ok) throw new Error('Failed');
                 return (await res.json()).user;
             },
-            async setSuspended(id, suspended) {
-                const res = await fetch('/api/users.php?action=suspend', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ id, suspended }) });
+            async setSuspended(id, suspended, reason) {
+                const res = await fetch('/api/users.php?action=suspend', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ id, suspended, reason }) });
                 if (!res.ok) throw new Error('Failed');
                 return (await res.json()).user;
             },
@@ -157,12 +180,25 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
                     try { await api.setRole(id, role); tr.classList.add('table-success'); setTimeout(()=>tr.classList.remove('table-success'), 600); } catch { alert('Failed to update role'); }
                 });
             });
+            // Suspend/Unsuspend via modal
+            const suModalEl = document.getElementById('suspendUserModal');
+            const suModal = suModalEl ? new bootstrap.Modal(suModalEl) : null;
+            const suReason = document.getElementById('suspendUserReason');
+            const suError = document.getElementById('suspendUserError');
+            let suUserId = null, suTarget = false;
+            document.getElementById('suspendUserConfirm')?.addEventListener('click', async () => {
+                const reason = String(suReason.value || '').trim();
+                if (!reason) { suError.classList.remove('d-none'); return; }
+                try { await api.setSuspended(suUserId, suTarget, reason); suModal?.hide(); load(); } catch { suError.textContent = 'Failed to update status.'; suError.classList.remove('d-none'); }
+            });
             tbody.querySelectorAll('button.suspend').forEach(btn => {
-                btn.addEventListener('click', async (e) => {
+                btn.addEventListener('click', (e) => {
                     const tr = e.target.closest('tr');
-                    const id = Number(tr.getAttribute('data-id'));
-                    const makeSuspended = e.target.textContent.includes('Suspend');
-                    try { await api.setSuspended(id, makeSuspended); load(); } catch { alert('Failed to update status'); }
+                    suUserId = Number(tr.getAttribute('data-id'));
+                    suTarget = e.target.textContent.includes('Suspend');
+                    suReason.value = '';
+                    suError.classList.add('d-none');
+                    suModal?.show();
                 });
             });
             const pwModalEl = document.getElementById('resetPwModal');
