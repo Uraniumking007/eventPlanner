@@ -176,9 +176,12 @@ declare(strict_types=1);
             document.getElementById('eventCategory').innerHTML = evt.category ? `<span class="badge text-bg-light">${evt.category}</span>` : '';
             const cutoff = evt.registration_close || evt.event_date;
             const dLeft = daysUntil(cutoff);
-            const statusLabel = dLeft != null && dLeft >= 0
-                ? `<span class="badge text-bg-success">Open</span>`
-                : `<span class="badge text-bg-danger">Closed</span>`;
+            const isSuspended = Number(evt.suspended || 0) === 1;
+            const statusLabel = isSuspended
+                ? `<span class=\"badge text-bg-warning\">Suspended</span>`
+                : (dLeft != null && dLeft >= 0
+                    ? `<span class=\"badge text-bg-success\">Open</span>`
+                    : `<span class=\"badge text-bg-danger\">Closed</span>`);
             const badge = dLeft != null ? `<span class="badge rounded-pill text-bg-secondary">${dLeft >= 0 ? dLeft + ' days left' : 'Closed'}</span>` : '';
             document.getElementById('eventStatus').innerHTML = statusLabel;
             const mapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(evt.location || '')}`;
@@ -191,6 +194,14 @@ declare(strict_types=1);
             const stickyStatus = document.getElementById('stickyStatus');
             if (stickyStatus) stickyStatus.innerHTML = statusLabel;
             document.getElementById('eventRegCount').textContent = String(Number(evt.registration_count || 0));
+            if (isSuspended) {
+                const reason = String(evt.suspend_reason || '').trim();
+                const container = document.getElementById('eventContainer');
+                const notice = document.createElement('div');
+                notice.className = 'alert alert-warning m-3';
+                notice.innerHTML = `<strong>Notice:</strong> This event is currently suspended${reason ? ` — Reason: ${reason}` : ''}.`;
+                container?.insertBefore(notice, container.firstChild);
+            }
             // Render rich text description safely
             (function renderDescription(){
                 const target = document.getElementById('eventDescription');
@@ -242,7 +253,9 @@ declare(strict_types=1);
             // Actions
             const actionArea = document.getElementById('actionArea');
             const actions = [];
-            if (!user) {
+            if (isSuspended) {
+                actions.push('<span class="small text-secondary">Registration is unavailable while the event is suspended.</span>');
+            } else if (!user) {
                 actions.push('<a class="btn btn-dark" href="/login.php">Log in to register</a>');
             } else if (user.role === 'attendee') {
                 const isClosed = dLeft == null || dLeft < 0;
