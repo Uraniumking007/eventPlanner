@@ -28,7 +28,7 @@
                 </div>
             </section>
             <div class="row g-4">
-                <form id="createEventForm" class="col-12 col-lg-8 border rounded-3 shadow-sm bg-white p-4">
+                <form id="createEventForm" class="col-12 col-lg-8 border rounded-3 shadow-sm bg-white p-4" enctype="multipart/form-data">
                     <div>
                         <label class="form-label small text-muted">Title</label>
                         <input name="title" maxlength="120" class="form-control" placeholder="e.g. Summer Tech Meetup 2025" required />
@@ -60,10 +60,17 @@
                         <input name="registration_close" type="datetime-local" class="form-control" />
                         <div class="small text-secondary mt-1">Optional. If set, registrations close at this time.</div>
                     </div>
-                    <div>
-                        <label class="form-label small text-muted">Image URL</label>
-                        <input name="image_path" class="form-control" placeholder="https://..." />
-                        <div class="small text-secondary mt-1">Paste a public image URL. Optional.</div>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label small text-muted">Image URL</label>
+                            <input name="image_path" class="form-control" placeholder="https://..." />
+                            <div class="small text-secondary mt-1">Optional. Used if no file is uploaded.</div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label small text-muted">Upload Image</label>
+                            <input name="image_file" type="file" accept="image/*" class="form-control" />
+                            <div class="small text-secondary mt-1">PNG, JPG, or WebP. Max 5 MB.</div>
+                        </div>
                     </div>
                     <div>
                         <label class="form-label small text-muted">Description</label>
@@ -109,7 +116,9 @@
 
     <?php include __DIR__ . '/../includes/footer.php'; ?>
 
+    <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
     <script>
+        var quill;
         // Ensure only organizers can access
         (async function guard(){
             try {
@@ -122,9 +131,8 @@
         async function createEvent(payload) {
             const res = await fetch('/api/events.php', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 credentials: 'same-origin',
-                body: JSON.stringify(payload)
+                body: payload
             });
             if (!res.ok) throw new Error('Create failed');
             return (await res.json()).event;
@@ -136,13 +144,14 @@
             const title = form.elements['title'];
             const location = form.elements['location'];
             const image = form.elements['image_path'];
+            const imageFile = form.elements['image_file'];
             const desc = form.elements['description'];
             const date = form.elements['event_date'];
             const titleCounter = document.getElementById('titleCounter');
             const locationCounter = document.getElementById('locationCounter');
             const descCounter = document.getElementById('descCounter');
             // Quill editor
-            const quill = new Quill('#descEditor', { theme: 'snow', placeholder: 'Agenda, speakers, who should attend, etc.', modules: { toolbar: [[{ header: [1,2,false] }], ['bold','italic','underline','strike'], [{ list: 'ordered' }, { list: 'bullet' }], ['link'], ['clean']] } });
+            quill = new Quill('#descEditor', { theme: 'snow', placeholder: 'Agenda, speakers, who should attend, etc.', modules: { toolbar: [[{ header: [1,2,false] }], ['bold','italic','underline','strike'], [{ list: 'ordered' }, { list: 'bullet' }], ['link'], ['clean']] } });
             if (desc && desc.value) { try { quill.root.innerHTML = desc.value; } catch {} }
             const pTitle = document.getElementById('previewTitle');
             const pMeta = document.getElementById('previewMeta');
@@ -161,8 +170,19 @@
                 const metaLoc = location.value || 'Location';
                 pMeta.textContent = `${metaDate} • ${metaLoc}`;
                 pDesc.innerHTML = (quill.root.innerHTML && quill.getText().trim().length) ? quill.root.innerHTML : 'Your description will appear here. Add details to attract attendees.';
+                const file = imageFile && imageFile.files && imageFile.files[0];
                 const url = (image.value || '').trim();
-                if (url) { pImg.src = url; pImg.classList.remove('d-none'); } else { pImg.classList.add('d-none'); pImg.removeAttribute('src'); }
+                if (file) {
+                    const objectUrl = URL.createObjectURL(file);
+                    pImg.src = objectUrl;
+                    pImg.classList.remove('d-none');
+                } else if (url) {
+                    pImg.src = url;
+                    pImg.classList.remove('d-none');
+                } else {
+                    pImg.classList.add('d-none');
+                    pImg.removeAttribute('src');
+                }
             };
             ['input','change'].forEach(ev => {
                 title.addEventListener(ev, () => { updateCounters(); updatePreview(); });
@@ -170,6 +190,7 @@
                 quill.on(ev === 'input' ? 'text-change' : 'selection-change', () => { updateCounters(); updatePreview(); });
                 date.addEventListener(ev, updatePreview);
                 image.addEventListener(ev, updatePreview);
+                imageFile.addEventListener(ev, updatePreview);
             });
             document.getElementById('resetBtn').addEventListener('click', () => { form.reset(); updateCounters(); updatePreview(); });
             updateCounters(); updatePreview();
@@ -182,16 +203,8 @@
 
         document.getElementById('createEventForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            document.getElementById('descriptionHidden').value = quill.root.innerHTML;
+            document.getElementById('descriptionHidden').value = (typeof quill !== 'undefined' && quill && quill.root) ? quill.root.innerHTML : '';
             const fd = new FormData(e.currentTarget);
-            const payload = {
-                title: String(fd.get('title') || ''),
-                event_date: String(fd.get('event_date') || ''),
-                registration_close: String(fd.get('registration_close') || ''),
-                location: String(fd.get('location') || ''),
-                image_path: String(fd.get('image_path') || ''),
-                description: String(fd.get('description') || ''),
-            };
             // Simple validation
             const form = e.currentTarget;
             const titleEl = form.elements['title'];
@@ -201,12 +214,12 @@
             const dateError = document.getElementById('dateError');
             const locationError = document.getElementById('locationError');
             let ok = true;
-            if (!payload.title.trim()) { setFieldError(titleEl, titleError, true); ok = false; } else { setFieldError(titleEl, titleError, false); }
-            if (!payload.event_date.trim()) { setFieldError(dateEl, dateError, true); ok = false; } else { setFieldError(dateEl, dateError, false); }
-            if (!payload.location.trim()) { setFieldError(locEl, locationError, true); ok = false; } else { setFieldError(locEl, locationError, false); }
+            if (!String(fd.get('title')||'').trim()) { setFieldError(titleEl, titleError, true); ok = false; } else { setFieldError(titleEl, titleError, false); }
+            if (!String(fd.get('event_date')||'').trim()) { setFieldError(dateEl, dateError, true); ok = false; } else { setFieldError(dateEl, dateError, false); }
+            if (!String(fd.get('location')||'').trim()) { setFieldError(locEl, locationError, true); ok = false; } else { setFieldError(locEl, locationError, false); }
             if (!ok) return;
             try {
-                const evt = await createEvent(payload);
+                const evt = await createEvent(fd);
                 window.location.href = '/organizer/edit.php?id=' + encodeURIComponent(evt.id);
             } catch (err) {
                 alert('Failed to create event');
