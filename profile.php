@@ -19,7 +19,14 @@ declare(strict_types=1);
         <div class="border rounded-3 shadow-sm bg-white p-4 p-lg-5 mb-4">
             <div class="row align-items-center g-3">
                 <div class="col-12 col-md-auto d-flex align-items-center gap-3">
-                    <div id="avatar" class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-semibold" style="width:56px;height:56px"></div>
+                    <div class="position-relative">
+                        <img id="avatarImg" src="" alt="Avatar" class="rounded-circle d-none" style="width:56px;height:56px;object-fit:cover" />
+                        <div id="avatar" class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-semibold" style="width:56px;height:56px"></div>
+                        <label class="position-absolute bottom-0 end-0 bg-dark text-white rounded-circle d-flex align-items-center justify-content-center" style="width:22px;height:22px; cursor:pointer">
+                            <i class="fa-solid fa-camera" style="font-size:12px"></i>
+                            <input id="avatarInput" type="file" accept="image/*" class="d-none" />
+                        </label>
+                    </div>
                     <div>
                         <h1 class="h4 fw-bold mb-1">My Profile</h1>
                         <div class="text-secondary small" id="meta"></div>
@@ -94,13 +101,37 @@ declare(strict_types=1);
             document.getElementById('email').value = user.email || '';
             const initials = String(user.username || '?').trim().split(/\s+/).map(s => s[0]?.toUpperCase()).slice(0,2).join('') || '?';
             const avatar = document.getElementById('avatar');
-            if (avatar) avatar.textContent = initials;
+            const avatarImg = document.getElementById('avatarImg');
+            if (user.avatar_path) {
+                if (avatarImg) { avatarImg.src = user.avatar_path; avatarImg.classList.remove('d-none'); }
+                if (avatar) avatar.classList.add('d-none');
+            } else {
+                if (avatarImg) { avatarImg.classList.add('d-none'); avatarImg.src = ''; }
+                if (avatar) { avatar.classList.remove('d-none'); avatar.textContent = initials; }
+            }
             const role = user.role ? String(user.role).replace(/^(.)/, (m, p1) => p1.toUpperCase()) : 'User';
             const since = user.created_at ? new Date(user.created_at).toLocaleDateString() : '';
             const meta = document.getElementById('meta');
             if (meta) meta.textContent = since ? `Member since ${since}` : '';
             const roleBadge = document.getElementById('roleBadge');
             if (roleBadge) roleBadge.textContent = role;
+        }
+        async function uploadAvatar(file) {
+            const form = new FormData();
+            form.append('avatar', file);
+            const res = await fetch('/api/auth.php?action=upload_avatar', { method: 'POST', credentials: 'same-origin', body: form });
+            const data = await res.json();
+            if (!res.ok) { showAlert(data.error || 'Failed to upload avatar', false); return; }
+            showAlert('Avatar updated');
+            // refresh view
+            const u = data.user;
+            const avatar = document.getElementById('avatar');
+            const avatarImg = document.getElementById('avatarImg');
+            if (u && u.avatar_path && avatarImg) {
+                avatarImg.src = u.avatar_path + '?t=' + Date.now();
+                avatarImg.classList.remove('d-none');
+                if (avatar) avatar.classList.add('d-none');
+            }
         }
         function showAlert(msg, ok = true) {
             const el = document.getElementById('alert');
@@ -141,6 +172,12 @@ declare(strict_types=1);
             const pw = document.getElementById('password');
             if (!pw) return;
             pw.type = pw.type === 'password' ? 'text' : 'password';
+        });
+        document.getElementById('avatarInput').addEventListener('change', (e) => {
+            const f = e.target.files && e.target.files[0];
+            if (!f) return;
+            uploadAvatar(f);
+            e.target.value = '';
         });
         loadProfile();
     </script>
