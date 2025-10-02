@@ -8,8 +8,8 @@ declare(strict_types=1);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Details</title>
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- jQuery for AJAX -->
@@ -17,75 +17,71 @@ declare(strict_types=1);
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/style.css?v=<?php echo time(); ?>">
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="d-flex flex-column min-vh-100">
     <!-- Navigation -->
     <?php include __DIR__ . '/includes/navbar.php'; ?>
 
-    <main class="flex-1">
-    <div class="max-w-5xl mx-auto px-4 py-6 lg:py-10">
-        <a href="/events.php" class="inline-flex items-center text-sm text-gray-600 hover:text-gray-800 mb-4">
-            <i class="fas fa-arrow-left mr-2"></i> Back to events
+    <main class="flex-grow-1">
+    <div class="container py-4 py-lg-5">
+        <a href="/events.php" class="text-decoration-none text-secondary small mb-3 d-inline-flex align-items-center">
+            <i class="fas fa-arrow-left me-2"></i> Back to events
         </a>
-        <div id="stickyHeader" class="sticky top-16 z-30 hidden">
-            <div class="p-[1px] rounded-xl bg-gradient-to-r from-blue-600/40 to-purple-600/40 shadow">
-                <div class="rounded-xl bg-white/95 backdrop-blur border border-white/50 px-4 py-3 flex items-center justify-between gap-3">
-                    <div class="truncate">
-                        <div id="stickyTitle" class="truncate text-sm sm:text-base font-semibold text-gray-900">Event</div>
-                        <div id="stickyMeta" class="hidden sm:block text-xs text-gray-600"></div>
+        <div id="stickyHeader" class="sticky-top bg-body border-bottom shadow-sm d-none">
+            <div class="container py-2">
+                <div class="d-flex align-items-center justify-content-between gap-3">
+                    <div class="text-truncate">
+                        <div id="stickyTitle" class="fw-semibold">Event</div>
+                        <div id="stickyMeta" class="small text-secondary d-none d-sm-block"></div>
                     </div>
                     <div id="stickyStatus"></div>
                 </div>
             </div>
         </div>
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2">
-                <div class="p-[1px] rounded-2xl bg-gradient-to-r from-blue-600/40 to-purple-600/40 shadow">
-                    <div id="eventContainer" class="rounded-2xl overflow-hidden bg-white/95 backdrop-blur border border-white/50">
-                        <div id="eventImage"></div>
-                        <div class="p-6">
-                        <div class="flex items-start justify-between gap-3">
-                            <div class="flex items-center gap-3">
-                                <h1 id="eventTitle" class="text-2xl font-extrabold text-gray-900 tracking-tight">Loading...</h1>
+        <div class="row g-4">
+            <div class="col-12 col-lg-8">
+                <div id="eventContainer" class="border rounded-3 shadow-sm overflow-hidden bg-white">
+                    <div id="eventImage"></div>
+                    <div class="p-3 p-lg-4">
+                        <div class="d-flex align-items-start justify-content-between gap-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <h1 id="eventTitle" class="h3 fw-bold mb-0">Loading...</h1>
                                 <span id="eventCategory"></span>
                             </div>
-                            <div id="eventStatus" class="shrink-0"></div>
+                            <div id="eventStatus" class="flex-shrink-0"></div>
                         </div>
-                            <div class="mt-2 text-sm text-gray-600 flex flex-wrap items-center gap-3" id="eventMeta"></div>
-                            <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="space-y-2">
-                                <div class="text-sm text-gray-500">Organizer</div>
-                                    <div id="eventOrganizer" class="inline-flex items-center gap-2 px-2.5 py-1.5 rounded bg-gray-100 text-gray-800 text-sm"></div>
+                        <div class="mt-2 small text-secondary d-flex flex-wrap align-items-center gap-3" id="eventMeta"></div>
+                        <div class="row g-3 mt-2">
+                            <div class="col-12 col-md-6">
+                                <div class="small text-muted">Organizer</div>
+                                <div id="eventOrganizer" class="badge text-bg-light"></div>
                             </div>
-                            <div class="space-y-2">
-                                <div class="text-sm text-gray-500">Registrations</div>
-                                    <div class="text-gray-900"><span id="eventRegCount" class="font-semibold">0</span></div>
+                            <div class="col-12 col-md-6">
+                                <div class="small text-muted">Registrations</div>
+                                <div class="fw-semibold"><span id="eventRegCount">0</span></div>
                             </div>
                         </div>
-                        <div class="mt-6">
-                            <h2 class="text-lg font-semibold text-gray-900 mb-2">About this event</h2>
-                            <p id="eventDescription" class="text-gray-800 whitespace-pre-line"></p>
+                        <div class="mt-4">
+                            <h2 class="h5 mb-2">About this event</h2>
+                            <p id="eventDescription" class="mb-0"></p>
                         </div>
-                            <div class="mt-6 flex flex-wrap gap-3" id="actionArea"></div>
-                        <div class="mt-6">
-                            <h2 class="text-lg font-semibold text-gray-900 mb-2">Location map</h2>
+                        <div class="mt-4 d-flex flex-wrap gap-2" id="actionArea"></div>
+                        <div class="mt-4">
+                            <h2 class="h6 mb-2">Location map</h2>
                             <div id="eventMap" class="mt-2">
                                 <!-- map embed injected by render() -->
                             </div>
                         </div>
-                        </div>
                     </div>
                 </div>
             </div>
-            <div class="lg:col-span-1 mt-8 lg:mt-0">
-                <div class="p-[1px] rounded-2xl bg-gradient-to-r from-gray-200/60 to-gray-100/60 shadow">
-                    <div class="bg-white rounded-2xl overflow-hidden">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-lg font-semibold text-gray-900">Attendees</h2>
-                            <div class="text-sm text-gray-500" id="attendeeCount">0</div>
+            <div class="col-12 col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h2 class="h6 mb-0">Attendees</h2>
+                            <div class="small text-muted" id="attendeeCount">0</div>
                         </div>
-                        <div id="attendeesContainer" class="divide-y"></div>
-                    </div>
+                        <div id="attendeesContainer" class="border-top"></div>
                     </div>
                 </div>
             </div>
@@ -171,37 +167,74 @@ declare(strict_types=1);
             // Set page title
             try { document.title = `${evt.title} • Event Details`; } catch {}
             // Image
-            const img = evt.image_path ? `<img src="${evt.image_path}" alt="${evt.title}" class="w-full h-64 object-cover">` : '';
+            const img = evt.image_path ? `<img src="${evt.image_path}" alt="${evt.title}" class="img-fluid w-100" style="height: 320px; object-fit: cover;">` : '';
             document.getElementById('eventImage').innerHTML = img;
             // Title, meta
             document.getElementById('eventTitle').textContent = evt.title;
             const stickyTitle = document.getElementById('stickyTitle');
             if (stickyTitle) stickyTitle.textContent = evt.title;
-            document.getElementById('eventCategory').innerHTML = evt.category ? `<span class="px-2 py-1 text-xs rounded bg-gray-100 text-gray-700">${evt.category}</span>` : '';
-            const dLeft = daysUntil(evt.event_date);
+            document.getElementById('eventCategory').innerHTML = evt.category ? `<span class="badge text-bg-light">${evt.category}</span>` : '';
+            const cutoff = evt.registration_close || evt.event_date;
+            const dLeft = daysUntil(cutoff);
             const statusLabel = dLeft != null && dLeft >= 0
-                ? `<span class="px-2 py-1 text-xs rounded bg-emerald-100 text-emerald-700">Open</span>`
-                : `<span class="px-2 py-1 text-xs rounded bg-red-100 text-red-700">Closed</span>`;
-            const badge = dLeft != null ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700">${dLeft >= 0 ? dLeft + ' days left' : 'Closed'}</span>` : '';
+                ? `<span class="badge text-bg-success">Open</span>`
+                : `<span class="badge text-bg-danger">Closed</span>`;
+            const badge = dLeft != null ? `<span class="badge rounded-pill text-bg-secondary">${dLeft >= 0 ? dLeft + ' days left' : 'Closed'}</span>` : '';
             document.getElementById('eventStatus').innerHTML = statusLabel;
             const mapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(evt.location || '')}`;
             document.getElementById('eventMeta').innerHTML = `
-                <span class="inline-flex items-center gap-2"><i class="fa-regular fa-calendar"></i> ${formatDate(evt.event_date)} ${badge ? '• ' + badge : ''}</span>
-                <span class="inline-flex items-center gap-2"><i class="fa-solid fa-location-dot"></i> ${evt.location} • <a class="text-blue-600 hover:underline" href="${mapHref}" target="_blank" rel="noopener">View on map</a></span>
+                <span class="d-inline-flex align-items-center gap-2"><i class="fa-regular fa-calendar"></i> ${formatDate(evt.event_date)} ${badge ? '• ' + badge : ''}</span>
+                <span class="d-inline-flex align-items-center gap-2"><i class="fa-solid fa-location-dot"></i> ${evt.location} • <a class="link-primary" href="${mapHref}" target="_blank" rel="noopener">View on map</a></span>
             `;
             const stickyMeta = document.getElementById('stickyMeta');
             if (stickyMeta) stickyMeta.innerHTML = `${formatDate(evt.event_date)} • ${evt.location}`;
             const stickyStatus = document.getElementById('stickyStatus');
             if (stickyStatus) stickyStatus.innerHTML = statusLabel;
             document.getElementById('eventRegCount').textContent = String(Number(evt.registration_count || 0));
-            document.getElementById('eventDescription').textContent = evt.description || 'No description available.';
+            // Render rich text description safely
+            (function renderDescription(){
+                const target = document.getElementById('eventDescription');
+                const raw = String(evt.description || '').trim();
+                if (!target) return;
+                if (!raw) { target.textContent = 'No description available.'; return; }
+                function sanitizeHtml(html) {
+                    try {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const allowedTags = new Set(['P','BR','STRONG','B','EM','I','U','S','A','UL','OL','LI','H1','H2']);
+                        const allowedAttrs = { 'A': new Set(['href','target','rel']) };
+                        const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_ELEMENT, null);
+                        const toRemove = [];
+                        while (walker.nextNode()) {
+                            const el = walker.currentNode;
+                            if (!allowedTags.has(el.tagName)) { toRemove.push(el); continue; }
+                            // Strip disallowed attributes
+                            Array.from(el.attributes).forEach(attr => {
+                                const ok = (allowedAttrs[el.tagName] && allowedAttrs[el.tagName].has(attr.name.toLowerCase()));
+                                if (!ok) el.removeAttribute(attr.name);
+                            });
+                            if (el.tagName === 'A') {
+                                const href = el.getAttribute('href') || '';
+                                if (!/^https?:\/\//i.test(href) && !href.startsWith('#') && !href.startsWith('/')) {
+                                    el.removeAttribute('href');
+                                }
+                                el.setAttribute('rel','noopener');
+                                if (!el.getAttribute('target')) el.setAttribute('target','_blank');
+                            }
+                        }
+                        toRemove.forEach(n => n.replaceWith(...Array.from(n.childNodes)));
+                        return doc.body.innerHTML;
+                    } catch { return ''; }
+                }
+                target.innerHTML = sanitizeHtml(raw);
+            })();
             document.getElementById('eventOrganizer').textContent = evt.organizer_name ? `@${evt.organizer_name}` : 'Unknown';
             // Map embed (only once)
             const mapEmbedSrc = `https://www.google.com/maps?q=${encodeURIComponent(evt.location || '')}&output=embed`;
             const mapContainer = document.getElementById('eventMap');
             if (mapContainer && !mapInitialized) {
-                mapContainer.innerHTML = `<div class="w-full overflow-hidden rounded-lg border">
-                    <iframe class="w-full h-64 md:h-80" src="${mapEmbedSrc}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                mapContainer.innerHTML = `<div class="rounded border overflow-hidden">
+                    <iframe class="w-100" style="height: 320px" src="${mapEmbedSrc}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
                 </div>`;
                 mapInitialized = true;
             }
@@ -210,17 +243,17 @@ declare(strict_types=1);
             const actionArea = document.getElementById('actionArea');
             const actions = [];
             if (!user) {
-                actions.push('<a class="px-4 py-2 bg-gray-900 text-white rounded hover:bg-black transition" href="/login.php">Log in to register</a>');
+                actions.push('<a class="btn btn-dark" href="/login.php">Log in to register</a>');
             } else if (user.role === 'attendee') {
                 const isClosed = dLeft == null || dLeft < 0;
                 const registered = await isUserRegistered(id);
                 if (!registered) {
-                    actions.push(`<button id="btnRegister" class="px-4 py-2 ${isClosed ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-900 hover:bg-black'} text-white rounded transition" data-id="${evt.id}" ${isClosed ? 'disabled' : ''}>Register now</button>`);
+                    actions.push(`<button id="btnRegister" class="btn ${isClosed ? 'btn-secondary' : 'btn-primary'}" data-id="${evt.id}" ${isClosed ? 'disabled' : ''}>Register now</button>`);
                 } else {
-                    actions.push(`<button id="btnUnregister" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition" data-id="${evt.id}">Unregister</button>`);
+                    actions.push(`<button id="btnUnregister" class="btn btn-outline-danger" data-id="${evt.id}">Unregister</button>`);
                 }
             } else if (user.role === 'organizer' && Number(user.id) === Number(evt.organizer_id)) {
-                actions.push('<span class="text-sm text-gray-600">You are the organizer</span>');
+                actions.push('<span class="small text-secondary">You are the organizer</span>');
             }
             actionArea.innerHTML = actions.join(' ');
             document.getElementById('btnRegister')?.addEventListener('click', async (e) => {
@@ -239,12 +272,12 @@ declare(strict_types=1);
                 const countEl = document.getElementById('attendeeCount');
                 countEl.textContent = `${attendees.length} attendee${attendees.length === 1 ? '' : 's'}`;
                 if (!attendees.length) {
-                    container.innerHTML = '<div class="text-sm text-gray-500">No attendees yet.</div>';
+                    container.innerHTML = '<div class="small text-secondary pt-2">No attendees yet.</div>';
                 } else {
                     container.innerHTML = attendees.map(a => `
-                        <div class="py-3 flex items-center justify-between">
-                            <div class="text-sm">
-                                <div class="font-medium text-gray-900">${a.username}</div>
+                        <div class="py-2 d-flex align-items-center justify-content-between border-top">
+                            <div class="small">
+                                <div class="fw-medium">${a.username}</div>
                             </div>
                         </div>
                     `).join('');
@@ -297,9 +330,9 @@ declare(strict_types=1);
                     if (!evt) return;
                     const dLeft = daysUntil(evt.event_date);
                     const statusLabel = dLeft != null && dLeft >= 0
-                        ? `<span class="px-2 py-1 text-xs rounded bg-emerald-100 text-emerald-700">Open</span>`
-                        : `<span class="px-2 py-1 text-xs rounded bg-red-100 text-red-700">Closed</span>`;
-                    const badge = dLeft != null ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700">${dLeft >= 0 ? dLeft + ' days left' : 'Closed'}</span>` : '';
+                        ? `<span class="badge text-bg-success">Open</span>`
+                        : `<span class="badge text-bg-danger">Closed</span>`;
+                    const badge = dLeft != null ? `<span class="badge rounded-pill text-bg-secondary">${dLeft >= 0 ? dLeft + ' days left' : 'Closed'}</span>` : '';
                     const mapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(evt.location || '')}`;
                     const statusEl = document.getElementById('eventStatus');
                     const metaEl = document.getElementById('eventMeta');
@@ -313,11 +346,10 @@ declare(strict_types=1);
                     const btnUnregister = document.getElementById('btnUnregister');
                     if (btnRegister) {
                         btnRegister.disabled = isClosed;
-                        btnRegister.className = `px-4 py-2 ${isClosed ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-900 hover:bg-black'} text-white rounded transition`;
+                        btnRegister.className = `btn ${isClosed ? 'btn-secondary' : 'btn-primary'}`;
                     }
                     if (btnUnregister && isClosed) {
-                        // If event closes, hide unregister in favor of clarity
-                        btnUnregister.classList.add('hidden');
+                        btnUnregister.classList.add('d-none');
                     }
                 });
         }
@@ -350,6 +382,8 @@ declare(strict_types=1);
             setTimeout(onScroll, 0);
         })();
     </script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
 
