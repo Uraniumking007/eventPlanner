@@ -7,68 +7,66 @@ declare(strict_types=1);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css?v=<?php echo time(); ?>">
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="d-flex flex-column min-vh-100">
     <?php include __DIR__ . '/includes/navbar.php'; ?>
 
-    <main class="flex-1">
-    <div class="max-w-4xl mx-auto px-4 py-8">
-        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 p-[1px] shadow-lg mb-6">
-            <div class="rounded-2xl bg-white/90 backdrop-blur-sm p-6 sm:p-8">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div class="flex items-center gap-4">
-                        <div id="avatar" class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-white flex items-center justify-center text-xl font-semibold shadow"></div>
-                        <div>
-                            <h1 class="text-2xl font-extrabold text-gray-900">My Profile</h1>
-                            <div class="text-sm text-gray-600" id="meta"></div>
-                        </div>
+    <main class="flex-grow-1">
+    <div class="container py-4 py-lg-5">
+        <div class="border rounded-3 shadow-sm bg-white p-4 p-lg-5 mb-4">
+            <div class="row align-items-center g-3">
+                <div class="col-12 col-md-auto d-flex align-items-center gap-3">
+                    <div id="avatar" class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-semibold" style="width:56px;height:56px"></div>
+                    <div>
+                        <h1 class="h4 fw-bold mb-1">My Profile</h1>
+                        <div class="text-secondary small" id="meta"></div>
                     </div>
-                    <div id="roleBadge" class="px-3 py-1 text-xs rounded-full bg-gray-100 text-gray-700 border"></div>
+                </div>
+                <div class="col-12 col-md-auto ms-auto">
+                    <span id="roleBadge" class="badge text-bg-light"></span>
                 </div>
             </div>
         </div>
 
-        <div id="alert" class="hidden mb-4 p-3 rounded text-sm"></div>
+        <div id="alert" class="alert d-none" role="alert"></div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 bg-white border rounded-xl shadow">
-                <div class="p-6">
-                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Account details</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm text-gray-600 mb-1" for="username">Username</label>
-                            <input id="username" type="text" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        <div class="row g-4">
+            <div class="col-12 col-lg-8">
+                <div class="border rounded-3 shadow-sm bg-white p-4">
+                    <h2 class="h6 mb-3">Account details</h2>
+                    <div class="row g-3">
+                        <div class="col-12 col-sm-6">
+                            <label class="form-label small text-muted" for="username">Username</label>
+                            <input id="username" type="text" class="form-control" />
                         </div>
-                        <div>
-                            <label class="block text-sm text-gray-600 mb-1" for="email">Email</label>
-                            <input id="email" type="email" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                        <div class="col-12 col-sm-6">
+                            <label class="form-label small text-muted" for="email">Email</label>
+                            <input id="email" type="email" class="form-control" />
                         </div>
-                        <div class="sm:col-span-2">
-                            <label class="block text-sm text-gray-600 mb-1" for="password">New Password (optional)</label>
-                            <div class="relative">
-                                <input id="password" type="password" class="w-full border rounded-lg px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Leave blank to keep current" />
-                                <button type="button" id="togglePw" class="absolute inset-y-0 right-0 px-3 text-gray-500 hover:text-gray-700">
-                                    <i class="fa-regular fa-eye"></i>
-                                </button>
+                        <div class="col-12">
+                            <label class="form-label small text-muted" for="password">New Password (optional)</label>
+                            <div class="position-relative">
+                                <input id="password" type="password" class="form-control pe-5" placeholder="Leave blank to keep current" />
+                                <button type="button" id="togglePw" class="btn btn-link position-absolute top-0 end-0 h-100 px-3 text-secondary"><i class="fa-regular fa-eye"></i></button>
                             </div>
                         </div>
                     </div>
-                    <div class="pt-4 flex items-center gap-3">
-                        <button id="saveBtn" class="inline-flex items-center px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-black transition">
+                    <div class="pt-3 d-flex align-items-center gap-3">
+                        <button id="saveBtn" class="btn btn-dark d-inline-flex align-items-center">
                             <span id="saveText">Save changes</span>
-                            <span id="saveSpinner" class="hidden ml-2 h-4 w-4 border-2 border-white/60 border-t-transparent rounded-full animate-spin"></span>
+                            <span id="saveSpinner" class="d-none ms-2 spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                         </button>
-                        <span id="savedLabel" class="hidden text-sm text-emerald-600">Saved</span>
+                        <span id="savedLabel" class="d-none small text-success">Saved</span>
                     </div>
                 </div>
             </div>
-            <div class="bg-white border rounded-xl shadow">
-                <div class="p-6">
-                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Security tips</h2>
-                    <ul class="space-y-2 text-sm text-gray-600 list-disc pl-5">
+            <div class="col-12 col-lg-4">
+                <div class="border rounded-3 shadow-sm bg-white p-4">
+                    <h2 class="h6 mb-3">Security tips</h2>
+                    <ul class="small text-secondary ps-3">
                         <li>Use a strong, unique password.</li>
                         <li>Do not share your credentials.</li>
                         <li>Update your password regularly.</li>
@@ -107,9 +105,9 @@ declare(strict_types=1);
         function showAlert(msg, ok = true) {
             const el = document.getElementById('alert');
             el.textContent = msg;
-            el.classList.remove('hidden');
-            el.className = `mb-4 p-3 rounded text-sm ${ok ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-red-50 text-red-800 border border-red-200'}`;
-            setTimeout(() => { el.classList.add('hidden'); }, 4000);
+            el.classList.remove('d-none');
+            el.className = `alert ${ok ? 'alert-success' : 'alert-danger'}`;
+            setTimeout(() => { el.classList.add('d-none'); }, 4000);
         }
         async function saveProfile() {
             const username = document.getElementById('username').value.trim();
@@ -120,7 +118,7 @@ declare(strict_types=1);
             const btn = document.getElementById('saveBtn');
             const spinner = document.getElementById('saveSpinner');
             const saved = document.getElementById('savedLabel');
-            btn.disabled = true; spinner.classList.remove('hidden'); saved.classList.add('hidden');
+            btn.disabled = true; spinner.classList.remove('d-none'); saved.classList.add('d-none');
             const res = await fetch('/api/auth.php?action=update', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -135,7 +133,7 @@ declare(strict_types=1);
             }
             document.getElementById('password').value = '';
             showAlert('Profile updated successfully');
-            btn.disabled = false; spinner.classList.add('hidden'); saved.classList.remove('hidden');
+            btn.disabled = false; spinner.classList.add('d-none'); saved.classList.remove('d-none');
         }
 
         document.getElementById('saveBtn').addEventListener('click', saveProfile);
@@ -146,6 +144,7 @@ declare(strict_types=1);
         });
         loadProfile();
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
 
