@@ -2,6 +2,19 @@
 declare(strict_types=1);
 require_once __DIR__ . '/init.php';
 
+// Local helpers for this endpoint
+function normalize_datetime_or_null(?string $value): ?string {
+    if ($value === null) return null;
+    $v = trim($value);
+    if ($v === '') return null;
+    // Accept HTML datetime-local value: YYYY-MM-DDTHH:MM or with seconds
+    $v = str_replace('T', ' ', $v);
+    if (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/', $v)) {
+        $v .= ':00';
+    }
+    return $v;
+}
+
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
 
@@ -28,13 +41,15 @@ switch ($method) {
         $title = trim((string)($body['title'] ?? ''));
         $description = (string)($body['description'] ?? null);
         $event_date = (string)($body['event_date'] ?? '');
+        $registration_close = normalize_datetime_or_null(isset($body['registration_close']) ? (string)$body['registration_close'] : null);
         $location = trim((string)($body['location'] ?? ''));
         $image_path = (string)($body['image_path'] ?? null);
         if ($title === '' || $event_date === '' || $location === '') {
             json_response(['error' => 'title, event_date, location required'], 422);
         }
-        $newId = insert('INSERT INTO events (organizer_id, title, description, event_date, location, image_path) VALUES (?, ?, ?, ?, ?, ?)', [
-            $user['id'], $title, $description, $event_date, $location, $image_path
+        
+        $newId = insert('INSERT INTO events (organizer_id, title, description, event_date, registration_close, location, image_path) VALUES (?, ?, ?, ?, ?, ?, ?)', [
+            $user['id'], $title, $description, $event_date, $registration_close, $location, $image_path
         ]);
         $created = fetchOne('SELECT * FROM events WHERE id = ?', [$newId]);
         json_response(['event' => $created], 201);
@@ -51,10 +66,13 @@ switch ($method) {
         $title = array_key_exists('title', $body) ? (string)$body['title'] : $event['title'];
         $description = array_key_exists('description', $body) ? (string)$body['description'] : $event['description'];
         $event_date = array_key_exists('event_date', $body) ? (string)$body['event_date'] : $event['event_date'];
+        $registration_close_raw = array_key_exists('registration_close', $body) ? (string)$body['registration_close'] : (string)($event['registration_close'] ?? '');
+        $registration_close = normalize_datetime_or_null($registration_close_raw);
         $location = array_key_exists('location', $body) ? (string)$body['location'] : $event['location'];
         $image_path = array_key_exists('image_path', $body) ? (string)$body['image_path'] : $event['image_path'];
-        update('UPDATE events SET title = ?, description = ?, event_date = ?, location = ?, image_path = ? WHERE id = ?', [
-            $title, $description, $event_date, $location, $image_path, $id
+        
+        update('UPDATE events SET title = ?, description = ?, event_date = ?, registration_close = ?, location = ?, image_path = ? WHERE id = ?', [
+            $title, $description, $event_date, $registration_close, $location, $image_path, $id
         ]);
         $updated = fetchOne('SELECT * FROM events WHERE id = ?', [$id]);
         json_response(['event' => $updated]);
