@@ -8,7 +8,7 @@ $eventId = isset($_GET['event_id']) ? (int) $_GET['event_id'] : null;
 switch ($method) {
     case 'GET':
         if ($eventId) {
-            $users = fetchAll('SELECT u.id, u.username, u.email FROM registrations r JOIN users u ON r.user_id = u.id WHERE r.event_id = ? ORDER BY u.username', [$eventId]);
+            $users = fetchAll('SELECT u.id, u.username, u.email, r.registered_at FROM registrations r JOIN users u ON r.user_id = u.id WHERE r.event_id = ? ORDER BY u.username', [$eventId]);
             json_response(['attendees' => $users]);
         } else {
             $user = require_auth();
