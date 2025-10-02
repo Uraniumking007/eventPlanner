@@ -32,8 +32,9 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
                         <p class="text-secondary mb-0">Manage the platform: users, events, and site metrics.</p>
                     </div>
                     <div class="d-flex gap-2">
-                        <a class="btn btn-dark" href="/events.php"><i class="fas fa-calendar-alt me-2"></i>View All Events</a>
+                        <a class="btn btn-dark" href="/admin/events.php"><i class="fas fa-calendar-alt me-2"></i>Manage Events</a>
                         <a class="btn btn-outline-secondary" href="/admin/users.php"><i class="fas fa-users-cog me-2"></i>Manage Users</a>
+                        <a class="btn btn-outline-secondary" href="/admin/audit.php"><i class="fas fa-clipboard-list me-2"></i>Audit Logs</a>
                     </div>
                 </div>
             </div>
