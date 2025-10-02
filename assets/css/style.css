@@ -18,10 +18,9 @@ footer{
     font-weight: bolder !important;
 }
 
+/* Avoid global centering that conflicts with Bootstrap layouts */
 body {
-  display: grid;
-  place-items: center;
-
+  display: block;
 }
 
 .navbar{
