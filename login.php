@@ -5,55 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Event Planner</title>
     <meta name="description" content="Login to your account to manage your events.">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="d-flex flex-column min-vh-100">
     <!-- Navigation -->
     <?php include __DIR__ . '/includes/navbar.php'; ?>
 
     <!-- Login -->
-    <div class="max-w-full sm:max-w-md md:max-w-lg mx-auto p-4 sm:p-6 md:p-8 bg-white/80 backdrop-blur rounded-2xl shadow-xl mt-8 sm:mt-12 md:mt-16 mx-4">
-        <div class="text-center mb-6">
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-green-100 to-emerald-200 text-emerald-700 mb-3 shadow">
-                <i class="fas fa-right-to-bracket"></i>
-            </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Sign in to your account</h1>
-            <p class="text-gray-600 text-xs sm:text-sm mt-1">Welcome back. Please enter your details.</p>
-        </div>
-        <form id="loginForm" class="space-y-4">
-            <div class="text-left">
-                <label class="block text-sm font-medium mb-1">Email</label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i class="fas fa-envelope"></i></span>
-                    <input class="w-full border rounded-lg pl-10 pr-3 py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-400" type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+    <div class="container py-5">
+        <div class="mx-auto" style="max-width: 520px;">
+            <div class="border rounded-3 shadow-sm bg-white p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-3 bg-success-subtle text-success mb-3 shadow" style="width:56px;height:56px">
+                        <i class="fas fa-right-to-bracket"></i>
+                    </div>
+                    <h1 class="h3 fw-bold mb-1">Sign in to your account</h1>
+                    <p class="text-secondary small mb-0">Welcome back. Please enter your details.</p>
+                </div>
+                <form id="loginForm" class="vstack gap-3">
+                    <div>
+                        <label class="form-label small">Email</label>
+                        <div class="position-relative">
+                            <span class="position-absolute top-50 translate-middle-y start-0 ps-3 text-secondary"><i class="fas fa-envelope"></i></span>
+                            <input class="form-control ps-5" type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label small">Password</label>
+                        <div class="position-relative">
+                            <span class="position-absolute top-50 translate-middle-y start-0 ps-3 text-secondary"><i class="fas fa-lock"></i></span>
+                            <input id="passwordInput" class="form-control ps-5 pe-5" type="password" name="password" placeholder="Your password" autocomplete="current-password" required>
+                            <button type="button" id="togglePwd" class="btn btn-link position-absolute top-50 translate-middle-y end-0 pe-3 text-secondary"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 small text-secondary">
+                        <input id="remember" name="remember" type="checkbox" class="form-check-input m-0">
+                        <label for="remember" class="form-check-label">Remember me on this device</label>
+                    </div>
+                    <div>
+                        <button id="submitBtn" class="btn btn-dark w-100" type="submit" disabled>Sign in</button>
+                    </div>
+                    <p id="loginError" class="text-center text-danger d-none small mb-0">Login failed. Check your email and password.</p>
+                    <p id="loginErrorMsg" class="text-center text-danger d-none text-break small mb-0"></p>
+                </form>
+                <div class="text-center mt-4 small text-secondary">
+                    Don't have an account?
+                    <a class="link-success fw-semibold" href="/register.php">Create one</a>
                 </div>
             </div>
-            <div class="text-left">
-                <label class="block text-sm font-medium mb-1">Password</label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i class="fas fa-lock"></i></span>
-                    <input id="passwordInput" class="w-full border rounded-lg pl-10 pr-10 py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-400" type="password" name="password" placeholder="Your password" autocomplete="current-password" required>
-                    <button type="button" id="togglePwd" class="absolute inset-y-0 right-0 pr-3 text-gray-400 hover:text-gray-600"><i class="fas fa-eye"></i></button>
-                </div>
-            </div>
-            <div class="flex items-center gap-2 text-sm text-gray-600">
-                <input id="remember" name="remember" type="checkbox" class="mt-1">
-                <label for="remember">Remember me on this device</label>
-            </div>
-            <div class="submit mt-2">
-                <input id="submitBtn" class="bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-300 text-white px-4 py-3 rounded-lg cursor-pointer text-sm sm:text-base w-full transition" type="submit" value="Sign in" disabled>
-            </div>
-            <p id="loginError" class="text-center text-red-600 hidden text-sm">Login failed. Check your email and password.</p>
-            <p id="loginErrorMsg" class="text-center text-red-600 hidden text-xs"></p>
-        </form>
-        <div class="text-center mt-5 text-sm text-gray-700">
-            Don't have an account?
-            <a class="text-emerald-700 font-medium hover:underline" href="/register.php">Create one</a>
         </div>
     </div>
 
@@ -65,8 +69,8 @@
             const path = window.location.pathname;
             const home = document.getElementById('navHome');
             const events = document.getElementById('navEvents');
-            if (path === '/' || path.endsWith('index.php')) home.classList.add('bg-white/10','text-white');
-            if (path.endsWith('events.php')) events.classList.add('bg-white/10','text-white');
+            if (path === '/' || path.endsWith('index.php')) home?.classList.add('active');
+            if (path.endsWith('events.php')) events?.classList.add('active');
         })();
 
         const form = document.getElementById('loginForm');
@@ -94,8 +98,8 @@
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            errorEl.classList.add('hidden');
-            loginErrorMsg.classList.add('hidden');
+            errorEl.classList.add('d-none');
+            loginErrorMsg.classList.add('d-none');
             loginErrorMsg.textContent = '';
             const formData = new FormData(form);
             const payload = {
@@ -116,12 +120,13 @@
                 const dest = data.user.role === 'organizer' ? '/dashboard.php' : '/events.php';
                 window.location.href = dest;
             } catch (err) {
-                errorEl.classList.remove('hidden');
+                errorEl.classList.remove('d-none');
                 loginErrorMsg.textContent = String(err?.message || 'Login failed');
-                loginErrorMsg.classList.remove('hidden');
+                loginErrorMsg.classList.remove('d-none');
             }
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
 
