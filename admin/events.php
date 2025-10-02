@@ -139,7 +139,7 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
                     <td>${e.location || ''}</td>
                     <td>${suspended ? '<span class="badge bg-danger-subtle text-danger">Suspended</span>' : '<span class="badge bg-success-subtle text-success">Active</span>'}</td>
                     <td class="text-end">
-                        <button class="btn btn-sm ${suspended ? 'btn-success' : 'btn-outline-warning'} suspend">${suspended ? 'Unsuspend' : 'Suspend'}</button>
+                        <button class="btn btn-sm ${suspended ? 'btn-success' : 'btn-outline-warning'} suspend" data-next="${suspended ? 0 : 1}">${suspended ? 'Unsuspend' : 'Suspend'}</button>
                     </td>
                 </tr>
             `;
@@ -156,18 +156,19 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
             const reasonEl = document.getElementById('suspendReason');
             const errorEl = document.getElementById('suspendError');
             const confirmBtn = document.getElementById('suspendConfirm');
-            let modal, currentEventId = null, suspendTarget = false, currentRow = null;
-            if (modalEl) modal = new bootstrap.Modal(modalEl);
+            let modal = null, currentEventId = null, suspendTarget = false, currentRow = null;
 
             tbody.querySelectorAll('button.suspend').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const tr = e.target.closest('tr');
                     currentRow = tr;
                     currentEventId = Number(tr.getAttribute('data-id'));
-                    suspendTarget = e.target.textContent.includes('Suspend');
+                    const next = e.target.getAttribute('data-next');
+                    suspendTarget = String(next) === '1';
                     document.getElementById('suspendModalLabel').textContent = suspendTarget ? 'Suspend Event' : 'Unsuspend Event';
                     reasonEl.value = '';
                     errorEl.classList.add('d-none');
+                    if (!modal && window.bootstrap?.Modal) modal = new bootstrap.Modal(modalEl);
                     modal?.show();
                 });
             });
