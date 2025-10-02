@@ -6,8 +6,8 @@
     <title>Event Planner - Events</title>
     <meta name="description" content="Explore upcoming events and find the perfect one for you.">
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- jQuery for AJAX (4.2 requirement) -->
@@ -15,47 +15,61 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/style.css?v=<?php echo time(); ?>">
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="d-flex flex-column min-vh-100">
     <!-- Navigation -->
     <?php include __DIR__ . '/includes/navbar.php'; ?>
 
-    <main class="flex-1">
-    <div class="max-w-8xl mx-auto px-4 py-6 lg:py-10">
-        <div class="mb-6 lg:mb-8">
-            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 p-[1px] shadow">
-                <div class="rounded-2xl bg-white/95 backdrop-blur px-4 py-5">
-                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900">Explore Events</h1>
-                    <p class="text-gray-600 text-sm sm:text-base mt-1">Find and register for upcoming events that match your interests.</p>
-                    <div class="text-xs sm:text-sm text-gray-500 mt-2">Showing <span id="eventsCount">0</span> events</div>
+    <main class="flex-grow-1">
+        <!-- Hero / Header -->
+        <section class="py-4 py-lg-5 border-bottom" style="background:linear-gradient(135deg,#f8fbff 0%, #f9f7ff 100%)">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-12 col-lg-8">
+                        <h1 class="display-6 fw-bold mb-2">Explore Events</h1>
+                        <p class="text-secondary mb-0">Find and register for upcoming events that match your interests.</p>
+                    </div>
+                    <div class="col-12 col-lg-4 text-lg-end mt-3 mt-lg-0">
+                        <span class="text-muted small">Showing <span id="eventsCount">0</span> events</span>
+                    </div>
                 </div>
             </div>
-        </div>
-        <!-- Filters -->
-        <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div>
-                <input id="searchInput" type="text" placeholder="Search events..." class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-400">
-            </div>
-            <div>
-                <select id="categorySelect" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                    <option value="">All categories</option>
-                    <option value="Corporate">Corporate</option>
-                    <option value="Social">Social</option>
-                    <option value="Tech">Tech</option>
-                    <option value="Workshop">Workshop</option>
-                </select>
-            </div>
-            <div>
-                <select id="sortSelect" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                    <option value="date_asc">Date: Soonest first</option>
-                    <option value="date_desc">Date: Latest first</option>
-                    <option value="title_asc">Title: A-Z</option>
-                    <option value="title_desc">Title: Z-A</option>
-                </select>
-            </div>
-        </div>
+        </section>
 
-        <div id="eventsList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6"></div>
-    </div>
+        <div class="container py-4 py-lg-5">
+            <!-- Filters Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-12 col-md-4">
+                            <label for="searchInput" class="form-label small text-muted">Search</label>
+                            <input id="searchInput" type="text" placeholder="Search events..." class="form-control">
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label for="categorySelect" class="form-label small text-muted">Category</label>
+                            <select id="categorySelect" class="form-select">
+                                <option value="">All categories</option>
+                                <option value="Corporate">Corporate</option>
+                                <option value="Social">Social</option>
+                                <option value="Tech">Tech</option>
+                                <option value="Workshop">Workshop</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label for="sortSelect" class="form-label small text-muted">Sort by</label>
+                            <select id="sortSelect" class="form-select">
+                                <option value="date_asc">Date: Soonest first</option>
+                                <option value="date_desc">Date: Latest first</option>
+                                <option value="title_asc">Title: A-Z</option>
+                                <option value="title_desc">Title: Z-A</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Events Grid -->
+            <div id="eventsList" class="row g-3 g-lg-4"></div>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -114,29 +128,29 @@
         }
         function eventCard(evt, user) {
             const actions = [];
-            actions.push(`<a href="/event.php?id=${evt.id}" class="px-3 py-1 border border-gray-300 text-gray-800 rounded text-sm hover:bg-gray-50 transition">More info</a>`);
+            actions.push(`<a href="/event.php?id=${evt.id}" class="btn btn-sm btn-outline-secondary">More info</a>`);
             const count = Number(evt.registration_count || 0);
             const dLeft = daysUntil(evt.event_date);
             const statusLabel = dLeft != null && dLeft >= 0
-                ? `<span class=\"px-2 py-1 text-xs rounded bg-emerald-100 text-emerald-700\">Open</span>`
-                : `<span class=\"px-2 py-1 text-xs rounded bg-red-100 text-red-700\">Closed</span>`;
-            const badge = dLeft != null ? `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700">${dLeft >= 0 ? dLeft + ' days left' : 'Closed'}</span>` : '';
+                ? `<span class=\"badge text-bg-success\">Open</span>`
+                : `<span class=\"badge text-bg-danger\">Closed</span>`;
+            const badge = dLeft != null ? `<span class=\"badge rounded-pill text-bg-secondary ms-2\">${dLeft >= 0 ? dLeft + ' days left' : 'Closed'}</span>` : '';
             return `
-                <div class="p-[1px] rounded-xl bg-gradient-to-r from-gray-200/60 to-gray-100/60 shadow hover:shadow-md transition">
-                    <div class="border rounded-xl overflow-hidden bg-white">
-                        ${evt.image_path ? `<img src="${evt.image_path}" alt="${evt.title}" class="w-full h-40 object-cover">` : ''}
-                        <div class="p-4">
-                        <div class="flex items-center justify-between mb-1">
-                            <h3 class="font-semibold text-lg">${evt.title}</h3>
-                            <div class="flex items-center gap-2">
-                                ${evt.category ? `<span class=\"px-2 py-1 text-xs rounded bg-gray-100 text-gray-700\">${evt.category}</span>` : ''}
-                                ${statusLabel}
+                <div class="col-12 col-sm-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+                        ${evt.image_path ? `<img src="${evt.image_path}" alt="${evt.title}" class="card-img-top" style="height: 200px; object-fit: cover;">` : ''}
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <h3 class="h6 mb-0">${evt.title}</h3>
+                                <div class="d-flex align-items-center gap-2">
+                                    ${evt.category ? `<span class=\"badge text-bg-light\">${evt.category}</span>` : ''}
+                                    ${statusLabel}
+                                </div>
                             </div>
-                        </div>
-                        <p class="text-sm text-gray-600 mb-2">${formatDate(evt.event_date)} • ${evt.location} ${badge}</p>
-                        <div class="text-xs text-gray-500 mb-2">Registrations: <span class="font-medium reg-count" data-event-id="${evt.id}">${count}</span></div>
-                        <p class="text-gray-800 text-sm mb-4 line-clamp-3">${evt.description || 'No description available.'}</p>
-                        <div class="flex flex-wrap gap-2">${actions.join(' ')}</div>
+                            <p class="text-secondary small mb-2">${formatDate(evt.event_date)} • ${evt.location} ${badge}</p>
+                            <div class="text-muted small mb-2">Registrations: <span class="fw-medium reg-count" data-event-id="${evt.id}">${count}</span></div>
+                            <p class="mb-3 small">${evt.description || 'No description available.'}</p>
+                            <div class="d-flex flex-wrap gap-2">${actions.join(' ')}</div>
                         </div>
                     </div>
                 </div>
@@ -168,7 +182,18 @@
             const countEl = document.getElementById('eventsCount');
             const renderList = () => {
                 const filtered = applyFilters(events);
-                list.innerHTML = filtered.map(e => eventCard(e, user)).join('');
+                if (!filtered.length) {
+                    list.innerHTML = `
+                        <div class=\"col-12\">
+                            <div class=\"text-center py-5 border rounded-3 bg-light\">
+                                <div class=\"display-6 mb-2\">😕</div>
+                                <h2 class=\"h5 mb-2\">No events found</h2>
+                                <p class=\"text-secondary mb-0\">Try adjusting your filters or check back later.</p>
+                            </div>
+                        </div>`;
+                } else {
+                    list.innerHTML = filtered.map(e => eventCard(e, user)).join('');
+                }
                 list.querySelectorAll('button[data-action]')?.forEach(btn => {
                     const id = Number(btn.getAttribute('data-id'));
                     const action = btn.getAttribute('data-action');
@@ -220,5 +245,7 @@
             });
         })();
     </script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
