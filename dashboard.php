@@ -19,7 +19,8 @@
                     <h1 class="display-6 fw-bold mb-1">Organizer Dashboard</h1>
                     <p class="text-secondary mb-0">Create and manage your events, view attendees, and see stats.</p>
                 </div>
-                <div>
+                <div class="d-flex gap-2">
+                    <a href="/organizer/attendees.php" class="btn btn-outline-secondary"><i class="fas fa-users me-2"></i>Attendees</a>
                     <button id="newEventBtn" class="btn btn-dark"><i class="fas fa-plus me-2"></i>New Event</button>
                 </div>
             </div>
