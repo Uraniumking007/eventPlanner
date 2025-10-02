@@ -244,7 +244,7 @@
                 const evt = myEvents.find(e => Number(e.id) === id);
                 btn.addEventListener('click', async () => {
                     if (action === 'edit') {
-                        openModal(evt);
+                        window.location.href = '/organizer/edit.php?id=' + id;
                     } else if (action === 'delete') {
                         if (!confirm('Delete this event?')) return;
                         try { await deleteEvent(id); render(); } catch { alert('Delete failed'); }
@@ -266,8 +266,8 @@
             });
         }
 
-        // Modal wiring
-        document.getElementById('newEventBtn').addEventListener('click', () => openModal(null));
+        // Modal wiring (new event now goes to dedicated page)
+        document.getElementById('newEventBtn').addEventListener('click', () => { window.location.href = '/organizer/create.php'; });
         document.getElementById('modalClose').addEventListener('click', closeModal);
         document.getElementById('modalCancel').addEventListener('click', closeModal);
         document.getElementById('eventModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });

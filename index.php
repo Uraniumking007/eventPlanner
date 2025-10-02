@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Not Planner</title>
+    <title>Event Planner - Home</title>
+    <meta name="description" content="Event Planner is a platform for creating and managing events.">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
