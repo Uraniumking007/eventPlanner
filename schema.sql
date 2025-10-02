@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS `events` (
   `registration_close` DATETIME DEFAULT NULL,
   `location` VARCHAR(255) NOT NULL,
   `image_path` VARCHAR(255) DEFAULT NULL,
+  `suspended` TINYINT(1) NOT NULL DEFAULT 0,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_events_organizer_id` (`organizer_id`),
