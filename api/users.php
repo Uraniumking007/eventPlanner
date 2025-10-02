@@ -32,7 +32,12 @@ switch ($method) {
             json_response(['user' => $user]);
         } elseif ($action === 'suspend') {
             $suspended = (int) (!!($body['suspended'] ?? false));
+            $reason = isset($body['reason']) ? (string)$body['reason'] : null;
             update('UPDATE users SET suspended = ? WHERE id = ?', [$suspended, $userId]);
+            // Optional: record to feedback table as simple audit (kept minimal to avoid new table)
+            if ($reason !== null && $reason !== '') {
+                try { insert('INSERT INTO feedback (name, email, message) VALUES (?, ?, ?)', ['admin_action', 'noreply@local', 'User ' . $userId . ' suspend=' . $suspended . ' reason=' . $reason]); } catch (Throwable $e) {}
+            }
             $user = fetchOne('SELECT id, username, email, role, suspended, created_at FROM users WHERE id = ?', [$userId]);
             json_response(['user' => $user]);
         } elseif ($action === 'password') {
