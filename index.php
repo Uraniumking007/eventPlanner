@@ -51,14 +51,18 @@
                     </div>
                 </div>
             </div>
-            <!-- Slider -->
-            <div class="slider-container mt-5">
-                <div class="position-relative">
-                    <div class="slider-wrapper rounded-4 overflow-hidden bg-white shadow"></div>
-                    <button class="prev-button btn btn-light position-absolute top-50 start-0 translate-middle-y ms-3 rounded-circle" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
-                    <button class="next-button btn btn-light position-absolute top-50 end-0 translate-middle-y me-3 rounded-circle" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
-                    <div id="sliderDots" class="d-flex justify-content-center gap-2 mt-3"></div>
-                </div>
+            <!-- Carousel -->
+            <div id="homeCarousel" class="carousel slide mt-5" data-bs-ride="carousel" data-bs-interval="4000">
+                <div class="carousel-indicators"></div>
+                <div class="carousel-inner rounded-4 overflow-hidden bg-white shadow"></div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#homeCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#homeCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
         </div>
     </section>
@@ -133,101 +137,70 @@
         fetch('/api/visits.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ page_url: window.location.pathname }) });
 
         // Navbar behavior (mobile toggle, active link, user area) is handled in includes/navbar.php
-
-        const sliderWrapper = document.querySelector('.slider-wrapper');
-        const prevButton = document.querySelector('.prev-button');
-        const nextButton = document.querySelector('.next-button');
-        const dotsContainer = document.getElementById('sliderDots');
-
-        let currentIndex = 0;
-        let slides = [];
+        const indicators = document.querySelector('#homeCarousel .carousel-indicators');
+        const inner = document.querySelector('#homeCarousel .carousel-inner');
 
         async function loadSlides() {
             try {
                 const res = await fetch('/api/events.php');
                 if (!res.ok) return [];
                 const data = await res.json();
-                const events = (data.events || []).filter(e => !!e.image_path);
-                return events.slice(0, 5); // limit to 5 slides
+                const events = (data.events || []).filter(e => !!e.image_path).map(e => {
+                    const raw = String(e.image_path || '').trim();
+                    const isAbs = /^https?:\/\//i.test(raw);
+                    const normalized = isAbs ? raw : (raw.startsWith('/') ? raw : ('/' + raw));
+                    return { ...e, _src: normalized };
+                });
+                const limited = events.slice(0, 5);
+                if (limited.length > 0) return limited;
+                // Fallback to built-in slides when no event images available
+                const fallback = [
+                    { id: 's1', title: 'Welcome to Event Planner', location: 'Create your first event', _src: '/assets/images/slide1.jpg' },
+                    { id: 's2', title: 'Engage Your Audience', location: 'Share beautiful visuals', _src: '/assets/images/slide2.jpeg' },
+                    { id: 's3', title: 'Host Great Events', location: 'On-site or virtual', _src: '/assets/images/slide3.png' },
+                    { id: 's4', title: 'Promote Easily', location: 'Reach more attendees', _src: '/assets/images/slide4.jpg' },
+                    { id: 's5', title: 'Analyze Results', location: 'Insights that matter', _src: '/assets/images/slide5.jpg' },
+                ];
+                return fallback;
             } catch {
                 return [];
             }
         }
 
-        function renderSlides(items) {
-            sliderWrapper.innerHTML = items.map((e) => `
-                <div class=\"slide-item\" style=\"float:left; width:100%\">\n                    <a href=\"/event.php?id=${e.id}\">\n                        <img class=\"img-fluid\" src=\"${e.image_path}\" alt=\"${e.title}\">\n                        <div class=\"slide-content\" style=\"background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.65) 100%);\">\n                            <h3 class=\"text-white h5 mb-1\">${e.title}</h3>\n                            <p class=\"text-white-50 small mb-0\">${e.location || ''}</p>\n                        </div>\n                    </a>\n                </div>
-            `).join('');
-            slides = Array.from(sliderWrapper.querySelectorAll('.slide-item'));
-            renderDots(slides.length);
-            updateSliderPosition();
-        }
-
-        function renderDots(n) {
-            if (!dotsContainer) return;
-            dotsContainer.innerHTML = Array.from({ length: n }).map((_, i) => `
-                <button type=\"button\" class=\"dot btn p-0 border-0 rounded-circle ${i === currentIndex ? 'bg-primary' : 'bg-secondary'}\" style=\"width:10px;height:10px\"></button>
-            `).join('');
-            Array.from(dotsContainer.children).forEach((dot, i) => {
-                dot.addEventListener('click', () => goToSlide(i));
+        function renderCarousel(items) {
+            if (!inner || !indicators) return;
+            inner.innerHTML = '';
+            indicators.innerHTML = '';
+            items.forEach((e, i) => {
+                const isActive = i === 0 ? ' active' : '';
+                const item = document.createElement('div');
+                item.className = 'carousel-item' + isActive;
+                item.innerHTML = `
+                    <a href="${e.id ? `/event.php?id=${e.id}` : '#'}" class="d-block position-relative">
+                        <div class="ratio ratio-16x9">
+                            <img class="w-100 h-100" src="${e._src || e.image_path}" alt="${e.title || ''}" style="object-fit:cover;">
+                        </div>
+                        <div class="position-absolute bottom-0 start-0 end-0 p-3" style="background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.65) 100%);">
+                            <h3 class="text-white h5 mb-1">${e.title || ''}</h3>
+                            <p class="text-white-50 small mb-0">${e.location || ''}</p>
+                        </div>
+                    </a>`;
+                inner.appendChild(item);
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.setAttribute('data-bs-target', '#homeCarousel');
+                btn.setAttribute('data-bs-slide-to', String(i));
+                if (i === 0) btn.className = 'active';
+                btn.setAttribute('aria-label', `Slide ${i+1}`);
+                indicators.appendChild(btn);
             });
         }
 
-        function getSlideWidth() {
-            const first = slides[0];
-            return first ? first.clientWidth : 0;
-        }
-
-        function updateDots() {
-            if (!dotsContainer) return;
-            Array.from(dotsContainer.children).forEach((dot, i) => {
-                if (i === currentIndex) {
-                    dot.classList.add('bg-primary');
-                    dot.classList.remove('bg-secondary');
-                } else {
-                    dot.classList.remove('bg-primary');
-                    dot.classList.add('bg-secondary');
-                }
-            });
-        }
-
-        function updateSliderPosition() {
-            const width = getSlideWidth();
-            sliderWrapper.style.whiteSpace = 'nowrap';
-            sliderWrapper.style.transform = `translateX(${-currentIndex * width}px)`;
-            sliderWrapper.style.transition = 'transform 400ms ease';
-            updateDots();
-        }
-
-        function goToSlide(index) {
-            if (!slides.length) return;
-            currentIndex = index;
-            if (currentIndex < 0) currentIndex = slides.length - 1;
-            if (currentIndex > slides.length - 1) currentIndex = 0;
-            updateSliderPosition();
-        }
-
-        nextButton.addEventListener('click', () => goToSlide(currentIndex + 1));
-        prevButton.addEventListener('click', () => goToSlide(currentIndex - 1));
-
-        let autoPlayInterval = null;
-        function startAutoPlay() {
-            stopAutoPlay();
-            autoPlayInterval = setInterval(() => goToSlide(currentIndex + 1), 4000);
-        }
-        function stopAutoPlay() {
-            if (autoPlayInterval) clearInterval(autoPlayInterval);
-        }
-
-        sliderWrapper.addEventListener('mouseenter', stopAutoPlay);
-        sliderWrapper.addEventListener('mouseleave', startAutoPlay);
-        window.addEventListener('resize', updateSliderPosition);
-
-        (async function initSlider() {
+        (async function initCarousel() {
             const items = await loadSlides();
-            if (!items.length) return; // keep static layout if no images
-            renderSlides(items);
-            startAutoPlay();
+            if (!items.length) return;
+            renderCarousel(items);
+            // Bootstrap 5 auto-initializes via data attributes; no manual init needed
         })();
 
         // Load dynamic stats
