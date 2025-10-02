@@ -5,75 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Event Planner</title>
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="d-flex flex-column min-vh-100">
     <!-- Navigation -->
     <?php include __DIR__ . '/includes/navbar.php'; ?>
 
     <!-- Register -->
-    <div class="max-w-full sm:max-w-md md:max-w-lg mx-auto p-4 sm:p-6 md:p-8 bg-white/80 backdrop-blur rounded-2xl shadow-xl mt-8 sm:mt-12 md:mt-16 mx-4">
-        <div class="text-center mb-6">
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-green-100 to-emerald-200 text-emerald-700 mb-3 shadow">
-                <i class="fas fa-user-plus"></i>
-            </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Create your account</h1>
-            <p class="text-gray-600 text-xs sm:text-sm mt-1">Join and start planning or attending events.</p>
-        </div>
-        <form id="registerForm" class="space-y-4">
-            <div class="text-left">
-                <label class="block text-sm font-medium mb-1">Username</label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i class="fas fa-user"></i></span>
-                    <input class="w-full border rounded-lg pl-10 pr-3 py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-400" type="text" name="username" placeholder="Jane Doe" autocomplete="username" required>
+    <div class="container py-5">
+        <div class="mx-auto" style="max-width: 520px;">
+            <div class="border rounded-3 shadow-sm bg-white p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-3 bg-success-subtle text-success mb-3 shadow" style="width:56px;height:56px">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h1 class="h3 fw-bold mb-1">Create your account</h1>
+                    <p class="text-secondary small mb-0">Join and start planning or attending events.</p>
+                </div>
+                <form id="registerForm" class="vstack gap-3">
+                    <div>
+                        <label class="form-label small">Username</label>
+                        <div class="position-relative">
+                            <span class="position-absolute top-50 translate-middle-y start-0 ps-3 text-secondary"><i class="fas fa-user"></i></span>
+                            <input class="form-control ps-5" type="text" name="username" placeholder="Jane Doe" autocomplete="username" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label small">Email</label>
+                        <div class="position-relative">
+                            <span class="position-absolute top-50 translate-middle-y start-0 ps-3 text-secondary"><i class="fas fa-envelope"></i></span>
+                            <input class="form-control ps-5" type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label small">Password</label>
+                        <div class="position-relative">
+                            <span class="position-absolute top-50 translate-middle-y start-0 ps-3 text-secondary"><i class="fas fa-lock"></i></span>
+                            <input id="passwordInput" class="form-control ps-5 pe-5" type="password" name="password" minlength="6" placeholder="At least 6 characters" autocomplete="new-password" required>
+                            <button type="button" id="togglePwd" class="btn btn-link position-absolute top-50 translate-middle-y end-0 pe-3 text-secondary"><i class="fas fa-eye"></i></button>
+                        </div>
+                        <div id="pwdHint" class="small text-secondary mt-1">Use 6+ characters with a mix of letters and numbers.</div>
+                    </div>
+                    <div>
+                        <label class="form-label small">Role</label>
+                        <div class="row g-2" role="group" aria-label="Select role">
+                            <div class="col-6"><button type="button" data-role="attendee" class="role-btn btn btn-outline-secondary w-100">Attendee</button></div>
+                            <div class="col-6"><button type="button" data-role="organizer" class="role-btn btn btn-outline-secondary w-100">Organizer</button></div>
+                        </div>
+                        <input type="hidden" name="role" id="roleInput" value="attendee">
+                    </div>
+                    <div class="d-flex align-items-start gap-2 small text-secondary">
+                        <input id="terms" type="checkbox" class="form-check-input m-0" required>
+                        <label for="terms" class="form-check-label">I agree to the <a class="link-success" href="#">Terms</a> and <a class="link-success" href="#">Privacy Policy</a>.</label>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 small text-secondary">
+                        <input id="remember" name="remember" type="checkbox" class="form-check-input m-0">
+                        <label for="remember" class="form-check-label">Remember me on this device</label>
+                    </div>
+                    <div>
+                        <button id="submitBtn" class="btn btn-dark w-100" type="submit" disabled>Create Account</button>
+                    </div>
+                    <p id="registerError" class="text-center text-danger d-none small mb-0">Registration failed. Try a different email.</p>
+                    <p id="registerErrorMsg" class="text-center text-danger d-none text-break small mb-0"></p>
+                </form>
+                <div class="text-center mt-4 small text-secondary">
+                    Already have an account?
+                    <a class="link-success fw-semibold" href="/login.php">Sign in</a>
                 </div>
             </div>
-            <div class="text-left">
-                <label class="block text-sm font-medium mb-1">Email</label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i class="fas fa-envelope"></i></span>
-                    <input class="w-full border rounded-lg pl-10 pr-3 py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-400" type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
-                </div>
-            </div>
-            <div class="text-left">
-                <label class="block text-sm font-medium mb-1">Password</label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400"><i class="fas fa-lock"></i></span>
-                    <input id="passwordInput" class="w-full border rounded-lg pl-10 pr-10 py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-400" type="password" name="password" minlength="6" placeholder="At least 6 characters" autocomplete="new-password" required>
-                    <button type="button" id="togglePwd" class="absolute inset-y-0 right-0 pr-3 text-gray-400 hover:text-gray-600"><i class="fas fa-eye"></i></button>
-                </div>
-                <div id="pwdHint" class="text-xs text-gray-500 mt-1">Use 6+ characters with a mix of letters and numbers.</div>
-            </div>
-            <div class="text-left">
-                <label class="block text-sm font-medium mb-1">Role</label>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" role="group" aria-label="Select role">
-                    <button type="button" data-role="attendee" class="role-btn w-full px-3 py-3 rounded-lg border text-sm font-medium bg-gray-50 border-gray-200 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-400">Attendee</button>
-                    <button type="button" data-role="organizer" class="role-btn w-full px-3 py-3 rounded-lg border text-sm font-medium bg-gray-50 border-gray-200 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-400">Organizer</button>
-                </div>
-                <input type="hidden" name="role" id="roleInput" value="attendee">
-            </div>
-            <div class="flex items-start gap-2 text-sm text-gray-600">
-                <input id="terms" type="checkbox" class="mt-1" required>
-                <label for="terms">I agree to the <a class="text-emerald-700 hover:underline" href="#">Terms</a> and <a class="text-emerald-700 hover:underline" href="#">Privacy Policy</a>.</label>
-            </div>
-            <div class="flex items-center gap-2 text-sm text-gray-600">
-                <input id="remember" name="remember" type="checkbox" class="mt-1">
-                <label for="remember">Remember me on this device</label>
-            </div>
-            <div class="submit mt-2">
-                <input id="submitBtn" class="bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-300 text-white px-4 py-3 rounded-lg cursor-pointer text-sm sm:text-base w-full transition" type="submit" value="Create Account" disabled>
-            </div>
-            <p id="registerError" class="text-center text-red-600 hidden text-sm">Registration failed. Try a different email.</p>
-            <p id="registerErrorMsg" class="text-center text-red-600 hidden text-xs"></p>
-        </form>
-        <div class="text-center mt-5 text-sm text-gray-700">
-            Already have an account?
-            <a class="text-emerald-700 font-medium hover:underline" href="/login.php">Sign in</a>
         </div>
     </div>
 
@@ -85,8 +89,8 @@
             const path = window.location.pathname;
             const home = document.getElementById('navHome');
             const events = document.getElementById('navEvents');
-            if (path === '/' || path.endsWith('index.php')) home.classList.add('bg-white/10','text-white');
-            if (path.endsWith('events.php')) events.classList.add('bg-white/10','text-white');
+            if (path === '/' || path.endsWith('index.php')) home?.classList.add('active');
+            if (path.endsWith('events.php')) events?.classList.add('active');
         })();
 
         const form = document.getElementById('registerForm');
@@ -102,8 +106,8 @@
 
         roleBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                roleBtns.forEach(b => b.classList.remove('ring-2','ring-emerald-400','bg-emerald-50','border-emerald-300'));
-                btn.classList.add('ring-2','ring-emerald-400','bg-emerald-50','border-emerald-300');
+                roleBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
                 roleInput.value = btn.getAttribute('data-role');
             });
         });
@@ -149,12 +153,13 @@
                 if (!data.user) throw new Error('Register failed');
                 window.location.href = '/events.php';
             } catch (err) {
-                errorEl.classList.remove('hidden');
+                errorEl.classList.remove('d-none');
                 registerErrorMsg.textContent = String(err?.message || 'Register failed');
-                registerErrorMsg.classList.remove('hidden');
+                registerErrorMsg.classList.remove('d-none');
             }
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
 
