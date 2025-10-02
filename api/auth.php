@@ -26,7 +26,7 @@ switch ($action) {
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 json_response(['error' => 'Invalid email format'], 422);
             }
-            $user = fetchOne('SELECT id, username, email, password_hash, role, suspended, created_at FROM users WHERE email = ?', [$email]);
+            $user = fetchOne('SELECT id, username, email, password_hash, role, avatar_path, suspended, created_at FROM users WHERE email = ?', [$email]);
             if (!$user || !password_verify($password, $user['password_hash'])) {
                 json_response(['error' => 'Invalid credentials'], 401);
             }
@@ -109,7 +109,7 @@ switch ($action) {
             }
             $hash = password_hash($password, PASSWORD_DEFAULT);
             $newId = insert('INSERT INTO users (username, email, password_hash, role) VALUES (?, ?, ?, ?)', [$username, $email, $hash, $role]);
-            $user = fetchOne('SELECT id, username, email, role, suspended, created_at FROM users WHERE id = ?', [$newId]);
+            $user = fetchOne('SELECT id, username, email, role, avatar_path, suspended, created_at FROM users WHERE id = ?', [$newId]);
             $_SESSION['user'] = $user;
             if ($remember) {
                 $cookieName = 'remember_me';
@@ -156,11 +156,105 @@ switch ($action) {
             } else {
                 update('UPDATE users SET username = ?, email = ? WHERE id = ?', [$newUsername, $newEmail, $user['id']]);
             }
-            $updated = fetchOne('SELECT id, username, email, role, suspended, created_at FROM users WHERE id = ?', [$user['id']]);
+            $updated = fetchOne('SELECT id, username, email, role, avatar_path, suspended, created_at FROM users WHERE id = ?', [$user['id']]);
             $_SESSION['user'] = $updated;
             json_response(['user' => $updated]);
         } catch (Throwable $e) {
             error_log('Auth update error: ' . $e->getMessage());
+            json_response(['error' => 'Internal server error'], 500);
+        }
+        break;
+
+    case 'upload_avatar':
+        try {
+            if ($method !== 'POST') json_response(['error' => 'Method not allowed'], 405);
+            $user = require_auth();
+
+            if (!isset($_FILES['avatar']) || !is_array($_FILES['avatar'])) {
+                json_response(['error' => 'No file uploaded'], 400);
+            }
+
+            $file = $_FILES['avatar'];
+            $err = (int)($file['error'] ?? UPLOAD_ERR_OK);
+            if ($err !== UPLOAD_ERR_OK) {
+                json_response(['error' => 'Upload error'], 400);
+            }
+
+            $tmp = $file['tmp_name'] ?? '';
+            $size = (int)($file['size'] ?? 0);
+            if (!is_uploaded_file($tmp)) {
+                json_response(['error' => 'Invalid upload'], 400);
+            }
+            if ($size <= 0 || $size > 5 * 1024 * 1024) {
+                json_response(['error' => 'Image too large (max 5MB)'], 422);
+            }
+
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime = $finfo ? finfo_file($finfo, $tmp) : null;
+            if ($finfo) finfo_close($finfo);
+            $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+            if (!$mime || !isset($allowed[$mime])) {
+                json_response(['error' => 'Unsupported image type'], 422);
+            }
+
+            switch ($mime) {
+                case 'image/jpeg':
+                    $src = imagecreatefromjpeg($tmp);
+                    break;
+                case 'image/png':
+                    $src = imagecreatefrompng($tmp);
+                    break;
+                case 'image/webp':
+                    if (!function_exists('imagecreatefromwebp')) json_response(['error' => 'WEBP not supported on server'], 500);
+                    $src = imagecreatefromwebp($tmp);
+                    break;
+                default:
+                    $src = null;
+            }
+            if (!$src) json_response(['error' => 'Failed to process image'], 500);
+
+            $srcW = imagesx($src);
+            $srcH = imagesy($src);
+            $side = min($srcW, $srcH);
+            $srcX = (int) max(0, ($srcW - $side) / 2);
+            $srcY = (int) max(0, ($srcH - $side) / 2);
+
+            $dstSize = 512;
+            $dst = imagecreatetruecolor($dstSize, $dstSize);
+            imagealphablending($dst, false);
+            imagesavealpha($dst, true);
+            $transparent = imagecolorallocatealpha($dst, 0, 0, 0, 127);
+            imagefilledrectangle($dst, 0, 0, $dstSize, $dstSize, $transparent);
+            if (!imagecopyresampled($dst, $src, 0, 0, $srcX, $srcY, $dstSize, $dstSize, $side, $side)) {
+                imagedestroy($src);
+                imagedestroy($dst);
+                json_response(['error' => 'Failed to resize image'], 500);
+            }
+            imagedestroy($src);
+
+            $root = dirname(__DIR__);
+            $targetDir = $root . '/uploads/avatars';
+            if (!is_dir($targetDir)) {
+                if (!mkdir($targetDir, 0775, true) && !is_dir($targetDir)) {
+                    imagedestroy($dst);
+                    json_response(['error' => 'Failed to prepare upload directory'], 500);
+                }
+            }
+            $filename = 'ava_' . date('Ymd_His') . '_' . bin2hex(random_bytes(4)) . '.png';
+            $targetPath = $targetDir . '/' . $filename;
+            if (!imagepng($dst, $targetPath)) {
+                imagedestroy($dst);
+                json_response(['error' => 'Failed to save image'], 500);
+            }
+            imagedestroy($dst);
+
+            $webPath = '/uploads/avatars/' . $filename;
+            update('UPDATE users SET avatar_path = ? WHERE id = ?', [$webPath, $user['id']]);
+            $updated = fetchOne('SELECT id, username, email, role, avatar_path, suspended, created_at FROM users WHERE id = ?', [$user['id']]);
+            $_SESSION['user'] = $updated;
+            json_response(['user' => $updated]);
+        } catch (Throwable $e) {
+            error_log('Auth upload_avatar error: ' . $e->getMessage());
             json_response(['error' => 'Internal server error'], 500);
         }
         break;
