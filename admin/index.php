@@ -33,7 +33,7 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
                     </div>
                     <div class="d-flex gap-2">
                         <a class="btn btn-dark" href="/events.php"><i class="fas fa-calendar-alt me-2"></i>View All Events</a>
-                        <a class="btn btn-outline-secondary" href="/profile.php"><i class="fas fa-user-cog me-2"></i>Your Profile</a>
+                        <a class="btn btn-outline-secondary" href="/admin/users.php"><i class="fas fa-users-cog me-2"></i>Manage Users</a>
                     </div>
                 </div>
             </div>
