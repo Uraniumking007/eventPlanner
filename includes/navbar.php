@@ -39,6 +39,7 @@
                 if (!desktop || !mobile) return;
                 if (user) {
                     const showDash = user.role === 'organizer';
+                    const showAdmin = user.role === 'admin';
                     const displayName = String(user.username || user.email || '').trim();
                     desktop.innerHTML = `
                         <div class="dropdown">
@@ -48,6 +49,7 @@
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuBtn">
                                 <li><h6 class="dropdown-header">Signed in</h6></li>
                                 <li><a class="dropdown-item" href="/profile.php">Profile</a></li>
+                                ${showAdmin ? '<li><a class="dropdown-item" href="/admin/index.php">Admin</a></li>' : ''}
                                 ${showDash ? '<li><a class="dropdown-item" href="/dashboard.php">Dashboard</a></li>' : ''}
                                 <li><a class="dropdown-item" href="/events.php">Events</a></li>
                                 <li><hr class="dropdown-divider"></li>
@@ -61,6 +63,7 @@
                         </div>
                         <div class="list-group">
                             <a class="list-group-item list-group-item-action" href="/profile.php">Profile</a>
+                            ${showAdmin ? '<a class="list-group-item list-group-item-action" href="/admin/index.php">Admin</a>' : ''}
                             ${showDash ? '<a class="list-group-item list-group-item-action" href="/dashboard.php">Dashboard</a>' : ''}
                             <a class="list-group-item list-group-item-action" href="/events.php">Events</a>
                         </div>`;
