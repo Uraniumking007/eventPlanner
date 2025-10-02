@@ -26,9 +26,12 @@ switch ($action) {
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 json_response(['error' => 'Invalid email format'], 422);
             }
-            $user = fetchOne('SELECT id, username, email, password_hash, role, created_at FROM users WHERE email = ?', [$email]);
+            $user = fetchOne('SELECT id, username, email, password_hash, role, suspended, created_at FROM users WHERE email = ?', [$email]);
             if (!$user || !password_verify($password, $user['password_hash'])) {
                 json_response(['error' => 'Invalid credentials'], 401);
+            }
+            if (!empty($user['suspended'])) {
+                json_response(['error' => 'Account suspended'], 403);
             }
             unset($user['password_hash']);
             $_SESSION['user'] = $user;
@@ -106,7 +109,7 @@ switch ($action) {
             }
             $hash = password_hash($password, PASSWORD_DEFAULT);
             $newId = insert('INSERT INTO users (username, email, password_hash, role) VALUES (?, ?, ?, ?)', [$username, $email, $hash, $role]);
-            $user = fetchOne('SELECT id, username, email, role, created_at FROM users WHERE id = ?', [$newId]);
+            $user = fetchOne('SELECT id, username, email, role, suspended, created_at FROM users WHERE id = ?', [$newId]);
             $_SESSION['user'] = $user;
             if ($remember) {
                 $cookieName = 'remember_me';
@@ -153,7 +156,7 @@ switch ($action) {
             } else {
                 update('UPDATE users SET username = ?, email = ? WHERE id = ?', [$newUsername, $newEmail, $user['id']]);
             }
-            $updated = fetchOne('SELECT id, username, email, role, created_at FROM users WHERE id = ?', [$user['id']]);
+            $updated = fetchOne('SELECT id, username, email, role, suspended, created_at FROM users WHERE id = ?', [$user['id']]);
             $_SESSION['user'] = $updated;
             json_response(['user' => $updated]);
         } catch (Throwable $e) {
