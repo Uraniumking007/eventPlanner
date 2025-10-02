@@ -1,28 +1,26 @@
-<footer class="mt-auto bg-gray-950 text-white">
-    <div class="max-w-7xl mx-auto px-4 py-10">
-        <div class="grid md:grid-cols-3 gap-8">
-            <div>
-                <div class="flex items-center gap-2 mb-2">
-                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 text-white shadow ring-1 ring-white/10"><i class="fas fa-calendar-alt"></i></span>
-                    <h5 class="text-lg font-semibold">Event Planner</h5>
+<footer class="mt-auto bg-dark text-white py-5">
+    <div class="container">
+        <div class="row g-4 align-items-start">
+            <div class="col-md-4">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="d-inline-flex align-items-center justify-content-center bg-primary text-white rounded p-1" style="width:32px;height:32px"><i class="fas fa-calendar-alt"></i></span>
+                    <h5 class="mb-0">Event Planner</h5>
                 </div>
-                <p class="m-0 text-white/80">Making event planning simple and efficient.</p>
+                <p class="text-white-50 mb-0">Making event planning simple and efficient.</p>
             </div>
-            <div class="text-white/80 text-sm">
-                <div class="font-semibold text-white mb-2">Quick links</div>
-                <div class="grid grid-cols-2 gap-2">
-                    <a href="/" class="hover:text-white">Home</a>
-                    <a href="/events.php" class="hover:text-white">Events</a>
-                    <a href="/profile.php" class="hover:text-white">Profile</a>
-                    <a href="/dashboard.php" class="hover:text-white">Dashboard</a>
+            <div class="col-md-4">
+                <div class="fw-semibold mb-2">Quick links</div>
+                <div class="row row-cols-2 g-2 small">
+                    <div class="col"><a class="link-light link-offset-1" href="/">Home</a></div>
+                    <div class="col"><a class="link-light link-offset-1" href="/events.php">Events</a></div>
+                    <div class="col"><a class="link-light link-offset-1" href="/profile.php">Profile</a></div>
+                    <div class="col"><a class="link-light link-offset-1" href="/dashboard.php">Dashboard</a></div>
                 </div>
             </div>
-            <div class="text-left md:text-right">
-                <p class="m-0 text-white/70">&copy; <?php echo date('Y'); ?> Event Planner</p>
-                <p class="m-0 text-white/60">All rights reserved.</p>
+            <div class="col-md-4 text-md-end">
+                <p class="text-white-50 mb-0">&copy; <?php echo date('Y'); ?> Event Planner</p>
+                <p class="text-white-50 mb-0">All rights reserved.</p>
             </div>
         </div>
     </div>
 </footer>
-
-
