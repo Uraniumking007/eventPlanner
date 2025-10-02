@@ -1,6 +1,3 @@
--- Database initialization for event_planner
--- Creates database and required tables
-
 CREATE DATABASE IF NOT EXISTS `event_planner` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `event_planner`;
 
