@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS `events` (
   `title` VARCHAR(255) NOT NULL,
   `description` TEXT,
   `event_date` DATE NOT NULL,
+  `registration_close` DATETIME DEFAULT NULL,
   `location` VARCHAR(255) NOT NULL,
   `image_path` VARCHAR(255) DEFAULT NULL,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
