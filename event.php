@@ -16,128 +16,169 @@ declare(strict_types=1);
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/style.css?v=<?php echo time(); ?>">
+    
+    <style>
+        .event-hero-overlay {
+            position: relative;
+            min-height: 450px;
+            background: linear-gradient(135deg, #0891b2 0%, #14b8a6 100%);
+            overflow: hidden;
+        }
+        .event-hero-overlay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><circle cx="3" cy="3" r="3"/></g></g></svg>');
+            animation: bgScroll 20s linear infinite;
+        }
+        @keyframes bgScroll {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(60px, 60px); }
+        }
+        .event-content-card {
+            margin-top: -80px;
+            position: relative;
+            z-index: 10;
+        }
+        .info-pill {
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            transition: all 0.3s ease;
+        }
+        .info-pill:hover {
+            background: rgba(6, 182, 212, 0.15);
+            border-color: rgba(6, 182, 212, 0.3);
+            transform: translateY(-2px);
+        }
+        .attendee-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            transition: transform 0.2s ease;
+        }
+        .attendee-item:hover .attendee-avatar {
+            transform: scale(1.1);
+        }
+        .map-container {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .stat-box {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(20, 184, 166, 0.1) 100%);
+            border-left: 4px solid var(--primary-color);
+        }
+    </style>
 </head>
-<body class="d-flex flex-column min-vh-100 bg-light">
+<body class="d-flex flex-column min-vh-100" style="background: #f8fafc;">
     <!-- Navigation -->
     <?php include __DIR__ . '/includes/navbar.php'; ?>
 
     <main class="flex-grow-1">
-        <!-- Sticky Header -->
-        <div id="stickyHeader" class="sticky-top bg-white border-bottom shadow-sm d-none" style="z-index: 1020;">
-            <div class="container py-3">
-                <div class="d-flex align-items-center justify-content-between gap-3">
-                    <div class="d-flex align-items-center gap-3 flex-grow-1 min-w-0">
-                        <a href="/events.php" class="btn btn-sm btn-outline-secondary">
-                            <i class="fas fa-arrow-left"></i>
+        <!-- Hero Section with Image/Gradient -->
+        <div class="event-hero-overlay" id="heroSection">
+            <div class="container h-100 d-flex align-items-end pb-5 position-relative" style="z-index: 2;">
+                <div class="row w-100 align-items-end">
+                    <div class="col-lg-8">
+                        <a href="/events.php" class="btn btn-light btn-sm mb-3 shadow-sm mt-3">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Events
                         </a>
-                        <div class="min-w-0">
-                            <div id="stickyTitle" class="fw-bold text-truncate">Event</div>
-                            <div id="stickyMeta" class="small text-muted d-none d-sm-block text-truncate"></div>
+                        <div id="heroContent">
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <span id="heroCategory"></span>
+                                <span id="heroStatus"></span>
+                            </div>
+                            <h1 id="heroTitle" class="display-5 fw-bold text-white mb-3">Loading Event...</h1>
+                            <div class="d-flex flex-wrap gap-3 text-white">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span id="heroDate" class="small"></span>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span id="heroLocation" class="small"></span>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="fas fa-users"></i>
+                                    <span id="heroAttendees" class="small">0 attendees</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div id="stickyStatus" class="flex-shrink-0"></div>
+                    <div class="col-lg-4 mt-3 mt-lg-0">
+                        <div id="heroActionArea"></div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="container py-3">
-            <!-- Back Button -->
-            <a href="/events.php" class="btn btn-sm btn-outline-secondary mb-3">
-                <i class="fas fa-arrow-left me-2"></i>Back to Events
-            </a>
-
-            <div class="row g-3">
-                <!-- Main Content -->
+        <!-- Main Content -->
+        <div class="container">
+            <div class="row g-4">
+                <!-- Main Column -->
                 <div class="col-12 col-lg-8">
-                    <div class="card shadow-sm border-0 overflow-hidden rounded-3">
-                        <!-- Event Image -->
-                        <div id="eventImage"></div>
-                        
-                        <!-- Event Details -->
-                        <div class="card-body p-3 p-md-4">
-                            <!-- Title & Status -->
-                            <div class="d-flex align-items-start justify-content-between gap-2 mb-3">
-                                <div class="flex-grow-1">
-                                    <h1 id="eventTitle" class="h3 fw-bold mb-2">Loading...</h1>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <span id="eventCategory"></span>
-                                        <span id="eventStatus"></span>
-                                    </div>
-                                </div>
-                            </div>
+                    <!-- Content Card -->
+                    <div class="card shadow-sm border-0 rounded-4 event-content-card">
+                        <div class="card-body p-4">
+                            <!-- Suspended Notice -->
+                            <div id="suspendedNotice"></div>
 
-                            <!-- Meta Information -->
-                            <div class="row g-2 mb-3">
-                                <div class="col-12 col-md-6">
-                                    <div class="d-flex align-items-start gap-2 p-2 bg-light rounded">
-                                        <div class="text-primary">
-                                            <i class="fas fa-calendar-alt"></i>
-                                        </div>
-                                        <div>
-                                            <div class="small text-muted">Date & Time</div>
-                                            <div id="eventDate" class="fw-semibold small"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="d-flex align-items-start gap-2 p-2 bg-light rounded">
-                                        <div class="text-danger">
-                                            <i class="fas fa-map-marker-alt"></i>
-                                        </div>
-                                        <div class="flex-grow-1 min-w-0">
-                                            <div class="small text-muted">Location</div>
-                                            <div id="eventLocation" class="fw-semibold small text-truncate"></div>
+                            <!-- Key Info Pills -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="info-pill rounded-3 p-3 h-100">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background: var(--gradient-primary);">
+                                                <i class="fas fa-user-tie text-white"></i>
+                                            </div>
+                                            <div>
+                                                <div class="text-muted small mb-1">Organized by</div>
+                                                <div id="organizerName" class="fw-bold"></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <!-- Organizer & Registration Stats -->
-                            <div class="row g-2 mb-3">
-                                <div class="col-12 col-md-6">
-                                    <div class="d-flex align-items-center gap-2 p-2 border rounded">
-                                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                            <i class="fas fa-user small"></i>
-                                        </div>
-                                        <div>
-                                            <div class="small text-muted">Organized By</div>
-                                            <div id="eventOrganizer" class="fw-bold small"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="d-flex align-items-center gap-2 p-2 border rounded">
-                                        <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                            <i class="fas fa-users small"></i>
-                                        </div>
-                                        <div>
-                                            <div class="small text-muted">Registrations</div>
-                                            <div class="fw-bold small">
-                                                <span id="eventRegCount">0</span>
-                                                <span class="text-muted">attendees</span>
+                                <div class="col-md-6">
+                                    <div class="info-pill rounded-3 p-3 h-100">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background: var(--gradient-secondary);">
+                                                <i class="fas fa-clock text-white"></i>
+                                            </div>
+                                            <div>
+                                                <div class="text-muted small mb-1">Time Remaining</div>
+                                                <div id="timeRemaining" class="fw-bold"></div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Description -->
-                            <div class="mb-3">
-                                <h2 class="h5 fw-bold mb-2">
-                                    <i class="fas fa-info-circle text-primary me-2"></i>About This Event
-                                </h2>
-                                <div id="eventDescription" class="text-muted" style="line-height: 1.7;"></div>
+                            <!-- Description Section -->
+                            <div class="mb-4">
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: var(--gradient-primary);">
+                                        <i class="fas fa-align-left text-white" style="font-size: 0.75rem;"></i>
+                                    </div>
+                                    <h2 class="h5 mb-0 fw-bold">Event Description</h2>
+                                </div>
+                                <div id="eventDescription" class="text-muted" style="line-height: 1.8; font-size: 0.95rem;"></div>
                             </div>
 
                             <!-- Action Buttons -->
-                            <div id="actionArea" class="d-flex flex-wrap gap-2 mb-3"></div>
+                            <div id="actionArea" class="mb-4"></div>
 
                             <!-- Location Map -->
-                            <div class="mt-4">
-                                <h2 class="h5 fw-bold mb-2">
-                                    <i class="fas fa-map text-danger me-2"></i>Location
-                                </h2>
-                                <div id="eventMap" class="rounded overflow-hidden shadow-sm"></div>
+                            <div>
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: var(--gradient-primary);">
+                                        <i class="fas fa-map-marked-alt text-white" style="font-size: 0.75rem;"></i>
+                                    </div>
+                                    <h2 class="h5 mb-0 fw-bold">Event Location</h2>
+                                </div>
+                                <div id="eventMap" class="map-container"></div>
                             </div>
                         </div>
                     </div>
@@ -145,46 +186,46 @@ declare(strict_types=1);
 
                 <!-- Sidebar -->
                 <div class="col-12 col-lg-4">
-                    <!-- Attendees Card -->
-                    <div class="card shadow-sm border-0 mb-3 rounded-3">
-                        <div class="card-header bg-white border-bottom py-2">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <h2 class="h6 mb-0 fw-bold">
-                                    <i class="fas fa-users text-primary me-2"></i>Attendees
-                                </h2>
-                                <span id="attendeeCount" class="badge bg-primary rounded-pill small">0</span>
+                    <!-- Registration Stats -->
+                    <div class="card shadow-sm border-0 rounded-4 mb-3">
+                        <div class="card-body p-4">
+                            <div class="text-center mb-3">
+                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px; background: var(--gradient-primary);">
+                                    <i class="fas fa-ticket-alt text-white fa-2x"></i>
+                                </div>
+                                <h3 class="h2 fw-bold mb-1" id="regCount">0</h3>
+                                <p class="text-muted mb-0">Registered Attendees</p>
                             </div>
-                        </div>
-                        <div class="card-body p-0">
-                            <div id="attendeesContainer" style="max-height: 350px; overflow-y: auto;"></div>
+                            <div class="stat-box rounded-3 p-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted small">Event Status</span>
+                                    <span id="sidebarStatus"></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Event Info Card -->
-                    <div class="card shadow-sm border-0 rounded-3">
-                        <div class="card-header bg-gradient text-white py-2" style="background: var(--gradient-primary);">
-                            <h3 class="small mb-0 fw-bold">
-                                <i class="fas fa-info-circle me-2"></i>Quick Info
-                            </h3>
+                    <!-- Attendees List -->
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header border-0 pt-4 px-4 pb-0 bg-white">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <h3 class="h6 mb-0 fw-bold">
+                                    <i class="fas fa-users me-2" style="color: var(--primary-color);"></i>
+                                    Attendees
+                                </h3>
+                                <span id="attendeeCount" class="badge rounded-pill" style="background: var(--gradient-primary);">0</span>
+                            </div>
                         </div>
-                        <div class="card-body p-3">
-                            <div class="d-flex align-items-center justify-content-between py-2 border-bottom">
-                                <span class="text-muted small">Status</span>
-                                <span id="quickStatus"></span>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between py-2 border-bottom">
-                                <span class="text-muted small">Category</span>
-                                <span id="quickCategory" class="fw-semibold small"></span>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between py-2">
-                                <span class="text-muted small">Time Left</span>
-                                <span id="quickTimeLeft" class="fw-semibold small"></span>
-                            </div>
+                        <div class="card-body p-0">
+                            <div id="attendeesContainer" style="max-height: 400px; overflow-y: auto;"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Bottom Spacing -->
+        <div style="height: 80px;"></div>
     </main>
 
     <!-- Footer -->
@@ -291,29 +332,20 @@ declare(strict_types=1);
             // Set page title
             document.title = `${evt.title} • Event Details`;
             
-            // Event Image
-            const imgContainer = document.getElementById('eventImage');
+            // Hero Section Background Image
+            const heroSection = document.getElementById('heroSection');
             if (evt.image_path) {
-                imgContainer.innerHTML = `
-                    <div class="position-relative" style="height: 300px; overflow: hidden;">
-                        <img src="${evt.image_path}" alt="${evt.title}" class="w-100 h-100" style="object-fit: cover;">
-                        <div class="position-absolute bottom-0 start-0 end-0 p-3" style="background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.7) 100%);">
-                            <div class="text-white">
-                                <h2 class="h4 fw-bold mb-0">${evt.title}</h2>
-                            </div>
-                        </div>
-                    </div>
-                `;
+                heroSection.style.background = `linear-gradient(rgba(8, 145, 178, 0.85), rgba(20, 184, 166, 0.85)), url('${evt.image_path}')`;
+                heroSection.style.backgroundSize = 'cover';
+                heroSection.style.backgroundPosition = 'center';
             }
             
-            // Title
-            document.getElementById('eventTitle').textContent = evt.title;
-            document.getElementById('stickyTitle').textContent = evt.title;
+            // Hero Title
+            document.getElementById('heroTitle').textContent = evt.title;
             
-            // Category
-            const categoryBadge = evt.category ? `<span class="badge bg-light text-dark border">${evt.category}</span>` : '';
-            document.getElementById('eventCategory').innerHTML = categoryBadge;
-            document.getElementById('quickCategory').textContent = evt.category || 'N/A';
+            // Hero Category
+            const categoryBadge = evt.category ? `<span class="badge bg-light text-dark">${evt.category}</span>` : '';
+            document.getElementById('heroCategory').innerHTML = categoryBadge;
             
             // Status
             const cutoff = evt.registration_close || evt.event_date;
@@ -322,51 +354,51 @@ declare(strict_types=1);
             
             let statusBadge = '';
             if (isSuspended) {
-                statusBadge = '<span class="badge bg-warning text-dark"><i class="fas fa-exclamation-triangle me-1"></i>Suspended</span>';
+                statusBadge = '<span class="badge bg-warning text-dark"><i class="fas fa-ban me-1"></i>Suspended</span>';
             } else if (dLeft !== null && dLeft >= 0) {
                 statusBadge = '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Open</span>';
             } else {
                 statusBadge = '<span class="badge bg-danger"><i class="fas fa-times-circle me-1"></i>Closed</span>';
             }
             
-            document.getElementById('eventStatus').innerHTML = statusBadge;
-            document.getElementById('stickyStatus').innerHTML = statusBadge;
-            document.getElementById('quickStatus').innerHTML = statusBadge;
+            document.getElementById('heroStatus').innerHTML = statusBadge;
+            document.getElementById('sidebarStatus').innerHTML = statusBadge;
             
-            // Time left
-            if (dLeft !== null && dLeft >= 0) {
-                document.getElementById('quickTimeLeft').innerHTML = `<span class="text-primary">${dLeft} ${dLeft === 1 ? 'day' : 'days'}</span>`;
-            } else {
-                document.getElementById('quickTimeLeft').textContent = 'Event closed';
-            }
+            // Hero Date and Location
+            document.getElementById('heroDate').textContent = formatDate(evt.event_date);
+            document.getElementById('heroLocation').textContent = evt.location;
             
-            // Date and Location
-            document.getElementById('eventDate').textContent = formatDate(evt.event_date);
-            document.getElementById('eventLocation').textContent = evt.location;
-            document.getElementById('stickyMeta').textContent = `${formatDate(evt.event_date)} • ${evt.location}`;
+            // Hero Attendees
+            const attendeeCount = Number(evt.registration_count || 0);
+            document.getElementById('heroAttendees').textContent = `${attendeeCount} ${attendeeCount === 1 ? 'attendee' : 'attendees'}`;
             
             // Organizer
-            document.getElementById('eventOrganizer').textContent = evt.organizer_name ? `@${evt.organizer_name}` : 'Unknown';
+            document.getElementById('organizerName').textContent = evt.organizer_name ? `@${evt.organizer_name}` : 'Unknown';
+            
+            // Time Remaining
+            if (dLeft !== null && dLeft >= 0) {
+                document.getElementById('timeRemaining').innerHTML = `<span style="color: var(--primary-color);">${dLeft} ${dLeft === 1 ? 'day' : 'days'} left</span>`;
+            } else {
+                document.getElementById('timeRemaining').textContent = 'Event has ended';
+            }
             
             // Registration count
-            document.getElementById('eventRegCount').textContent = String(Number(evt.registration_count || 0));
+            document.getElementById('regCount').textContent = String(attendeeCount);
             
             // Suspended notice
             if (isSuspended) {
                 const reason = String(evt.suspend_reason || '').trim();
-                const notice = document.createElement('div');
-                notice.className = 'alert alert-warning mx-4 mt-4';
-                notice.innerHTML = `
-                    <div class="d-flex align-items-center gap-3">
-                        <i class="fas fa-exclamation-triangle fa-2x"></i>
-                        <div>
-                            <strong>Event Suspended</strong>
-                            ${reason ? `<div class="mt-1">${reason}</div>` : ''}
+                document.getElementById('suspendedNotice').innerHTML = `
+                    <div class="alert alert-warning mb-4">
+                        <div class="d-flex align-items-start gap-3">
+                            <i class="fas fa-exclamation-triangle fa-2x"></i>
+                            <div>
+                                <h6 class="fw-bold mb-1">Event Suspended</h6>
+                                ${reason ? `<p class="mb-0 small">${reason}</p>` : ''}
+                            </div>
                         </div>
                     </div>
                 `;
-                const cardBody = document.querySelector('.card-body');
-                cardBody?.insertBefore(notice, cardBody.firstChild);
             }
             
             // Description
@@ -379,42 +411,118 @@ declare(strict_types=1);
             }
             
             // Action buttons
+            const heroActionArea = document.getElementById('heroActionArea');
             const actionArea = document.getElementById('actionArea');
-            const actions = [];
+            
+            let heroActions = [];
+            let contentActions = [];
             
             if (isSuspended) {
-                actions.push(`
-                    <div class="alert alert-warning mb-0 w-100">
-                        <i class="fas fa-info-circle me-2"></i>Registration is unavailable while the event is suspended.
+                const suspendedMsg = `
+                    <div class="alert alert-warning mb-0 w-100 shadow">
+                        <i class="fas fa-info-circle me-2"></i>Registration unavailable - Event suspended
                     </div>
-                `);
+                `;
+                heroActions.push(suspendedMsg);
+                contentActions.push(`<div class="alert alert-info mb-0 w-100"><i class="fas fa-info-circle me-2"></i>Registration is unavailable while the event is suspended.</div>`);
             } else if (!user) {
-                actions.push('<a class="btn btn-gradient btn-lg px-5" href="/login.php"><i class="fas fa-sign-in-alt me-2"></i>Log In to Register</a>');
-            } else if (user.role === 'attendee') {
+                const loginBtn = `
+                    <a class="btn btn-light btn-lg shadow-lg w-100" href="/login.php">
+                        <i class="fas fa-sign-in-alt me-2"></i>Log In to Register
+                    </a>
+                `;
+                heroActions.push(loginBtn);
+                contentActions.push(`<div class="d-grid w-100"><a class="btn btn-gradient btn-lg" href="/login.php"><i class="fas fa-sign-in-alt me-2"></i>Log In to Register</a></div>`);
+            } else if (user && (user.role === 'attendee' || user.role === 'admin')) {
+                // Attendees and Admins can register for events
                 const isClosed = dLeft == null || dLeft < 0;
                 const registered = await isUserRegistered(id);
                 
                 if (!registered) {
-                    actions.push(`
-                        <button id="btnRegister" class="btn ${isClosed ? 'btn-secondary' : 'btn-gradient'} btn-lg px-5" data-id="${evt.id}" ${isClosed ? 'disabled' : ''}>
+                    heroActions.push(`
+                        <button id="btnRegisterHero" class="btn ${isClosed ? 'btn-light' : 'btn-light'} btn-lg shadow-lg w-100" data-id="${evt.id}" ${isClosed ? 'disabled' : ''}>
                             <i class="fas fa-ticket-alt me-2"></i>${isClosed ? 'Registration Closed' : 'Register Now'}
                         </button>
                     `);
+                    contentActions.push(`
+                        <div class="d-grid w-100">
+                            <button id="btnRegister" class="btn ${isClosed ? 'btn-secondary' : 'btn-gradient'} btn-lg" data-id="${evt.id}" ${isClosed ? 'disabled' : ''}>
+                                <i class="fas fa-ticket-alt me-2"></i>${isClosed ? 'Registration Closed' : 'Register for This Event'}
+                            </button>
+                        </div>
+                    `);
                 } else {
-                    actions.push(`
-                        <button id="btnUnregister" class="btn btn-outline-danger btn-lg px-5" data-id="${evt.id}">
-                            <i class="fas fa-times me-2"></i>Unregister
+                    heroActions.push(`
+                        <button id="btnUnregisterHero" class="btn btn-outline-light btn-lg shadow-lg w-100" data-id="${evt.id}">
+                            <i class="fas fa-check-circle me-2"></i>You're Registered
                         </button>
                     `);
+                    contentActions.push(`
+                        <div class="d-grid w-100">
+                            <button id="btnUnregister" class="btn btn-outline-danger btn-lg" data-id="${evt.id}">
+                                <i class="fas fa-times me-2"></i>Cancel Registration
+                            </button>
+                        </div>
+                    `);
                 }
-            } else if (user.role === 'organizer' && Number(user.id) === Number(evt.organizer_id)) {
-                actions.push('<div class="alert alert-info mb-0"><i class="fas fa-crown me-2"></i>You are the organizer of this event</div>');
+            } else if (user && user.role === 'organizer') {
+                if (Number(user.id) === Number(evt.organizer_id)) {
+                    const organizerMsg = `
+                        <div class="badge bg-light text-dark p-3 w-100 shadow">
+                            <i class="fas fa-crown me-2"></i>You're the Organizer
+                        </div>
+                    `;
+                    heroActions.push(organizerMsg);
+                    contentActions.push(`<div class="alert alert-info mb-0 d-flex align-items-center gap-2 w-100"><i class="fas fa-crown"></i><span>You are the organizer of this event</span></div>`);
+                } else {
+                    // Organizers can register for other people's events
+                    const isClosed = dLeft == null || dLeft < 0;
+                    const registered = await isUserRegistered(id);
+                    
+                    if (!registered) {
+                        heroActions.push(`
+                            <button id="btnRegisterHero" class="btn btn-light btn-lg shadow-lg w-100" data-id="${evt.id}" ${isClosed ? 'disabled' : ''}>
+                                <i class="fas fa-ticket-alt me-2"></i>${isClosed ? 'Registration Closed' : 'Register Now'}
+                            </button>
+                        `);
+                        contentActions.push(`
+                            <div class="d-grid w-100">
+                                <button id="btnRegister" class="btn ${isClosed ? 'btn-secondary' : 'btn-gradient'} btn-lg" data-id="${evt.id}" ${isClosed ? 'disabled' : ''}>
+                                    <i class="fas fa-ticket-alt me-2"></i>${isClosed ? 'Registration Closed' : 'Register for This Event'}
+                                </button>
+                            </div>
+                        `);
+                    } else {
+                        heroActions.push(`
+                            <button id="btnUnregisterHero" class="btn btn-outline-light btn-lg shadow-lg w-100" data-id="${evt.id}">
+                                <i class="fas fa-check-circle me-2"></i>You're Registered
+                            </button>
+                        `);
+                        contentActions.push(`
+                            <div class="d-grid w-100">
+                                <button id="btnUnregister" class="btn btn-outline-danger btn-lg" data-id="${evt.id}">
+                                    <i class="fas fa-times me-2"></i>Cancel Registration
+                                </button>
+                            </div>
+                        `);
+                    }
+                }
             }
             
-            actionArea.innerHTML = actions.join(' ');
+            if (heroActionArea) {
+                heroActionArea.innerHTML = heroActions.join('');
+            }
+            if (actionArea) {
+                actionArea.innerHTML = contentActions.join('');
+            }
             
-            // Bind action buttons
+            // Bind action buttons (both hero and content)
             document.getElementById('btnRegister')?.addEventListener('click', async () => {
+                const ok = await register(id);
+                if (ok) await render();
+            });
+            
+            document.getElementById('btnRegisterHero')?.addEventListener('click', async () => {
                 const ok = await register(id);
                 if (ok) await render();
             });
@@ -424,11 +532,16 @@ declare(strict_types=1);
                 if (ok) await render();
             });
             
+            document.getElementById('btnUnregisterHero')?.addEventListener('click', async () => {
+                const ok = await unregister(id);
+                if (ok) await render();
+            });
+            
             // Map
             if (!mapInitialized) {
                 const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(evt.location || '')}&output=embed`;
                 document.getElementById('eventMap').innerHTML = `
-                    <iframe class="w-100 border-0" style="height: 280px;" src="${mapSrc}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                    <iframe class="w-100 border-0" style="height: 350px; border-radius: 16px;" src="${mapSrc}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
                 `;
                 mapInitialized = true;
             }
@@ -443,20 +556,23 @@ declare(strict_types=1);
                 
                 if (!attendees.length) {
                     container.innerHTML = `
-                        <div class="text-center py-4 text-muted">
-                            <i class="fas fa-users fa-lg mb-2 opacity-25"></i>
-                            <p class="mb-0 small">No attendees yet</p>
+                        <div class="text-center py-5 text-muted">
+                            <div class="mb-3" style="opacity: 0.3;">
+                                <i class="fas fa-users fa-3x"></i>
+                            </div>
+                            <p class="mb-0">No attendees yet</p>
+                            <p class="small mb-0">Be the first to register!</p>
                         </div>
                     `;
                 } else {
                     container.innerHTML = attendees.map((a, index) => `
-                        <div class="d-flex align-items-center gap-2 p-2 ${index !== attendees.length - 1 ? 'border-bottom' : ''}">
-                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 32px; height: 32px; font-weight: 600; font-size: 0.75rem;">
+                        <div class="attendee-item d-flex align-items-center gap-3 p-3 ${index !== attendees.length - 1 ? 'border-bottom' : ''}">
+                            <div class="attendee-avatar rounded-circle text-white d-flex align-items-center justify-content-center flex-shrink-0 fw-bold" style="font-size: 0.875rem;">
                                 ${a.username.substring(0, 2).toUpperCase()}
                             </div>
                             <div class="flex-grow-1 min-w-0">
-                                <div class="fw-semibold small text-truncate">${a.username}</div>
-                                <div class="text-muted" style="font-size: 0.75rem;">Attendee</div>
+                                <div class="fw-semibold text-truncate">${a.username}</div>
+                                <div class="text-muted small">Registered attendee</div>
                             </div>
                         </div>
                     `).join('');
@@ -472,7 +588,7 @@ declare(strict_types=1);
                 const allowedAttrs = { 'A': new Set(['href','target','rel']) };
                 const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_ELEMENT, null);
                 const toRemove = [];
-                
+
                 while (walker.nextNode()) {
                     const el = walker.currentNode;
                     if (!allowedTags.has(el.tagName)) { 
@@ -518,20 +634,23 @@ declare(strict_types=1);
                     
                     if (!attendees.length) {
                         container.innerHTML = `
-                            <div class="text-center py-4 text-muted">
-                                <i class="fas fa-users fa-lg mb-2 opacity-25"></i>
-                                <p class="mb-0 small">No attendees yet</p>
+                            <div class="text-center py-5 text-muted">
+                                <div class="mb-3" style="opacity: 0.3;">
+                                    <i class="fas fa-users fa-3x"></i>
+                                </div>
+                                <p class="mb-0">No attendees yet</p>
+                                <p class="small mb-0">Be the first to register!</p>
                             </div>
                         `;
                     } else {
                         container.innerHTML = attendees.map((a, index) => `
-                            <div class="d-flex align-items-center gap-2 p-2 ${index !== attendees.length - 1 ? 'border-bottom' : ''}">
-                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 32px; height: 32px; font-weight: 600; font-size: 0.75rem;">
+                            <div class="attendee-item d-flex align-items-center gap-3 p-3 ${index !== attendees.length - 1 ? 'border-bottom' : ''}">
+                                <div class="attendee-avatar rounded-circle text-white d-flex align-items-center justify-content-center flex-shrink-0 fw-bold" style="font-size: 0.875rem;">
                                     ${a.username.substring(0, 2).toUpperCase()}
                                 </div>
                                 <div class="flex-grow-1 min-w-0">
-                                    <div class="fw-semibold small text-truncate">${a.username}</div>
-                                    <div class="text-muted" style="font-size: 0.75rem;">Attendee</div>
+                                    <div class="fw-semibold text-truncate">${a.username}</div>
+                                    <div class="text-muted small">Registered attendee</div>
                                 </div>
                             </div>
                         `).join('');
@@ -546,7 +665,8 @@ declare(strict_types=1);
             $.getJSON(`/api/events.php?id=${id}`)
                 .done(data => {
                     const count = Number(data?.event?.registration_count || 0);
-                    $('#eventRegCount').text(String(count));
+                    $('#regCount').text(String(count));
+                    $('#heroAttendees').text(`${count} ${count === 1 ? 'attendee' : 'attendees'}`);
                 });
         }
 
@@ -565,35 +685,20 @@ declare(strict_types=1);
                     const btnRegister = document.getElementById('btnRegister');
                     if (btnRegister) {
                         btnRegister.disabled = isClosed;
-                        btnRegister.className = `btn ${isClosed ? 'btn-secondary' : 'btn-gradient'} btn-lg px-5`;
-                        btnRegister.innerHTML = `<i class="fas fa-ticket-alt me-2"></i>${isClosed ? 'Registration Closed' : 'Register Now'}`;
+                        btnRegister.className = `btn ${isClosed ? 'btn-secondary' : 'btn-gradient'} btn-lg`;
+                        btnRegister.innerHTML = `<i class="fas fa-ticket-alt me-2"></i>${isClosed ? 'Registration Closed' : 'Register for This Event'}`;
                     }
                     
-                    if (dLeft !== null && dLeft >= 0) {
-                        document.getElementById('quickTimeLeft').innerHTML = `<span class="text-primary">${dLeft} ${dLeft === 1 ? 'day' : 'days'}</span>`;
-                    } else {
-                        document.getElementById('quickTimeLeft').textContent = 'Event closed';
+                    const timeEl = document.getElementById('timeRemaining');
+                    if (timeEl) {
+                        if (dLeft !== null && dLeft >= 0) {
+                            timeEl.innerHTML = `<span style="color: var(--primary-color);">${dLeft} ${dLeft === 1 ? 'day' : 'days'} left</span>`;
+                        } else {
+                            timeEl.textContent = 'Event has ended';
+                        }
                     }
                 });
         }
-
-        // Sticky header visibility
-        (function setupStickyHeader() {
-            const sticky = document.getElementById('stickyHeader');
-            const threshold = 400;
-            
-            function onScroll() {
-                if (!sticky) return;
-                if (window.scrollY > threshold) {
-                    sticky.classList.remove('d-none');
-                } else {
-                    sticky.classList.add('d-none');
-                }
-            }
-            
-            window.addEventListener('scroll', onScroll, { passive: true });
-            onScroll();
-        })();
 
         // Track visit
         fetch('/api/visits.php', { 
