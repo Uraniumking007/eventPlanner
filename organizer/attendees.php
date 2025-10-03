@@ -56,37 +56,24 @@ if (!$user || ($user['role'] ?? '') !== 'organizer') {
                     <input id="searchInput" type="text" class="form-control" placeholder="Name or email">
                 </div>
             </div>
-            <div class="card shadow-sm border-0 rounded-3">
-                <div class="card-header bg-white border-bottom py-3">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <h2 class="h6 mb-1 fw-bold">
-                                <i class="fas fa-list me-2 text-primary"></i>Attendees List
+            <div class="card border-0" style="border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);">
+                <div class="card-header border-0 py-4" style="background: var(--gradient-primary); border-radius: 16px 16px 0 0;">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                        <div class="text-white">
+                            <h2 class="h5 mb-1 fw-bold">
+                                <i class="fas fa-users me-2"></i>Attendees List
                             </h2>
-                            <div class="small text-muted" id="count">0 attendees</div>
+                            <div class="small opacity-90" id="count">0 attendees</div>
                         </div>
-                        <button id="exportCsvBtn" class="btn btn-sm btn-gradient">
-                            <i class="fas fa-file-csv me-1"></i>Export CSV
+                        <button id="exportCsvBtn" class="btn btn-light shadow-sm" style="border-radius: 8px; font-weight: 500;">
+                            <i class="fas fa-file-csv me-2"></i>Export CSV
                         </button>
                     </div>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="small text-muted fw-semibold">User ID</th>
-                                    <th class="small text-muted fw-semibold">Name</th>
-                                    <th class="small text-muted fw-semibold">Email</th>
-                                    <th class="small text-muted fw-semibold">Registered At</th>
-                                </tr>
-                            </thead>
-                            <tbody id="attendeesTable">
-                                <tr><td colspan="4" class="text-center text-muted py-4">
-                                    <i class="fas fa-info-circle me-2"></i>Select an event to view attendees
-                                </td></tr>
-                            </tbody>
-                        </table>
+                <div class="card-body p-0" id="attendeesContainer">
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-info-circle fa-2x mb-3" style="opacity: 0.3;"></i>
+                        <p class="mb-0">Select an event to view attendees</p>
                     </div>
                 </div>
             </div>
@@ -111,22 +98,38 @@ if (!$user || ($user['role'] ?? '') !== 'organizer') {
             return (await res.json()).attendees || [];
         }
 
-        function row(a) {
+        function row(a, index, total) {
             const initials = (a.username || a.email || 'U').substring(0, 2).toUpperCase();
+            const isLast = index === total - 1;
             return `
-                <tr>
-                    <td class="small">#${a.id}</td>
-                    <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; font-size: 0.7rem; font-weight: 600;">
+                <div class="attendee-row p-3 ${!isLast ? 'border-bottom' : ''}" style="transition: all 0.2s ease;">
+                    <div class="row align-items-center g-3">
+                        <div class="col-auto">
+                            <div class="rounded-circle text-white d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: var(--gradient-primary); font-weight: 600; font-size: 1rem;">
                                 ${initials}
                             </div>
-                            <span class="fw-semibold small">${(a.username || '').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span>
                         </div>
-                    </td>
-                    <td class="small text-muted">${(a.email || '').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</td>
-                    <td class="small text-nowrap text-muted">${new Date(a.registered_at || Date.now()).toLocaleString()}</td>
-                </tr>
+                        <div class="col">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <h3 class="h6 mb-0 fw-bold" style="color: #1f2937;">${(a.username || 'Unknown').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</h3>
+                                <span class="badge rounded-pill" style="background: rgba(6, 182, 212, 0.1); color: var(--primary-color); font-size: 0.7rem;">#${a.id}</span>
+                            </div>
+                            <div class="small text-muted">
+                                <i class="fas fa-envelope me-1" style="color: var(--primary-color); font-size: 0.75rem;"></i>
+                                ${(a.email || 'No email').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+                            </div>
+                        </div>
+                        <div class="col-auto text-end">
+                            <div class="small text-muted mb-1">
+                                <i class="fas fa-clock me-1" style="color: var(--primary-color);"></i>
+                                Registered
+                            </div>
+                            <div class="small fw-semibold" style="color: #6b7280;">
+                                ${new Date(a.registered_at || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             `;
         }
 
@@ -148,23 +151,52 @@ if (!$user || ($user['role'] ?? '') !== 'organizer') {
         async function loadAttendees() {
             const select = document.getElementById('eventSelect');
             const eventId = Number(select.value);
-            const tbody = document.getElementById('attendeesTable');
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4"><i class="fas fa-spinner fa-spin me-2"></i>Loading attendees...</td></tr>';
+            const container = document.getElementById('attendeesContainer');
+            container.innerHTML = `
+                <div class="text-center text-muted py-5">
+                    <i class="fas fa-spinner fa-spin fa-2x mb-3" style="opacity: 0.5;"></i>
+                    <p class="mb-0">Loading attendees...</p>
+                </div>
+            `;
             try {
-                // Extend registrations API to include registered_at for clarity; currently we fallback to now.
                 allAttendees = await fetchAttendees(eventId);
                 applyFilter();
             } catch {
-                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger py-4"><i class="fas fa-exclamation-triangle me-2"></i>Failed to load attendees.</td></tr>';
+                container.innerHTML = `
+                    <div class="text-center text-danger py-5">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-3" style="opacity: 0.5;"></i>
+                        <p class="mb-0">Failed to load attendees.</p>
+                    </div>
+                `;
             }
         }
 
         function applyFilter() {
             const q = (document.getElementById('searchInput').value || '').toLowerCase();
-            const tbody = document.getElementById('attendeesTable');
+            const container = document.getElementById('attendeesContainer');
             const filtered = allAttendees.filter(a => String(a.username||'').toLowerCase().includes(q) || String(a.email||'').toLowerCase().includes(q));
             document.getElementById('count').textContent = `${filtered.length} attendee${filtered.length === 1 ? '' : 's'}`;
-            tbody.innerHTML = filtered.length ? filtered.map(row).join('') : '<tr><td colspan="4" class="text-center text-muted py-4"><i class="fas fa-search me-2"></i>No attendees found matching your search.</td></tr>';
+            
+            if (!filtered.length) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-search fa-2x mb-3" style="opacity: 0.3;"></i>
+                        <p class="mb-0">No attendees found matching your search.</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = filtered.map((a, i) => row(a, i, filtered.length)).join('');
+                
+                // Add hover effects
+                container.querySelectorAll('.attendee-row').forEach(row => {
+                    row.addEventListener('mouseenter', function() {
+                        this.style.backgroundColor = 'rgba(6, 182, 212, 0.05)';
+                    });
+                    row.addEventListener('mouseleave', function() {
+                        this.style.backgroundColor = 'transparent';
+                    });
+                });
+            }
         }
 
         function toCsv(rows) {

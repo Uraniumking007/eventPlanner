@@ -14,6 +14,20 @@
     --accent-color: #22d3ee;
     --success-color: #14b8a6;
 }
+
+/* Event Card Hover Effects */
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04) !important;
+}
+
+.card img {
+    transition: transform 0.3s ease;
+}
+
+.card:hover img {
+    transform: scale(1.05);
+}
 *{
     margin: 0;
     padding: 0;

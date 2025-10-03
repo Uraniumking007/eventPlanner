@@ -172,43 +172,62 @@
             const count = Number(evt.registration_count || 0);
             return `
                 <div class="col-12 col-md-6">
-                    <div class="card border-0 shadow-sm h-100 event-card" style="border-radius: 10px; overflow: hidden;">
+                    <div class="card border-0 h-100" style="border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); transition: all 0.3s ease;">
                         ${evt.image_path ? `
-                            <div class="position-relative" style="height: 120px; overflow: hidden;">
-                                <img src="${evt.image_path}" class="w-100 h-100" style="object-fit: cover;">
-                                <div class="position-absolute top-0 end-0 m-2">
-                                    <span class="badge bg-white text-dark small">${evt.category || 'Event'}</span>
+                            <div class="position-relative overflow-hidden" style="height: 140px;">
+                                <img src="${evt.image_path}" class="w-100 h-100" style="object-fit: cover; transition: transform 0.3s ease;">
+                                <div class="position-absolute top-0 start-0 end-0 p-2" style="background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, transparent 100%);">
+                                    ${evt.category ? `<span class="badge bg-white text-dark small">${evt.category}</span>` : ''}
                                 </div>
                             </div>
                         ` : `
-                            <div class="position-relative" style="height: 120px; background: var(--gradient-primary);">
+                            <div class="position-relative" style="height: 140px; background: var(--gradient-primary);">
+                                <div class="position-absolute top-0 start-0 p-2">
+                                    ${evt.category ? `<span class="badge bg-white text-dark small">${evt.category}</span>` : ''}
+                                </div>
                                 <div class="d-flex align-items-center justify-content-center h-100">
-                                    <i class="fas fa-calendar-alt fa-2x text-white opacity-25"></i>
+                                    <i class="fas fa-calendar-alt text-white" style="font-size: 2.5rem; opacity: 0.2;"></i>
                                 </div>
                             </div>
                         `}
                         <div class="card-body p-3">
-                            <h3 class="h6 fw-bold mb-2">${evt.title}</h3>
-                            <div class="d-flex align-items-center gap-2 text-muted small mb-1">
-                                <i class="fas fa-calendar"></i>
-                                <span>${formatDate(evt.event_date)}</span>
-                            </div>
-                            <div class="d-flex align-items-center gap-2 text-muted small mb-2">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span class="text-truncate">${evt.location}</span>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between py-2 border-top">
-                                <div class="d-flex align-items-center gap-1">
-                                    <i class="fas fa-users text-muted small"></i>
-                                    <span class="fw-semibold">${count}</span>
-                                    <span class="text-muted small">registered</span>
+                            <h3 class="h6 fw-bold mb-3" style="color: #1f2937;">${evt.title}</h3>
+                            
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 28px; height: 28px; background: rgba(6, 182, 212, 0.1);">
+                                        <i class="fas fa-calendar" style="font-size: 0.75rem; color: var(--primary-color);"></i>
+                                    </div>
+                                    <span class="small text-muted">${formatDate(evt.event_date)}</span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 28px; height: 28px; background: rgba(239, 68, 68, 0.1);">
+                                        <i class="fas fa-map-marker-alt" style="font-size: 0.75rem; color: #ef4444;"></i>
+                                    </div>
+                                    <span class="small text-muted text-truncate">${evt.location}</span>
                                 </div>
                             </div>
-                            <div class="d-flex gap-2 mt-2">
-                                <button data-action="edit" data-id="${evt.id}" class="btn btn-sm btn-outline-secondary flex-grow-1">
+
+                            <div class="d-flex align-items-center justify-content-between mb-3 pt-2" style="border-top: 2px solid #f3f4f6;">
+                                <div class="d-flex align-items-center gap-2 mt-2">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: var(--gradient-primary);">
+                                        <i class="fas fa-users text-white" style="font-size: 0.75rem;"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold small" style="color: var(--primary-color);">${count}</div>
+                                        <div class="text-muted" style="font-size: 0.7rem;">attendees</div>
+                                    </div>
+                                </div>
+                                <a href="/event.php?id=${evt.id}" class="btn btn-sm" style="background: rgba(6, 182, 212, 0.1); color: var(--primary-color); border-radius: 8px; font-weight: 500; font-size: 0.875rem;">
+                                    <i class="fas fa-eye me-1"></i>View
+                                </a>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button data-action="edit" data-id="${evt.id}" class="btn btn-sm flex-grow-1" style="background: var(--gradient-primary); color: white; border-radius: 8px; font-weight: 500;">
                                     <i class="fas fa-edit me-1"></i>Edit
                                 </button>
-                                <button data-action="delete" data-id="${evt.id}" class="btn btn-sm btn-outline-danger">
+                                <button data-action="delete" data-id="${evt.id}" class="btn btn-sm btn-outline-danger" style="border-radius: 8px;">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>

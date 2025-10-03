@@ -167,73 +167,95 @@
             const isSuspended = Number(evt.suspended || 0) === 1;
             
             let statusBadge = '';
-            let daysBadge = '';
+            let statusColor = '';
             
             if (isSuspended) {
-                statusBadge = '<span class="badge bg-warning text-dark"><i class="fas fa-exclamation-triangle me-1"></i>Suspended</span>';
+                statusBadge = '<span class="badge" style="background: #fbbf24; color: #78350f;"><i class="fas fa-ban me-1"></i>Suspended</span>';
+                statusColor = '#fbbf24';
             } else if (dLeft !== null && dLeft >= 0) {
-                statusBadge = '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Open</span>';
-                daysBadge = `<span class="badge bg-primary rounded-pill"><i class="fas fa-clock me-1"></i>${dLeft} ${dLeft === 1 ? 'day' : 'days'} left</span>`;
+                statusBadge = '<span class="badge" style="background: linear-gradient(135deg, #14b8a6, #0d9488); color: white;"><i class="fas fa-check-circle me-1"></i>Open</span>';
+                statusColor = '#14b8a6';
             } else {
-                statusBadge = '<span class="badge bg-danger"><i class="fas fa-times-circle me-1"></i>Closed</span>';
+                statusBadge = '<span class="badge bg-secondary"><i class="fas fa-clock me-1"></i>Closed</span>';
+                statusColor = '#6b7280';
             }
 
             return `
                 <div class="col-12 col-sm-6 col-lg-4">
-                    <div class="card h-100 shadow-sm border-0 overflow-hidden event-card" style="border-radius: 12px;">
+                    <div class="card h-100 border-0 overflow-hidden" style="border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); transition: all 0.3s ease;">
                         ${evt.image_path ? `
-                            <div class="position-relative overflow-hidden" style="height: 180px;">
-                                <img src="${evt.image_path}" alt="${evt.title}" class="card-img-top w-100 h-100" style="object-fit: cover; transition: transform 0.3s ease;">
-                                <div class="position-absolute top-0 end-0 m-2">
-                                    ${statusBadge}
+                            <div class="position-relative overflow-hidden" style="height: 200px;">
+                                <img src="${evt.image_path}" alt="${evt.title}" class="w-100 h-100" style="object-fit: cover; transition: transform 0.3s ease;">
+                                <div class="position-absolute top-0 start-0 end-0 p-3" style="background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, transparent 100%);">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        ${evt.category ? `<span class="badge bg-white text-dark">${evt.category}</span>` : '<span></span>'}
+                                        ${statusBadge}
+                                    </div>
                                 </div>
+                                ${dLeft !== null && dLeft >= 0 && !isSuspended ? `
+                                    <div class="position-absolute bottom-0 end-0 m-3">
+                                        <div class="badge" style="background: rgba(6, 182, 212, 0.95); color: white; font-weight: 600; padding: 6px 12px;">
+                                            <i class="fas fa-clock me-1"></i>${dLeft} ${dLeft === 1 ? 'day' : 'days'} left
+                                        </div>
+                                    </div>
+                                ` : ''}
                             </div>
                         ` : `
-                            <div class="position-relative" style="height: 180px; background: var(--gradient-primary);">
-                                <div class="position-absolute top-0 end-0 m-2">
-                                    ${statusBadge}
+                            <div class="position-relative" style="height: 200px; background: var(--gradient-primary);">
+                                <div class="position-absolute top-0 start-0 end-0 p-3">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        ${evt.category ? `<span class="badge bg-white text-dark">${evt.category}</span>` : '<span></span>'}
+                                        ${statusBadge}
+                                    </div>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-center h-100">
-                                    <i class="fas fa-calendar-alt text-white" style="font-size: 3rem; opacity: 0.3;"></i>
+                                    <i class="fas fa-calendar-alt text-white" style="font-size: 3.5rem; opacity: 0.2;"></i>
                                 </div>
+                                ${dLeft !== null && dLeft >= 0 && !isSuspended ? `
+                                    <div class="position-absolute bottom-0 end-0 m-3">
+                                        <div class="badge bg-white text-dark" style="font-weight: 600; padding: 6px 12px;">
+                                            <i class="fas fa-clock me-1"></i>${dLeft} ${dLeft === 1 ? 'day' : 'days'} left
+                                        </div>
+                                    </div>
+                                ` : ''}
                             </div>
                         `}
-                        <div class="card-body p-3">
-                            <div class="d-flex align-items-start justify-content-between mb-2">
-                                <h3 class="h6 fw-bold mb-0">${evt.title}</h3>
-                                ${evt.category ? `<span class="badge bg-light text-dark ms-2 flex-shrink-0 small">${evt.category}</span>` : ''}
-                            </div>
+                        <div class="card-body p-4">
+                            <h3 class="h5 fw-bold mb-3" style="color: #1f2937;">${evt.title}</h3>
                             
-                            <div class="mb-2">
-                                <div class="d-flex align-items-center text-muted mb-1">
-                                    <i class="fas fa-calendar me-2 text-primary small"></i>
-                                    <small class="fw-medium">${formatDate(evt.event_date)}</small>
-                                    ${daysBadge ? `<span class="ms-2">${daysBadge}</span>` : ''}
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; background: rgba(6, 182, 212, 0.1);">
+                                        <i class="fas fa-calendar" style="font-size: 0.875rem; color: var(--primary-color);"></i>
+                                    </div>
+                                    <span class="small text-muted">${formatDate(evt.event_date)}</span>
                                 </div>
-                                <div class="d-flex align-items-center text-muted">
-                                    <i class="fas fa-map-marker-alt me-2 text-danger small"></i>
-                                    <small>${evt.location}</small>
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; background: rgba(239, 68, 68, 0.1);">
+                                        <i class="fas fa-map-marker-alt" style="font-size: 0.875rem; color: #ef4444;"></i>
+                                    </div>
+                                    <span class="small text-muted text-truncate">${evt.location}</span>
                                 </div>
                             </div>
 
                             ${isSuspended && evt.suspend_reason ? `
-                                <div class="alert alert-warning py-1 px-2 small mb-2">
-                                    <strong>Suspended:</strong> ${evt.suspend_reason}
+                                <div class="alert alert-warning py-2 px-3 mb-3" style="border-radius: 8px; font-size: 0.875rem;">
+                                    <i class="fas fa-info-circle me-1"></i>${evt.suspend_reason}
                                 </div>
                             ` : ''}
 
-                            <p class="text-muted small mb-2" style="line-height: 1.5;">
-                                ${(evt.description || 'No description available.').substring(0, 100)}${evt.description && evt.description.length > 100 ? '...' : ''}
-                            </p>
-
-                            <div class="d-flex align-items-center justify-content-between pt-2 border-top">
-                                <div class="d-flex align-items-center gap-1">
-                                    <i class="fas fa-users text-muted small"></i>
-                                    <span class="fw-semibold small reg-count" data-event-id="${evt.id}">${count}</span>
-                                    <span class="text-muted" style="font-size: 0.75rem;">registered</span>
+                            <div class="d-flex align-items-center justify-content-between pt-3" style="border-top: 2px solid #f3f4f6;">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; background: var(--gradient-primary);">
+                                        <i class="fas fa-users text-white" style="font-size: 0.875rem;"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold reg-count" data-event-id="${evt.id}" style="color: var(--primary-color);">${count}</div>
+                                        <div class="text-muted" style="font-size: 0.75rem;">attendees</div>
+                                    </div>
                                 </div>
-                                <a href="/event.php?id=${evt.id}" class="btn btn-sm btn-gradient px-2">
-                                    Details <i class="fas fa-arrow-right ms-1"></i>
+                                <a href="/event.php?id=${evt.id}" class="btn btn-sm px-3" style="background: var(--gradient-primary); color: white; border-radius: 8px; font-weight: 500;">
+                                    View Event <i class="fas fa-arrow-right ms-1"></i>
                                 </a>
                             </div>
                         </div>
