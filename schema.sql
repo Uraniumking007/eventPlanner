@@ -85,5 +85,23 @@ CREATE TABLE IF NOT EXISTS `visits` (
   KEY `idx_visits_visit_time` (`visit_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Table for storing contact form submissions
+CREATE TABLE IF NOT EXISTS `contact_submissions` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `first_name` VARCHAR(100) NOT NULL,
+  `last_name` VARCHAR(100) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `phone` VARCHAR(20) DEFAULT NULL,
+  `subject` VARCHAR(100) NOT NULL,
+  `message` TEXT NOT NULL,
+  `newsletter_opt_in` TINYINT(1) NOT NULL DEFAULT 0,
+  `ip_address` VARCHAR(45) DEFAULT NULL,
+  `user_agent` TEXT DEFAULT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_contact_email` (`email`),
+  KEY `idx_contact_created_at` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 

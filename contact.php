@@ -275,27 +275,62 @@ require_once __DIR__ . '/api/init.php';
                 event.stopPropagation();
                 
                 if (form.checkValidity()) {
-                    // Simulate form submission
                     const submitBtn = form.querySelector('button[type="submit"]');
                     const originalText = submitBtn.innerHTML;
                     
+                    // Show loading state
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
                     submitBtn.disabled = true;
                     
-                    setTimeout(() => {
-                        form.style.display = 'none';
-                        successMessage.style.display = 'block';
-                        
-                        // Reset form after 5 seconds
-                        setTimeout(() => {
-                            form.style.display = 'block';
-                            successMessage.style.display = 'none';
-                            form.reset();
-                            form.classList.remove('was-validated');
+                    // Prepare form data
+                    const formData = new FormData(form);
+                    const data = {
+                        firstName: formData.get('firstName'),
+                        lastName: formData.get('lastName'),
+                        email: formData.get('email'),
+                        phone: formData.get('phone'),
+                        subject: formData.get('subject'),
+                        message: formData.get('message'),
+                        newsletter: formData.get('newsletter') === 'on'
+                    };
+                    
+                    // Submit to API
+                    fetch('/api/contact.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            // Show success message
+                            form.style.display = 'none';
+                            successMessage.style.display = 'block';
+                            
+                            // Reset form after 5 seconds
+                            setTimeout(() => {
+                                form.style.display = 'block';
+                                successMessage.style.display = 'none';
+                                form.reset();
+                                form.classList.remove('was-validated');
+                                submitBtn.innerHTML = originalText;
+                                submitBtn.disabled = false;
+                            }, 5000);
+                        } else {
+                            // Show error message
+                            alert('Error: ' + (result.error || 'Failed to send message. Please try again.'));
                             submitBtn.innerHTML = originalText;
                             submitBtn.disabled = false;
-                        }, 5000);
-                    }, 2000);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Failed to send message. Please check your connection and try again.');
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    });
                 }
                 
                 form.classList.add('was-validated');
