@@ -62,12 +62,12 @@
                     <h6 class="fw-bold mb-3">Resources</h6>
                     <ul class="list-unstyled">
                         <li class="mb-2">
-                            <a class="text-white-50 text-decoration-none d-flex align-items-center gap-2 hover-link" href="#">
+                            <a href="/about.php" class="text-white-50 text-decoration-none d-flex align-items-center gap-2 hover-link" href="#">
                                 <i class="fas fa-angle-right small"></i>About Us
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a class="text-white-50 text-decoration-none d-flex align-items-center gap-2 hover-link" href="#">
+                            <a href="/contact.php" class="text-white-50 text-decoration-none d-flex align-items-center gap-2 hover-link" href="#">
                                 <i class="fas fa-angle-right small"></i>Contact
                             </a>
                         </li>
