@@ -76,21 +76,23 @@
                     const showAdmin = user.role === 'admin';
                     const displayName = String(user.username || user.email || '').trim();
                     const initials = displayName.substring(0, 2).toUpperCase();
+                    const avatarPath = user.avatar_path || '';
+                    const hasAvatar = avatarPath && avatarPath.trim() !== '';
 
                     // Desktop user menu
                     desktop.innerHTML = `
                         <div class="dropdown">
                             <button class="btn d-flex align-items-center gap-2 text-white border-0 dropdown-toggle" type="button" id="userMenuBtn" data-bs-toggle="dropdown" aria-expanded="false" style="background: rgba(255, 255, 255, 0.1);">
-                                <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold" style="width: 32px; height: 32px; background: var(--gradient-primary); font-size: 0.75rem;">
-                                    ${initials}
+                                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: var(--gradient-primary); font-size: 0.75rem; overflow: hidden;">
+                                    ${hasAvatar ? `<img src="${avatarPath}" alt="${displayName}" class="w-100 h-100 object-fit-cover" style="object-fit: cover;">` : `<span class="text-white fw-bold">${initials}</span>`}
                                 </div>
                                 <span class="d-none d-xl-inline">${displayName}</span>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" style="min-width: 220px;">
                                 <li>
                                     <div class="dropdown-header d-flex align-items-center gap-2 pb-2 border-bottom">
-                                        <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold" style="width: 36px; height: 36px; background: var(--gradient-primary); font-size: 0.875rem;">
-                                            ${initials}
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; background: var(--gradient-primary); font-size: 0.875rem; overflow: hidden;">
+                                            ${hasAvatar ? `<img src="${avatarPath}" alt="${displayName}" class="w-100 h-100 object-fit-cover" style="object-fit: cover;">` : `<span class="text-white fw-bold">${initials}</span>`}
                                         </div>
                                         <div class="flex-grow-1 min-w-0">
                                             <div class="fw-semibold text-truncate">${displayName}</div>
@@ -113,8 +115,8 @@
                         <div class="card border-0 mb-3" style="background: rgba(255, 255, 255, 0.1);">
                             <div class="card-body p-3">
                                 <div class="d-flex align-items-center gap-3 mb-3">
-                                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold" style="width: 48px; height: 48px; background: var(--gradient-primary);">
-                                        ${initials}
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: var(--gradient-primary); overflow: hidden;">
+                                        ${hasAvatar ? `<img src="${avatarPath}" alt="${displayName}" class="w-100 h-100 object-fit-cover" style="object-fit: cover;">` : `<span class="text-white fw-bold">${initials}</span>`}
                                     </div>
                                     <div class="flex-grow-1 min-w-0 text-white">
                                         <div class="fw-semibold text-truncate">${displayName}</div>
