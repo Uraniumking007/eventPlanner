@@ -22,47 +22,70 @@ if (!$user || ($user['role'] ?? '') !== 'organizer') {
     <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
     <main class="flex-grow-1">
-        <section class="py-4 border-bottom bg-light">
-            <div class="container d-flex align-items-center justify-content-between">
-                <div>
-                    <h1 class="h3 mb-0">Event Attendees</h1>
-                    <div class="text-secondary small">View user details for attendees of your events.</div>
+        <!-- Hero Header -->
+        <section class="hero-gradient text-white py-4">
+            <div class="container hero-content">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h1 class="h3 fw-bold mb-2">Event Attendees</h1>
+                        <p class="mb-0 opacity-90">
+                            <i class="fas fa-users me-2"></i>View and manage attendees for your events
+                        </p>
+                    </div>
+                    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                        <a class="btn btn-outline-custom" href="/dashboard.php">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </a>
+                    </div>
                 </div>
-                <a class="btn btn-outline-secondary" href="/dashboard.php"><i class="fas fa-chevron-left me-2"></i>Back to Dashboard</a>
             </div>
         </section>
 
-        <div class="container py-4 py-lg-5">
-            <div class="row g-3 align-items-end mb-3">
+        <div class="container py-4">
+            <div class="row g-3 mb-3">
                 <div class="col-12 col-md-6">
-                    <label class="form-label small text-secondary">Event</label>
+                    <label class="form-label small fw-semibold">
+                        <i class="fas fa-calendar-alt me-1"></i>Select Event
+                    </label>
                     <select id="eventSelect" class="form-select"></select>
                 </div>
                 <div class="col-12 col-md-6">
-                    <label class="form-label small text-secondary">Search attendees</label>
+                    <label class="form-label small fw-semibold">
+                        <i class="fas fa-search me-1"></i>Search Attendees
+                    </label>
                     <input id="searchInput" type="text" class="form-control" placeholder="Name or email">
                 </div>
             </div>
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center justify-content-between mb-2">
-                        <h2 class="h6 mb-0">Attendees</h2>
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="small text-secondary" id="count">0</div>
-                            <button id="exportCsvBtn" class="btn btn-sm btn-outline-secondary"><i class="fas fa-file-csv me-1"></i>Export CSV</button>
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-white border-bottom py-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h2 class="h6 mb-1 fw-bold">
+                                <i class="fas fa-list me-2 text-primary"></i>Attendees List
+                            </h2>
+                            <div class="small text-muted" id="count">0 attendees</div>
                         </div>
+                        <button id="exportCsvBtn" class="btn btn-sm btn-gradient">
+                            <i class="fas fa-file-csv me-1"></i>Export CSV
+                        </button>
                     </div>
+                </div>
+                <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-sm align-middle mb-0">
-                            <thead>
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
                                 <tr>
-                                    <th>User ID</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Registered At</th>
+                                    <th class="small text-muted fw-semibold">User ID</th>
+                                    <th class="small text-muted fw-semibold">Name</th>
+                                    <th class="small text-muted fw-semibold">Email</th>
+                                    <th class="small text-muted fw-semibold">Registered At</th>
                                 </tr>
                             </thead>
-                            <tbody id="attendeesTable"><tr><td colspan="4" class="text-secondary small">Select an event.</td></tr></tbody>
+                            <tbody id="attendeesTable">
+                                <tr><td colspan="4" class="text-center text-muted py-4">
+                                    <i class="fas fa-info-circle me-2"></i>Select an event to view attendees
+                                </td></tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -89,12 +112,20 @@ if (!$user || ($user['role'] ?? '') !== 'organizer') {
         }
 
         function row(a) {
+            const initials = (a.username || a.email || 'U').substring(0, 2).toUpperCase();
             return `
                 <tr>
-                    <td>${a.id}</td>
-                    <td>${(a.username || '').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</td>
-                    <td>${(a.email || '').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</td>
-                    <td class="text-nowrap">${new Date(a.registered_at || Date.now()).toLocaleString()}</td>
+                    <td class="small">#${a.id}</td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; font-size: 0.7rem; font-weight: 600;">
+                                ${initials}
+                            </div>
+                            <span class="fw-semibold small">${(a.username || '').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span>
+                        </div>
+                    </td>
+                    <td class="small text-muted">${(a.email || '').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</td>
+                    <td class="small text-nowrap text-muted">${new Date(a.registered_at || Date.now()).toLocaleString()}</td>
                 </tr>
             `;
         }
@@ -118,13 +149,13 @@ if (!$user || ($user['role'] ?? '') !== 'organizer') {
             const select = document.getElementById('eventSelect');
             const eventId = Number(select.value);
             const tbody = document.getElementById('attendeesTable');
-            tbody.innerHTML = '<tr><td colspan="4" class="text-secondary small">Loading...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4"><i class="fas fa-spinner fa-spin me-2"></i>Loading attendees...</td></tr>';
             try {
                 // Extend registrations API to include registered_at for clarity; currently we fallback to now.
                 allAttendees = await fetchAttendees(eventId);
                 applyFilter();
             } catch {
-                tbody.innerHTML = '<tr><td colspan="4" class="text-danger small">Failed to load attendees.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger py-4"><i class="fas fa-exclamation-triangle me-2"></i>Failed to load attendees.</td></tr>';
             }
         }
 
@@ -133,7 +164,7 @@ if (!$user || ($user['role'] ?? '') !== 'organizer') {
             const tbody = document.getElementById('attendeesTable');
             const filtered = allAttendees.filter(a => String(a.username||'').toLowerCase().includes(q) || String(a.email||'').toLowerCase().includes(q));
             document.getElementById('count').textContent = `${filtered.length} attendee${filtered.length === 1 ? '' : 's'}`;
-            tbody.innerHTML = filtered.length ? filtered.map(row).join('') : '<tr><td colspan="4" class="text-secondary small">No attendees found.</td></tr>';
+            tbody.innerHTML = filtered.length ? filtered.map(row).join('') : '<tr><td colspan="4" class="text-center text-muted py-4"><i class="fas fa-search me-2"></i>No attendees found matching your search.</td></tr>';
         }
 
         function toCsv(rows) {

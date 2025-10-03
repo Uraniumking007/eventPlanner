@@ -13,23 +13,28 @@
     <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
     <main class="flex-grow-1">
-        <div class="container py-4 py-lg-5">
-            <section class="py-4 border rounded-3 shadow-sm mb-4" style="background:linear-gradient(135deg,#f8fbff 0%, #f9f7ff 100%)">
-                <div class="container-fluid">
-                    <div class="d-flex flex-wrap align-items-start justify-content-between gap-3">
-                        <div>
-                            <h1 class="h3 fw-bold mb-1">Edit Event</h1>
-                            <p class="text-secondary mb-0">Update your event details below.</p>
-                        </div>
-                        <div>
-                            <a href="/dashboard.php" class="btn btn-dark btn-sm"><i class="fas fa-arrow-left me-2"></i>Back to Dashboard</a>
-                        </div>
+        <!-- Hero Header -->
+        <section class="hero-gradient text-white py-4">
+            <div class="container hero-content">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h1 class="h3 fw-bold mb-2">Edit Event</h1>
+                        <p class="mb-0 opacity-90">
+                            <i class="fas fa-edit me-2"></i>Update your event details below
+                        </p>
+                    </div>
+                    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                        <a href="/dashboard.php" class="btn btn-outline-custom">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </a>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <div class="row g-4">
-                <form id="editEventForm" class="col-12 col-lg-8 border rounded-3 shadow-sm bg-white p-4">
+        <div class="container py-4">
+            <div class="row g-3">
+                <form id="editEventForm" class="col-12 col-lg-8 card border-0 shadow-sm rounded-3 p-3 p-md-4">
                     <input type="hidden" name="id" />
                     <div>
                         <label class="form-label small text-muted">Title</label>
@@ -69,7 +74,7 @@
                     </div>
                     <div>
                         <label class="form-label small text-muted">Description</label>
-                        <div id="descEditor" class="form-control" style="height: 220px; padding:0;">
+                        <div id="descEditor" class="form-control" style="height: 180px; padding:0;">
                             <div class="ql-editor"></div>
                         </div>
                         <textarea name="description" id="descriptionHidden" class="d-none"></textarea>
@@ -78,29 +83,39 @@
                             <span class="small text-muted" id="descCounter">0/1000</span>
                         </div>
                     </div>
-                    <div class="d-flex align-items-center justify-content-between gap-2 pt-2">
-                        <button id="deleteBtn" type="button" class="btn btn-outline-danger">Delete Event</button>
+                    <div class="d-flex align-items-center justify-content-between gap-2 pt-3 border-top">
+                        <button id="deleteBtn" type="button" class="btn btn-outline-danger">
+                            <i class="fas fa-trash me-2"></i>Delete Event
+                        </button>
                         <div class="d-flex align-items-center gap-2">
                             <a href="/dashboard.php" class="btn btn-outline-secondary">Cancel</a>
-                            <button type="submit" class="btn btn-dark">Save Changes</button>
+                            <button type="submit" class="btn btn-gradient">
+                                <i class="fas fa-save me-2"></i>Save Changes
+                            </button>
                         </div>
                     </div>
                 </form>
-                <aside class="col-12 col-lg-4 border rounded-3 shadow-sm bg-white overflow-hidden">
-                    <div class="p-3 border-bottom">
-                        <h2 class="small fw-semibold mb-0">Live Preview</h2>
-                        <div class="small text-secondary">This is how your event will look.</div>
-                    </div>
-                    <div id="previewCard">
-                        <div>
-                            <img id="previewImage" src="" class="w-100 d-none" style="height: 224px; object-fit: cover;" alt="Event image preview">
-                            <div class="p-3">
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <h3 id="previewTitle" class="h6 mb-0">Your Event Title</h3>
-                                    <span class="small text-secondary">Draft</span>
+                <aside class="col-12 col-lg-4">
+                    <div class="card border-0 shadow-sm rounded-3 overflow-hidden sticky-top" style="top: 20px;">
+                        <div class="card-header bg-gradient text-white border-0 py-2" style="background: var(--gradient-primary);">
+                            <h2 class="small fw-bold mb-0">
+                                <i class="fas fa-eye me-2"></i>Live Preview
+                            </h2>
+                            <div class="small opacity-90">How your event will look</div>
+                        </div>
+                        <div id="previewCard">
+                            <div>
+                                <img id="previewImage" src="" class="w-100 d-none" style="height: 180px; object-fit: cover;" alt="Event image preview">
+                                <div class="p-3">
+                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                        <h3 id="previewTitle" class="h6 mb-0 fw-bold">Your Event Title</h3>
+                                        <span class="badge bg-light text-dark small">Draft</span>
+                                    </div>
+                                    <div class="small text-muted mb-2" id="previewMeta">
+                                        <i class="fas fa-calendar me-1"></i>Date • <i class="fas fa-map-marker-alt me-1"></i>Location
+                                    </div>
+                                    <p class="small text-muted mb-0" id="previewDesc">Your description will appear here. Add details to attract attendees.</p>
                                 </div>
-                                <div class="small text-secondary" id="previewMeta">Date • Location</div>
-                                <p class="small mt-2 mb-0" id="previewDesc">Your description will appear here. Add details to attract attendees.</p>
                             </div>
                         </div>
                     </div>
