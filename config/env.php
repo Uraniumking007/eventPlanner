@@ -1,39 +1,31 @@
 <?php
-/**
- * Environment Configuration Loader
- * Loads environment variables from .env file
- */
+declare(strict_types=1);
 
-function loadEnv($path = null) {
-    if ($path === null) {
-        $path = __DIR__ . '/../.env';
+// Load environment variables from .env file
+function loadEnv(string $filePath): void {
+    if (!file_exists($filePath)) {
+        return;
     }
     
-    if (!file_exists($path)) {
-        return false;
-    }
-    
-    $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    
+    $lines = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
         // Skip comments
         if (strpos(trim($line), '#') === 0) {
             continue;
         }
         
-        // Parse key=value pairs
+        // Parse KEY=VALUE
         if (strpos($line, '=') !== false) {
             list($key, $value) = explode('=', $line, 2);
             $key = trim($key);
             $value = trim($value);
             
             // Remove quotes if present
-            if ((substr($value, 0, 1) === '"' && substr($value, -1) === '"') ||
-                (substr($value, 0, 1) === "'" && substr($value, -1) === "'")) {
-                $value = substr($value, 1, -1);
+            if (preg_match('/^(["\'])(.*)\1$/', $value, $matches)) {
+                $value = $matches[2];
             }
             
-            // Set environment variable if not already set
+            // Set as environment variable if not already set
             if (!getenv($key)) {
                 putenv("$key=$value");
                 $_ENV[$key] = $value;
@@ -41,9 +33,8 @@ function loadEnv($path = null) {
             }
         }
     }
-    
-    return true;
 }
 
-// Auto-load .env file when this file is included
-loadEnv();
+// Load .env file
+loadEnv(__DIR__ . '/../.env');
+
