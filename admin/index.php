@@ -24,81 +24,126 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
     <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
     <main class="flex-grow-1">
-        <section class="py-4 py-lg-5 border-bottom" style="background:linear-gradient(135deg,#f8fbff 0%, #f9f7ff 100%)">
-            <div class="container">
-                <div class="d-flex flex-wrap align-items-start justify-content-between gap-3">
-                    <div>
-                        <h1 class="display-6 fw-bold mb-1">Admin Dashboard</h1>
-                        <p class="text-secondary mb-0">Manage the platform: users, events, and site metrics.</p>
+        <!-- Hero Header -->
+        <section class="hero-gradient text-white py-4">
+            <div class="container hero-content">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <h1 class="h3 fw-bold mb-2">Admin Dashboard</h1>
+                        <p class="mb-0 opacity-90">
+                            <i class="fas fa-shield-alt me-2"></i>Manage the platform: users, events, and site metrics
+                        </p>
                     </div>
-                    <div class="d-flex gap-2">
-                        <a class="btn btn-dark" href="/admin/events.php"><i class="fas fa-calendar-alt me-2"></i>Manage Events</a>
-                        <a class="btn btn-outline-secondary" href="/admin/users.php"><i class="fas fa-users-cog me-2"></i>Manage Users</a>
-                        <a class="btn btn-outline-secondary" href="/admin/audit.php"><i class="fas fa-clipboard-list me-2"></i>Audit Logs</a>
+                    <div class="col-lg-6 mt-3 mt-lg-0">
+                        <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+                            <a class="btn btn-outline-custom btn-sm" href="/admin/users.php">
+                                <i class="fas fa-users-cog me-1"></i>Users
+                            </a>
+                            <a class="btn btn-outline-custom btn-sm" href="/admin/events.php">
+                                <i class="fas fa-calendar-alt me-1"></i>Events
+                            </a>
+                            <a class="btn btn-outline-custom btn-sm" href="/admin/audit.php">
+                                <i class="fas fa-clipboard-list me-1"></i>Audit Logs
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <div class="container py-4 py-lg-5">
+        <div class="container py-4">
+            <!-- Stats Cards -->
             <div class="row g-3 mb-4">
-                <div class="col-6 col-lg-2">
-                    <div class="border rounded-3 shadow-sm bg-white p-4 text-center h-100">
-                        <div class="text-secondary small">Events</div>
-                        <div id="statEvents" class="h3 fw-bold mb-0">0</div>
+                <div class="col-6 col-md-4 col-lg">
+                    <div class="card border-0 shadow-sm rounded-3 h-100">
+                        <div class="card-body p-3 text-center">
+                            <div class="rounded-circle mx-auto mb-2" style="width: 40px; height: 40px; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-calendar-alt text-white small"></i>
+                            </div>
+                            <div id="statEvents" class="h4 fw-bold mb-1">0</div>
+                            <div class="text-muted small">Events</div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-6 col-lg-2">
-                    <div class="border rounded-3 shadow-sm bg-white p-4 text-center h-100">
-                        <div class="text-secondary small">Registrations</div>
-                        <div id="statRegistrations" class="h3 fw-bold mb-0">0</div>
+                <div class="col-6 col-md-4 col-lg">
+                    <div class="card border-0 shadow-sm rounded-3 h-100">
+                        <div class="card-body p-3 text-center">
+                            <div class="rounded-circle mx-auto mb-2" style="width: 40px; height: 40px; background: var(--gradient-secondary); display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-ticket-alt text-white small"></i>
+                            </div>
+                            <div id="statRegistrations" class="h4 fw-bold mb-1">0</div>
+                            <div class="text-muted small">Registrations</div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-6 col-lg-2">
-                    <div class="border rounded-3 shadow-sm bg-white p-4 text-center h-100">
-                        <div class="text-secondary small">Attendees</div>
-                        <div id="statAttendees" class="h3 fw-bold mb-0">0</div>
+                <div class="col-6 col-md-4 col-lg">
+                    <div class="card border-0 shadow-sm rounded-3 h-100">
+                        <div class="card-body p-3 text-center">
+                            <div class="rounded-circle mx-auto mb-2" style="width: 40px; height: 40px; background: var(--gradient-success); display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-users text-white small"></i>
+                            </div>
+                            <div id="statAttendees" class="h4 fw-bold mb-1">0</div>
+                            <div class="text-muted small">Attendees</div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-6 col-lg-2">
-                    <div class="border rounded-3 shadow-sm bg-white p-4 text-center h-100">
-                        <div class="text-secondary small">Visits</div>
-                        <div id="statVisits" class="h3 fw-bold mb-0">0</div>
+                <div class="col-6 col-md-4 col-lg">
+                    <div class="card border-0 shadow-sm rounded-3 h-100">
+                        <div class="card-body p-3 text-center">
+                            <div class="rounded-circle mx-auto mb-2" style="width: 40px; height: 40px; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-eye text-white small"></i>
+                            </div>
+                            <div id="statVisits" class="h4 fw-bold mb-1">0</div>
+                            <div class="text-muted small">Visits</div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-6 col-lg-2">
-                    <div class="border rounded-3 shadow-sm bg-white p-4 text-center h-100">
-                        <div class="text-secondary small">Organizers</div>
-                        <div id="statOrganizers" class="h3 fw-bold mb-0">0</div>
+                <div class="col-6 col-md-4 col-lg">
+                    <div class="card border-0 shadow-sm rounded-3 h-100">
+                        <div class="card-body p-3 text-center">
+                            <div class="rounded-circle mx-auto mb-2" style="width: 40px; height: 40px; background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%); display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-user-tie text-white small"></i>
+                            </div>
+                            <div id="statOrganizers" class="h4 fw-bold mb-1">0</div>
+                            <div class="text-muted small">Organizers</div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="row g-4">
-                <div class="col-12">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <h2 class="h6 mb-0">Recent Events</h2>
-                                <a class="btn btn-sm btn-outline-secondary" href="/events.php">View all</a>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table table-sm align-middle mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>Title</th>
-                                            <th>Organizer</th>
-                                            <th>Date</th>
-                                            <th>Location</th>
-                                            <th class="text-end">Registrations</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="adminEventsTable">
-                                        <tr><td colspan="5" class="text-secondary small">Loading...</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
+            <!-- Recent Events Table -->
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-white border-bottom py-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h2 class="h6 mb-1 fw-bold">
+                                <i class="fas fa-calendar-check text-primary me-2"></i>Recent Events
+                            </h2>
+                            <div class="small text-muted">Latest events on the platform</div>
                         </div>
+                        <a class="btn btn-sm btn-gradient" href="/events.php">
+                            View All <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="small text-muted fw-semibold">Title</th>
+                                    <th class="small text-muted fw-semibold">Organizer</th>
+                                    <th class="small text-muted fw-semibold">Date</th>
+                                    <th class="small text-muted fw-semibold">Location</th>
+                                    <th class="small text-muted fw-semibold text-end">Registrations</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminEventsTable">
+                                <tr><td colspan="5" class="text-center text-muted py-4">
+                                    <i class="fas fa-spinner fa-spin me-2"></i>Loading events...
+                                </td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -120,14 +165,19 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
         function renderEventsTable(items) {
             const body = document.getElementById('adminEventsTable');
             if (!body) return;
-            if (!items.length) { body.innerHTML = '<tr><td colspan="5" class="text-secondary small">No events found.</td></tr>'; return; }
+            if (!items.length) { 
+                body.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-info-circle me-2"></i>No events found.</td></tr>'; 
+                return; 
+            }
             body.innerHTML = items.slice(0, 10).map(e => `
                 <tr>
-                    <td>${e.title}</td>
-                    <td>${e.organizer_name || e.organizer_id}</td>
-                    <td>${fmtDate(e.event_date)}</td>
-                    <td>${e.location || ''}</td>
-                    <td class="text-end">${Number(e.registration_count || 0)}</td>
+                    <td class="fw-semibold small">${e.title}</td>
+                    <td class="small text-muted">${e.organizer_name || e.organizer_id}</td>
+                    <td class="small text-nowrap text-muted">${fmtDate(e.event_date)}</td>
+                    <td class="small text-muted">${e.location || ''}</td>
+                    <td class="text-end">
+                        <span class="badge bg-primary rounded-pill">${Number(e.registration_count || 0)}</span>
+                    </td>
                 </tr>
             `).join('');
         }

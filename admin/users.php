@@ -22,43 +22,56 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
     <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
     <main class="flex-grow-1">
-        <section class="py-4 border-bottom bg-light">
-            <div class="container">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div>
-                        <h1 class="h3 mb-0">User Management</h1>
-                        <div class="text-secondary small">Change roles, suspend accounts, reset passwords</div>
+        <!-- Hero Header -->
+        <section class="hero-gradient text-white py-4">
+            <div class="container hero-content">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h1 class="h3 fw-bold mb-2">User Management</h1>
+                        <p class="mb-0 opacity-90">
+                            <i class="fas fa-users-cog me-2"></i>Change roles, suspend accounts, and reset passwords
+                        </p>
                     </div>
-                    <a class="btn btn-outline-secondary" href="/admin/index.php"><i class="fas fa-chevron-left me-2"></i>Back to Admin</a>
+                    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                        <a class="btn btn-outline-custom" href="/admin/index.php">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Admin
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <div class="container py-4 py-lg-5">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="input-group" style="max-width: 360px">
-                            <span class="input-group-text"><i class="fas fa-search"></i></span>
-                            <input id="search" type="text" class="form-control" placeholder="Search users...">
+        <div class="container py-4">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-white border-bottom py-3">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                        <div class="input-group" style="max-width: 400px">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="fas fa-search text-muted"></i>
+                            </span>
+                            <input id="search" type="text" class="form-control border-start-0 ps-0" placeholder="Search by name or email...">
                         </div>
-                        <div class="text-secondary small" id="count"></div>
+                        <div class="text-muted small fw-semibold" id="count">0 users</div>
                     </div>
+                </div>
+                <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-sm align-middle mb-0">
-                            <thead>
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th>Status</th>
-                                    <th>Created</th>
-                                    <th class="text-end">Actions</th>
+                                    <th class="small text-muted fw-semibold">ID</th>
+                                    <th class="small text-muted fw-semibold">Name</th>
+                                    <th class="small text-muted fw-semibold">Email</th>
+                                    <th class="small text-muted fw-semibold">Role</th>
+                                    <th class="small text-muted fw-semibold">Status</th>
+                                    <th class="small text-muted fw-semibold">Created</th>
+                                    <th class="small text-muted fw-semibold text-end">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="usersTable">
-                                <tr><td colspan="7" class="text-secondary small">Loading...</td></tr>
+                                <tr><td colspan="7" class="text-center text-muted py-4">
+                                    <i class="fas fa-spinner fa-spin me-2"></i>Loading users...
+                                </td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -142,24 +155,38 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
         function esc(s) { return String(s ?? '').replace(/[&<>"] /g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',' ':' '})[c]); }
 
         function row(u) {
-            const badge = u.suspended ? '<span class="badge bg-danger-subtle text-danger">Suspended</span>' : '<span class="badge bg-success-subtle text-success">Active</span>';
+            const badge = u.suspended ? '<span class="badge bg-danger">Suspended</span>' : '<span class="badge bg-success">Active</span>';
+            const initials = (u.username || u.email || 'U').substring(0, 2).toUpperCase();
             return `
                 <tr data-id="${u.id}">
-                    <td>${u.id}</td>
-                    <td>${esc(u.username)}</td>
-                    <td>${esc(u.email)}</td>
+                    <td class="small text-muted">#${u.id}</td>
                     <td>
-                        <select class="form-select form-select-sm role" style="width:auto">
-                            <option value="attendee" ${u.role==='attendee'?'selected':''}>attendee</option>
-                            <option value="organizer" ${u.role==='organizer'?'selected':''}>organizer</option>
-                            <option value="admin" ${u.role==='admin'?'selected':''}>admin</option>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 28px; height: 28px; font-size: 0.7rem; font-weight: 600;">
+                                ${initials}
+                            </div>
+                            <span class="fw-semibold small">${esc(u.username)}</span>
+                        </div>
+                    </td>
+                    <td class="small text-muted">${esc(u.email)}</td>
+                    <td>
+                        <select class="form-select form-select-sm role" style="width: 110px; font-size: 0.875rem;">
+                            <option value="attendee" ${u.role==='attendee'?'selected':''}>Attendee</option>
+                            <option value="organizer" ${u.role==='organizer'?'selected':''}>Organizer</option>
+                            <option value="admin" ${u.role==='admin'?'selected':''}>Admin</option>
                         </select>
                     </td>
                     <td>${badge}</td>
-                    <td class="text-nowrap">${new Date(u.created_at).toLocaleDateString()}</td>
+                    <td class="small text-muted text-nowrap">${new Date(u.created_at).toLocaleDateString()}</td>
                     <td class="text-end">
-                        <button class="btn btn-sm ${u.suspended ? 'btn-success' : 'btn-outline-warning'} suspend">${u.suspended ? 'Unsuspend' : 'Suspend'}</button>
-                        <button class="btn btn-sm btn-outline-secondary reset">Reset PW</button>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn ${u.suspended ? 'btn-success' : 'btn-outline-warning'} suspend">
+                                <i class="fas fa-${u.suspended ? 'check' : 'ban'} me-1"></i>${u.suspended ? 'Unsuspend' : 'Suspend'}
+                            </button>
+                            <button class="btn btn-outline-secondary reset">
+                                <i class="fas fa-key me-1"></i>Reset
+                            </button>
+                        </div>
                     </td>
                 </tr>
             `;
@@ -168,9 +195,13 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
         function render(list) {
             const tbody = document.getElementById('usersTable');
             const count = document.getElementById('count');
-            if (!list.length) { tbody.innerHTML = '<tr><td colspan="7" class="text-secondary small">No users found.</td></tr>'; count.textContent = '0 users'; return; }
+            if (!list.length) { 
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4"><i class="fas fa-search me-2"></i>No users found.</td></tr>'; 
+                count.textContent = '0 users'; 
+                return; 
+            }
             tbody.innerHTML = list.map(row).join('');
-            count.textContent = list.length + ' users';
+            count.textContent = list.length + ' user' + (list.length === 1 ? '' : 's');
 
             tbody.querySelectorAll('select.role').forEach(sel => {
                 sel.addEventListener('change', async (e) => {
@@ -224,7 +255,12 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
 
         let allUsers = [];
         async function load() {
-            try { allUsers = await api.list(); applyFilter(); } catch { document.getElementById('usersTable').innerHTML = '<tr><td colspan="7" class="text-danger small">Load failed.</td></tr>'; }
+            try { 
+                allUsers = await api.list(); 
+                applyFilter(); 
+            } catch { 
+                document.getElementById('usersTable').innerHTML = '<tr><td colspan="7" class="text-center text-danger py-4"><i class="fas fa-exclamation-triangle me-2"></i>Failed to load users.</td></tr>'; 
+            }
         }
         function applyFilter() {
             const q = (document.getElementById('search').value || '').toLowerCase();

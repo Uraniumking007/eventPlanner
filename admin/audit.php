@@ -22,54 +22,86 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
     <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
     <main class="flex-grow-1">
-        <section class="py-4 border-bottom bg-light">
-            <div class="container d-flex align-items-center justify-content-between">
-                <div>
-                    <h1 class="h3 mb-0">Event Audit Logs</h1>
-                    <div class="text-secondary small">Review admin actions with reasons.</div>
+        <!-- Hero Header -->
+        <section class="hero-gradient text-white py-4">
+            <div class="container hero-content">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h1 class="h3 fw-bold mb-2">Event Audit Logs</h1>
+                        <p class="mb-0 opacity-90">
+                            <i class="fas fa-clipboard-list me-2"></i>Review all admin actions with reasons
+                        </p>
+                    </div>
+                    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                        <a class="btn btn-outline-custom" href="/admin/index.php">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Admin
+                        </a>
+                    </div>
                 </div>
-                <a class="btn btn-outline-secondary" href="/admin/index.php"><i class="fas fa-chevron-left me-2"></i>Back to Admin</a>
             </div>
         </section>
 
-        <div class="container py-4 py-lg-5">
-            <div class="row g-3 align-items-end mb-3">
-                <div class="col-12 col-md-3">
-                    <label for="filterAdmin" class="form-label small text-secondary mb-1">Admin</label>
-                    <input id="filterAdmin" type="text" class="form-control" placeholder="Admin username/email">
-                </div>
-                <div class="col-12 col-md-3">
-                    <label for="filterAction" class="form-label small text-secondary mb-1">Action</label>
-                    <select id="filterAction" class="form-select">
-                        <option value="">All</option>
-                        <option value="create">Create</option>
-                        <option value="update">Update</option>
-                        <option value="delete">Delete</option>
-                    </select>
-                </div>
-                <div class="col-12 col-md-3">
-                    <label for="filterEventId" class="form-label small text-secondary mb-1">Event ID</label>
-                    <input id="filterEventId" type="number" class="form-control" placeholder="e.g. 42">
-                </div>
-                <div class="col-12 col-md-3 d-grid">
-                    <button id="applyFilters" class="btn btn-primary"><i class="fas fa-filter me-2"></i>Apply</button>
+        <div class="container py-4">
+            <!-- Filters -->
+            <div class="card shadow-sm border-0 rounded-3 mb-3">
+                <div class="card-body p-3">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-12 col-md-3">
+                            <label for="filterAdmin" class="form-label small fw-semibold mb-1">
+                                <i class="fas fa-user-shield me-1"></i>Admin
+                            </label>
+                            <input id="filterAdmin" type="text" class="form-control" placeholder="Search by admin...">
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <label for="filterAction" class="form-label small fw-semibold mb-1">
+                                <i class="fas fa-tasks me-1"></i>Action
+                            </label>
+                            <select id="filterAction" class="form-select">
+                                <option value="">All Actions</option>
+                                <option value="create">Create</option>
+                                <option value="update">Update</option>
+                                <option value="delete">Delete</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <label for="filterEventId" class="form-label small fw-semibold mb-1">
+                                <i class="fas fa-hashtag me-1"></i>Event ID
+                            </label>
+                            <input id="filterEventId" type="number" class="form-control" placeholder="e.g. 42">
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <button id="applyFilters" class="btn btn-gradient w-100">
+                                <i class="fas fa-filter me-2"></i>Apply Filters
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="card shadow-sm">
-                <div class="card-body">
+            <!-- Logs Table -->
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h2 class="h6 mb-0 fw-bold">
+                        <i class="fas fa-history text-primary me-2"></i>Audit Trail
+                    </h2>
+                </div>
+                <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-sm align-middle mb-0">
-                            <thead>
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
                                 <tr>
-                                    <th>When</th>
-                                    <th>Admin</th>
-                                    <th>Action</th>
-                                    <th>Event ID</th>
-                                    <th>Reason</th>
+                                    <th class="small text-muted fw-semibold">When</th>
+                                    <th class="small text-muted fw-semibold">Admin</th>
+                                    <th class="small text-muted fw-semibold">Action</th>
+                                    <th class="small text-muted fw-semibold">Event ID</th>
+                                    <th class="small text-muted fw-semibold">Reason</th>
                                 </tr>
                             </thead>
-                            <tbody id="logsTable"><tr><td colspan="5" class="text-secondary small">Loading...</td></tr></tbody>
+                            <tbody id="logsTable">
+                                <tr><td colspan="5" class="text-center text-muted py-4">
+                                    <i class="fas fa-spinner fa-spin me-2"></i>Loading logs...
+                                </td></tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -91,21 +123,35 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
 
         function render(list) {
             const tbody = document.getElementById('logsTable');
-            if (!list.length) { tbody.innerHTML = '<tr><td colspan="5" class="text-secondary small">No logs.</td></tr>'; return; }
+            if (!list.length) { 
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4"><i class="fas fa-info-circle me-2"></i>No logs found.</td></tr>'; 
+                return; 
+            }
             tbody.innerHTML = list.map(l => `
                 <tr>
-                    <td class="text-nowrap">${fmtDate(l.created_at)}</td>
-                    <td>${l.admin_name || l.admin_user_id}</td>
-                    <td class="text-capitalize">${l.action}</td>
-                    <td>${l.event_id ?? ''}</td>
-                    <td>${String(l.reason||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</td>
+                    <td class="small text-nowrap text-muted">${fmtDate(l.created_at)}</td>
+                    <td class="small">${l.admin_name || l.admin_user_id}</td>
+                    <td class="small">
+                        <span class="badge ${
+                            l.action === 'create' ? 'bg-success-subtle text-success' :
+                            l.action === 'update' ? 'bg-primary-subtle text-primary' :
+                            'bg-danger-subtle text-danger'
+                        } text-capitalize">${l.action}</span>
+                    </td>
+                    <td class="small text-muted">#${l.event_id ?? ''}</td>
+                    <td class="small text-muted">${String(l.reason||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</td>
                 </tr>
             `).join('');
         }
 
         let all = [];
         async function load() {
-            try { all = await fetchLogs(); apply(); } catch { document.getElementById('logsTable').innerHTML = '<tr><td colspan="5" class="text-danger small">Load failed.</td></tr>'; }
+            try { 
+                all = await fetchLogs(); 
+                apply(); 
+            } catch { 
+                document.getElementById('logsTable').innerHTML = '<tr><td colspan="5" class="text-center text-danger py-4"><i class="fas fa-exclamation-triangle me-2"></i>Failed to load logs.</td></tr>'; 
+            }
         }
         function apply() {
             const adminQ = (document.getElementById('filterAdmin').value || '').toLowerCase();

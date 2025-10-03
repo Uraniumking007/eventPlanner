@@ -22,56 +22,59 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
     <?php include __DIR__ . '/../includes/navbar.php'; ?>
 
     <main class="flex-grow-1">
-        <section class="py-4 border-bottom bg-light">
-            <div class="container d-flex align-items-center justify-content-between">
-                <div>
-                    <h1 class="h3 mb-0">Event Management</h1>
-                    <div class="text-secondary small">Admins can only suspend/unsuspend events with a reason.</div>
+        <!-- Hero Header -->
+        <section class="hero-gradient text-white py-4">
+            <div class="container hero-content">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h1 class="h3 fw-bold mb-2">Event Management</h1>
+                        <p class="mb-0 opacity-90">
+                            <i class="fas fa-calendar-alt me-2"></i>Suspend or unsuspend events with a reason
+                        </p>
+                    </div>
+                    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                        <a class="btn btn-outline-custom" href="/admin/index.php">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Admin
+                        </a>
+                    </div>
                 </div>
-                <a class="btn btn-outline-secondary" href="/admin/index.php"><i class="fas fa-chevron-left me-2"></i>Back to Admin</a>
             </div>
         </section>
 
-        <div class="container py-4 py-lg-5">
-            <div class="d-flex align-items-center justify-content-between mb-3">
-                <div class="input-group" style="max-width: 360px">
-                    <span class="input-group-text"><i class="fas fa-search"></i></span>
-                    <input id="search" type="text" class="form-control" placeholder="Search events...">
+        <div class="container py-4">
+            <!-- Events Table -->
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-white border-bottom py-3">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                        <div class="input-group" style="max-width: 400px">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="fas fa-search text-muted"></i>
+                            </span>
+                            <input id="search" type="text" class="form-control border-start-0 ps-0" placeholder="Search events...">
+                        </div>
+                        <div class="text-muted small fw-semibold" id="count">0 events</div>
+                    </div>
                 </div>
-                <div class="text-secondary small" id="count"></div>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table table-sm align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Organizer</th>
-                            <th>Date</th>
-                            <th>Location</th>
-                            <th>Status</th>
-                            <th class="text-end">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="eventsTable"><tr><td colspan="5" class="text-secondary small">Loading...</td></tr></tbody>
-                </table>
-            </div>
-
-            <div class="mt-4">
-                <h2 class="h6 mb-2">Recent Audit Logs</h2>
-                <div class="table-responsive">
-                    <table class="table table-sm align-middle mb-0">
-                        <thead>
-                            <tr>
-                                <th>When</th>
-                                <th>Admin</th>
-                                <th>Action</th>
-                                <th>Event ID</th>
-                                <th>Reason</th>
-                            </tr>
-                        </thead>
-                        <tbody id="logsTable"><tr><td colspan="5" class="text-secondary small">Loading...</td></tr></tbody>
-                    </table>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="small text-muted fw-semibold">Title</th>
+                                    <th class="small text-muted fw-semibold">Organizer</th>
+                                    <th class="small text-muted fw-semibold">Date</th>
+                                    <th class="small text-muted fw-semibold">Location</th>
+                                    <th class="small text-muted fw-semibold">Status</th>
+                                    <th class="small text-muted fw-semibold text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="eventsTable">
+                                <tr><td colspan="6" class="text-center text-muted py-4">
+                                    <i class="fas fa-spinner fa-spin me-2"></i>Loading events...
+                                </td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -119,12 +122,6 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
                 if (!res.ok) throw new Error('Failed');
                 return true;
             },
-            async logs(eventId) {
-                const url = eventId ? '/api/events.php?action=logs&event_id=' + eventId : '/api/events.php?action=logs';
-                const res = await fetch(url, { credentials: 'same-origin' });
-                if (!res.ok) throw new Error('Failed');
-                return (await res.json()).logs || [];
-            }
         };
 
         function fmtDate(d) { try { return new Date(d).toLocaleString(); } catch { return d; } }
@@ -133,13 +130,15 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
             const suspended = Number(e.suspended || 0) === 1;
             return `
                 <tr data-id="${e.id}">
-                    <td>${e.title}</td>
-                    <td>${e.organizer_name || e.organizer_id}</td>
-                    <td>${fmtDate(e.event_date)}</td>
-                    <td>${e.location || ''}</td>
-                    <td>${suspended ? '<span class="badge bg-danger-subtle text-danger">Suspended</span>' : '<span class="badge bg-success-subtle text-success">Active</span>'}</td>
+                    <td class="fw-semibold small">${e.title}</td>
+                    <td class="small text-muted">${e.organizer_name || e.organizer_id}</td>
+                    <td class="small text-nowrap text-muted">${fmtDate(e.event_date)}</td>
+                    <td class="small text-muted">${e.location || ''}</td>
+                    <td>${suspended ? '<span class="badge bg-danger">Suspended</span>' : '<span class="badge bg-success">Active</span>'}</td>
                     <td class="text-end">
-                        <button class="btn btn-sm ${suspended ? 'btn-success' : 'btn-outline-warning'} suspend" data-next="${suspended ? 0 : 1}">${suspended ? 'Unsuspend' : 'Suspend'}</button>
+                        <button class="btn btn-sm ${suspended ? 'btn-success' : 'btn-outline-warning'} suspend" data-next="${suspended ? 0 : 1}">
+                            <i class="fas fa-${suspended ? 'check' : 'ban'} me-1"></i>${suspended ? 'Unsuspend' : 'Suspend'}
+                        </button>
                     </td>
                 </tr>
             `;
@@ -148,9 +147,13 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
         function render(list) {
             const tbody = document.getElementById('eventsTable');
             const count = document.getElementById('count');
-            if (!list.length) { tbody.innerHTML = '<tr><td colspan="5" class="text-secondary small">No events found.</td></tr>'; count.textContent = '0 events'; return; }
+            if (!list.length) { 
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4"><i class="fas fa-search me-2"></i>No events found.</td></tr>'; 
+                count.textContent = '0 events'; 
+                return; 
+            }
             tbody.innerHTML = list.map(row).join('');
-            count.textContent = list.length + ' events';
+            count.textContent = list.length + ' event' + (list.length === 1 ? '' : 's');
 
             const modalEl = document.getElementById('suspendModal');
             const reasonEl = document.getElementById('suspendReason');
@@ -188,23 +191,15 @@ if (!$user || ($user['role'] ?? '') !== 'admin') {
             });
         }
 
-        function renderLogs(list) {
-            const tbody = document.getElementById('logsTable');
-            if (!list.length) { tbody.innerHTML = '<tr><td colspan="5" class="text-secondary small">No logs yet.</td></tr>'; return; }
-            tbody.innerHTML = list.map(l => `
-                <tr>
-                    <td class="text-nowrap">${fmtDate(l.created_at)}</td>
-                    <td>${l.admin_name || l.admin_user_id}</td>
-                    <td>${l.action}</td>
-                    <td>${l.event_id ?? ''}</td>
-                    <td>${(l.reason || '').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</td>
-                </tr>
-            `).join('');
-        }
 
         let all = [];
         async function load() {
-            try { all = await api.listEvents(); applyFilter(); renderLogs(await api.logs()); } catch { document.getElementById('eventsTable').innerHTML = '<tr><td colspan="5" class="text-danger small">Load failed.</td></tr>'; }
+            try { 
+                all = await api.listEvents(); 
+                applyFilter(); 
+            } catch { 
+                document.getElementById('eventsTable').innerHTML = '<tr><td colspan="6" class="text-center text-danger py-4"><i class="fas fa-exclamation-triangle me-2"></i>Failed to load events.</td></tr>'; 
+            }
         }
         function applyFilter() {
             const q = (document.getElementById('search').value || '').toLowerCase();
