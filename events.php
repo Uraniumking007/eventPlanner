@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Planner - Events</title>
+    <title>Event Planner - Explore Events</title>
     <meta name="description" content="Explore upcoming events and find the perfect one for you.">
     
     <!-- Bootstrap CSS -->
@@ -20,69 +20,87 @@
     <?php include __DIR__ . '/includes/navbar.php'; ?>
 
     <main class="flex-grow-1">
-        <!-- Hero / Header -->
-        <section class="py-4 py-lg-5 border-bottom" style="background:linear-gradient(135deg,#f8fbff 0%, #f9f7ff 100%)">
-            <div class="container">
+        <!-- Hero Header -->
+        <section class="hero-gradient text-white py-5">
+            <div class="container hero-content">
                 <div class="row align-items-center">
-                    <div class="col-12 col-lg-8">
-                        <h1 class="display-6 fw-bold mb-2">Explore Events</h1>
-                        <p class="text-secondary mb-0">Find and register for upcoming events that match your interests.</p>
+                    <div class="col-lg-8">
+                        <span class="section-badge bg-white text-primary mb-3">
+                            <i class="fas fa-calendar-alt me-2"></i>Discover Events
+                        </span>
+                        <h1 class="display-4 fw-bold mb-3">Find Your Next Experience</h1>
+                        <p class="lead mb-0 opacity-90">
+                            Browse through amazing events happening around you. From workshops to conferences, find what excites you.
+                        </p>
                     </div>
-                    <div class="col-12 col-lg-4 text-lg-end mt-3 mt-lg-0">
-                        <span class="text-muted small">Showing <span id="eventsCount">0</span> events</span>
+                    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                        <div class="badge bg-white bg-opacity-25 text-white px-4 py-3 rounded-pill">
+                            <i class="fas fa-ticket-alt me-2"></i>
+                            <span id="eventsCount" class="fw-bold fs-5">0</span>
+                            <span class="ms-1">events available</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <div class="container py-4 py-lg-5">
-            <!-- Filters Card -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-body">
-                    <div class="row g-3 align-items-end">
-                        <div class="col-12 col-md-4">
-                            <label for="searchInput" class="form-label small text-muted">Search</label>
-                            <input id="searchInput" type="text" placeholder="Search events..." class="form-control">
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <label for="categorySelect" class="form-label small text-muted">Category</label>
-                            <select id="categorySelect" class="form-select">
-                                <option value="">All categories</option>
-                                <option value="Corporate">Corporate</option>
-                                <option value="Social">Social</option>
-                                <option value="Tech">Tech</option>
-                                <option value="Workshop">Workshop</option>
-                            </select>
-                        </div>
-                        <div class="col-12 col-md-4">
-                            <label for="sortSelect" class="form-label small text-muted">Sort by</label>
-                            <select id="sortSelect" class="form-select">
-                                <option value="date_asc">Date: Soonest first</option>
-                                <option value="date_desc">Date: Latest first</option>
-                                <option value="title_asc">Title: A-Z</option>
-                                <option value="title_desc">Title: Z-A</option>
-                            </select>
+        <!-- Filters Section -->
+        <section class="py-4 bg-light border-bottom">
+            <div class="container">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-4">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-4">
+                                <label for="searchInput" class="form-label fw-semibold small text-muted text-uppercase">
+                                    <i class="fas fa-search me-2"></i>Search Events
+                                </label>
+                                <input id="searchInput" type="text" placeholder="Type to search..." class="form-control form-control-lg">
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label for="categorySelect" class="form-label fw-semibold small text-muted text-uppercase">
+                                    <i class="fas fa-filter me-2"></i>Category
+                                </label>
+                                <select id="categorySelect" class="form-select form-select-lg">
+                                    <option value="">All Categories</option>
+                                    <option value="Corporate">Corporate</option>
+                                    <option value="Social">Social</option>
+                                    <option value="Tech">Tech</option>
+                                    <option value="Workshop">Workshop</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label for="sortSelect" class="form-label fw-semibold small text-muted text-uppercase">
+                                    <i class="fas fa-sort me-2"></i>Sort By
+                                </label>
+                                <select id="sortSelect" class="form-select form-select-lg">
+                                    <option value="date_asc">Date: Soonest First</option>
+                                    <option value="date_desc">Date: Latest First</option>
+                                    <option value="title_asc">Title: A-Z</option>
+                                    <option value="title_desc">Title: Z-A</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Events Grid -->
-            <div id="eventsList" class="row g-3 g-lg-4"></div>
-        </div>
+        <!-- Events Grid -->
+        <section class="py-5">
+            <div class="container">
+                <div id="eventsList" class="row g-4"></div>
+            </div>
+        </section>
     </main>
 
     <!-- Footer -->
     <?php include __DIR__ . '/includes/footer.php'; ?>
 
     <script>
-        // Navbar behavior (mobile toggle, active link, avatar menu) is handled in includes/navbar.php
-
         async function fetchMe() {
             const res = await fetch('/api/auth.php?action=me', { credentials: 'same-origin' });
             return res.ok ? res.json() : { user: null };
         }
-        // Removed dummyEvents; page uses dynamic data from /api/events.php
 
         async function fetchEvents() {
             const res = await fetch('/api/events.php');
@@ -90,6 +108,7 @@
             const data = await res.json();
             return data.events || [];
         }
+
         async function register(eventId) {
             const res = await fetch('/api/registrations.php', {
                 method: 'POST',
@@ -103,6 +122,7 @@
             }
             render();
         }
+
         async function unregister(eventId) {
             const res = await fetch('/api/registrations.php?event_id=' + eventId, {
                 method: 'DELETE',
@@ -114,9 +134,21 @@
             }
             render();
         }
+
         function formatDate(dateStr) {
-            try { return new Date(dateStr).toLocaleDateString(); } catch { return dateStr; }
+            try { 
+                const date = new Date(dateStr);
+                return date.toLocaleDateString('en-US', { 
+                    weekday: 'short', 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+            } catch { 
+                return dateStr; 
+            }
         }
+
         function daysUntil(dateStr) {
             try {
                 const now = new Date();
@@ -124,42 +156,92 @@
                 const ms = end.setHours(23,59,59,999) - now.getTime();
                 const days = Math.ceil(ms / (1000 * 60 * 60 * 24));
                 return isNaN(days) ? null : days;
-            } catch { return null; }
+            } catch { 
+                return null; 
+            }
         }
+
         function eventCard(evt, user) {
-            const actions = [];
-            actions.push(`<a href="/event.php?id=${evt.id}" class="btn btn-sm btn-outline-secondary">More info</a>`);
             const count = Number(evt.registration_count || 0);
             const dLeft = daysUntil(evt.event_date);
             const isSuspended = Number(evt.suspended || 0) === 1;
-            const statusLabel = isSuspended
-                ? `<span class=\"badge text-bg-warning\">Suspended</span>`
-                : (dLeft != null && dLeft >= 0
-                    ? `<span class=\"badge text-bg-success\">Open</span>`
-                    : `<span class=\"badge text-bg-danger\">Closed</span>`);
-            const badge = dLeft != null ? `<span class=\"badge rounded-pill text-bg-secondary ms-2\">${dLeft >= 0 ? dLeft + ' days left' : 'Closed'}</span>` : '';
+            
+            let statusBadge = '';
+            let daysBadge = '';
+            
+            if (isSuspended) {
+                statusBadge = '<span class="badge bg-warning text-dark"><i class="fas fa-exclamation-triangle me-1"></i>Suspended</span>';
+            } else if (dLeft !== null && dLeft >= 0) {
+                statusBadge = '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Open</span>';
+                daysBadge = `<span class="badge bg-primary rounded-pill"><i class="fas fa-clock me-1"></i>${dLeft} ${dLeft === 1 ? 'day' : 'days'} left</span>`;
+            } else {
+                statusBadge = '<span class="badge bg-danger"><i class="fas fa-times-circle me-1"></i>Closed</span>';
+            }
+
             return `
                 <div class="col-12 col-sm-6 col-lg-4">
-                    <div class="card h-100 shadow-sm">
-                        ${evt.image_path ? `<img src="${evt.image_path}" alt="${evt.title}" class="card-img-top" style="height: 200px; object-fit: cover;">` : ''}
-                        <div class="card-body">
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                <h3 class="h6 mb-0">${evt.title}</h3>
-                                <div class="d-flex align-items-center gap-2">
-                                    ${evt.category ? `<span class=\"badge text-bg-light\">${evt.category}</span>` : ''}
-                                    ${statusLabel}
+                    <div class="card h-100 shadow-sm border-0 overflow-hidden event-card">
+                        ${evt.image_path ? `
+                            <div class="position-relative overflow-hidden" style="height: 220px;">
+                                <img src="${evt.image_path}" alt="${evt.title}" class="card-img-top w-100 h-100" style="object-fit: cover; transition: transform 0.3s ease;">
+                                <div class="position-absolute top-0 end-0 m-3">
+                                    ${statusBadge}
                                 </div>
                             </div>
-                            <p class="text-secondary small mb-2">${formatDate(evt.event_date)} • ${evt.location} ${badge}</p>
-                            ${isSuspended ? `<div class=\"alert alert-warning py-2 small mb-2\"><strong>Suspended</strong>${evt.suspend_reason ? ` — Reason: ${evt.suspend_reason}` : ''}</div>` : ''}
-                            <div class="text-muted small mb-2">Registrations: <span class="fw-medium reg-count" data-event-id="${evt.id}">${count}</span></div>
-                            <p class="mb-3 small">${evt.description || 'No description available.'}</p>
-                            <div class="d-flex flex-wrap gap-2">${actions.join(' ')}</div>
+                        ` : `
+                            <div class="position-relative" style="height: 220px; background: var(--gradient-primary);">
+                                <div class="position-absolute top-0 end-0 m-3">
+                                    ${statusBadge}
+                                </div>
+                                <div class="d-flex align-items-center justify-content-center h-100">
+                                    <i class="fas fa-calendar-alt text-white" style="font-size: 4rem; opacity: 0.3;"></i>
+                                </div>
+                            </div>
+                        `}
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-start justify-content-between mb-3">
+                                <h3 class="h5 fw-bold mb-0">${evt.title}</h3>
+                                ${evt.category ? `<span class="badge bg-light text-dark ms-2 flex-shrink-0">${evt.category}</span>` : ''}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center text-muted mb-2">
+                                    <i class="fas fa-calendar me-2 text-primary"></i>
+                                    <small class="fw-medium">${formatDate(evt.event_date)}</small>
+                                    ${daysBadge ? `<span class="ms-2">${daysBadge}</span>` : ''}
+                                </div>
+                                <div class="d-flex align-items-center text-muted">
+                                    <i class="fas fa-map-marker-alt me-2 text-danger"></i>
+                                    <small>${evt.location}</small>
+                                </div>
+                            </div>
+
+                            ${isSuspended && evt.suspend_reason ? `
+                                <div class="alert alert-warning py-2 px-3 small mb-3">
+                                    <strong>Suspended:</strong> ${evt.suspend_reason}
+                                </div>
+                            ` : ''}
+
+                            <p class="text-muted small mb-3" style="line-height: 1.6;">
+                                ${(evt.description || 'No description available.').substring(0, 120)}${evt.description && evt.description.length > 120 ? '...' : ''}
+                            </p>
+
+                            <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-users text-muted me-2"></i>
+                                    <span class="fw-semibold reg-count" data-event-id="${evt.id}">${count}</span>
+                                    <span class="text-muted small ms-1">registered</span>
+                                </div>
+                                <a href="/event.php?id=${evt.id}" class="btn btn-sm btn-gradient px-3">
+                                    View Details <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             `;
         }
+
         function applyFilters(events) {
             const q = (document.getElementById('searchInput').value || '').toLowerCase();
             const cat = document.getElementById('categorySelect').value;
@@ -184,50 +266,71 @@
             const [{ user }, events] = await Promise.all([fetchMe(), fetchEvents()]);
             const list = document.getElementById('eventsList');
             const countEl = document.getElementById('eventsCount');
+            
             const renderList = () => {
                 const filtered = applyFilters(events);
+                
                 if (!filtered.length) {
                     list.innerHTML = `
-                        <div class=\"col-12\">
-                            <div class=\"text-center py-5 border rounded-3 bg-light\">
-                                <div class=\"display-6 mb-2\">😕</div>
-                                <h2 class=\"h5 mb-2\">No events found</h2>
-                                <p class=\"text-secondary mb-0\">Try adjusting your filters or check back later.</p>
+                        <div class="col-12">
+                            <div class="text-center py-5">
+                                <div class="mb-4">
+                                    <i class="fas fa-search" style="font-size: 4rem; color: var(--primary-color); opacity: 0.3;"></i>
+                                </div>
+                                <h2 class="h4 fw-bold mb-2">No Events Found</h2>
+                                <p class="text-muted mb-4">Try adjusting your search or filters to find what you're looking for.</p>
+                                <button class="btn btn-gradient" onclick="document.getElementById('searchInput').value=''; document.getElementById('categorySelect').value=''; render();">
+                                    <i class="fas fa-redo me-2"></i>Clear Filters
+                                </button>
                             </div>
                         </div>`;
                 } else {
                     list.innerHTML = filtered.map(e => eventCard(e, user)).join('');
                 }
-                list.querySelectorAll('button[data-action]')?.forEach(btn => {
-                    const id = Number(btn.getAttribute('data-id'));
-                    const action = btn.getAttribute('data-action');
-                    btn.addEventListener('click', () => action === 'register' ? register(id) : unregister(id));
-                });
+                
                 if (countEl) countEl.textContent = String(filtered.length);
             };
 
             // Bind inputs once
-            document.getElementById('searchInput').addEventListener('input', renderList);
-            document.getElementById('categorySelect').addEventListener('change', renderList);
-            document.getElementById('sortSelect').addEventListener('change', renderList);
+            const searchInput = document.getElementById('searchInput');
+            const categorySelect = document.getElementById('categorySelect');
+            const sortSelect = document.getElementById('sortSelect');
+            
+            if (searchInput && !searchInput.hasAttribute('data-bound')) {
+                searchInput.addEventListener('input', renderList);
+                searchInput.setAttribute('data-bound', 'true');
+            }
+            if (categorySelect && !categorySelect.hasAttribute('data-bound')) {
+                categorySelect.addEventListener('change', renderList);
+                categorySelect.setAttribute('data-bound', 'true');
+            }
+            if (sortSelect && !sortSelect.hasAttribute('data-bound')) {
+                sortSelect.addEventListener('change', renderList);
+                sortSelect.setAttribute('data-bound', 'true');
+            }
 
             renderList();
         }
+
         // Track visit
-        fetch('/api/visits.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ page_url: window.location.pathname }) });
+        fetch('/api/visits.php', { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify({ page_url: window.location.pathname }) 
+        });
+
         render();
 
         // Live Reg Count Update using jQuery + AJAX (4.2)
         (function setupLiveRegistrationCounts() {
             function updateCountsOnce() {
-                // Collect visible event IDs from DOM
                 const ids = new Set();
                 $('.reg-count').each(function () {
                     const id = Number($(this).data('event-id'));
                     if (!Number.isNaN(id)) ids.add(id);
                 });
                 if (ids.size === 0) return;
-                // Fetch each event's latest count and update span
+                
                 ids.forEach((id) => {
                     $.getJSON(`/api/events.php?id=${id}`)
                         .done((data) => {
@@ -236,11 +339,10 @@
                         });
                 });
             }
-            // Initial after first render
+            
             setTimeout(updateCountsOnce, 600);
-            // Poll every 10 seconds
             setInterval(updateCountsOnce, 10000);
-            // Nudge an update shortly after user actions
+            
             document.addEventListener('click', (e) => {
                 const t = e.target;
                 if (t && t.matches && t.matches('button[data-action="register"], button[data-action="unregister"]')) {
@@ -249,6 +351,7 @@
             });
         })();
     </script>
+    
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

@@ -492,3 +492,23 @@ body {
     font-weight: 700;
     margin-bottom: 1rem;
 }
+
+/* Event card hover effects */
+.event-card {
+    transition: all 0.3s ease;
+    border-radius: 15px !important;
+}
+
+.event-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+.event-card:hover img {
+    transform: scale(1.05);
+}
+
+/* Ensure min-width for truncation */
+.min-w-0 {
+    min-width: 0;
+}
