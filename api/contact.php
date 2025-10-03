@@ -84,15 +84,12 @@ try {
         error_log('Failed to store contact submission: ' . $e->getMessage());
     }
     
-    // Send email to admin
+    // Send notification email to admin only
     $emailSent = sendContactEmail($formData);
     
     if (!$emailSent) {
         json_response(['error' => 'Failed to send email. Please try again later.'], 500);
     }
-    
-    // Send auto-reply to user
-    $autoReplySent = sendAutoReplyEmail($formData);
     
     // Log the submission
     error_log('Contact form submitted: ' . $formData['email'] . ' - ' . $formData['subject']);
@@ -100,8 +97,7 @@ try {
     // Return success response
     json_response([
         'success' => true,
-        'message' => 'Thank you for your message! We\'ll get back to you within 24 hours.',
-        'auto_reply_sent' => $autoReplySent
+        'message' => 'Thank you for your message! We\'ll get back to you within 24 hours.'
     ]);
     
 } catch (Exception $e) {
