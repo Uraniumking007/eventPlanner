@@ -40,25 +40,25 @@ declare(strict_types=1);
             </div>
         </div>
 
-        <div class="container py-4">
+        <div class="container py-3">
             <!-- Back Button -->
-            <a href="/events.php" class="btn btn-outline-secondary mb-4">
+            <a href="/events.php" class="btn btn-sm btn-outline-secondary mb-3">
                 <i class="fas fa-arrow-left me-2"></i>Back to Events
             </a>
 
-            <div class="row g-4">
+            <div class="row g-3">
                 <!-- Main Content -->
                 <div class="col-12 col-lg-8">
-                    <div class="card shadow-sm border-0 overflow-hidden">
+                    <div class="card shadow-sm border-0 overflow-hidden rounded-3">
                         <!-- Event Image -->
                         <div id="eventImage"></div>
                         
                         <!-- Event Details -->
-                        <div class="card-body p-4 p-lg-5">
+                        <div class="card-body p-3 p-md-4">
                             <!-- Title & Status -->
-                            <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
+                            <div class="d-flex align-items-start justify-content-between gap-2 mb-3">
                                 <div class="flex-grow-1">
-                                    <h1 id="eventTitle" class="display-6 fw-bold mb-2">Loading...</h1>
+                                    <h1 id="eventTitle" class="h3 fw-bold mb-2">Loading...</h1>
                                     <div class="d-flex align-items-center gap-2">
                                         <span id="eventCategory"></span>
                                         <span id="eventStatus"></span>
@@ -67,54 +67,54 @@ declare(strict_types=1);
                             </div>
 
                             <!-- Meta Information -->
-                            <div class="row g-3 mb-4">
+                            <div class="row g-2 mb-3">
                                 <div class="col-12 col-md-6">
-                                    <div class="d-flex align-items-start gap-3 p-3 bg-light rounded">
+                                    <div class="d-flex align-items-start gap-2 p-2 bg-light rounded">
                                         <div class="text-primary">
-                                            <i class="fas fa-calendar-alt fa-lg"></i>
+                                            <i class="fas fa-calendar-alt"></i>
                                         </div>
                                         <div>
-                                            <div class="small text-muted mb-1">Date & Time</div>
-                                            <div id="eventDate" class="fw-semibold"></div>
+                                            <div class="small text-muted">Date & Time</div>
+                                            <div id="eventDate" class="fw-semibold small"></div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
-                                    <div class="d-flex align-items-start gap-3 p-3 bg-light rounded">
+                                    <div class="d-flex align-items-start gap-2 p-2 bg-light rounded">
                                         <div class="text-danger">
-                                            <i class="fas fa-map-marker-alt fa-lg"></i>
+                                            <i class="fas fa-map-marker-alt"></i>
                                         </div>
                                         <div class="flex-grow-1 min-w-0">
-                                            <div class="small text-muted mb-1">Location</div>
-                                            <div id="eventLocation" class="fw-semibold text-truncate"></div>
+                                            <div class="small text-muted">Location</div>
+                                            <div id="eventLocation" class="fw-semibold small text-truncate"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Organizer & Registration Stats -->
-                            <div class="row g-3 mb-4">
+                            <div class="row g-2 mb-3">
                                 <div class="col-12 col-md-6">
-                                    <div class="d-flex align-items-center gap-3 p-3 border rounded">
-                                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                                            <i class="fas fa-user"></i>
+                                    <div class="d-flex align-items-center gap-2 p-2 border rounded">
+                                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                            <i class="fas fa-user small"></i>
                                         </div>
                                         <div>
                                             <div class="small text-muted">Organized By</div>
-                                            <div id="eventOrganizer" class="fw-bold"></div>
+                                            <div id="eventOrganizer" class="fw-bold small"></div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6">
-                                    <div class="d-flex align-items-center gap-3 p-3 border rounded">
-                                        <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                                            <i class="fas fa-users"></i>
+                                    <div class="d-flex align-items-center gap-2 p-2 border rounded">
+                                        <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                            <i class="fas fa-users small"></i>
                                         </div>
                                         <div>
                                             <div class="small text-muted">Registrations</div>
-                                            <div class="fw-bold">
+                                            <div class="fw-bold small">
                                                 <span id="eventRegCount">0</span>
-                                                <span class="text-muted small">attendees</span>
+                                                <span class="text-muted">attendees</span>
                                             </div>
                                         </div>
                                     </div>
@@ -122,19 +122,19 @@ declare(strict_types=1);
                             </div>
 
                             <!-- Description -->
-                            <div class="mb-4">
-                                <h2 class="h4 fw-bold mb-3">
+                            <div class="mb-3">
+                                <h2 class="h5 fw-bold mb-2">
                                     <i class="fas fa-info-circle text-primary me-2"></i>About This Event
                                 </h2>
-                                <div id="eventDescription" class="text-muted" style="line-height: 1.8;"></div>
+                                <div id="eventDescription" class="text-muted" style="line-height: 1.7;"></div>
                             </div>
 
                             <!-- Action Buttons -->
-                            <div id="actionArea" class="d-flex flex-wrap gap-3 mb-4"></div>
+                            <div id="actionArea" class="d-flex flex-wrap gap-2 mb-3"></div>
 
                             <!-- Location Map -->
-                            <div class="mt-5">
-                                <h2 class="h4 fw-bold mb-3">
+                            <div class="mt-4">
+                                <h2 class="h5 fw-bold mb-2">
                                     <i class="fas fa-map text-danger me-2"></i>Location
                                 </h2>
                                 <div id="eventMap" class="rounded overflow-hidden shadow-sm"></div>
@@ -146,39 +146,39 @@ declare(strict_types=1);
                 <!-- Sidebar -->
                 <div class="col-12 col-lg-4">
                     <!-- Attendees Card -->
-                    <div class="card shadow-sm border-0 mb-4">
-                        <div class="card-header bg-white border-bottom py-3">
+                    <div class="card shadow-sm border-0 mb-3 rounded-3">
+                        <div class="card-header bg-white border-bottom py-2">
                             <div class="d-flex align-items-center justify-content-between">
-                                <h2 class="h5 mb-0 fw-bold">
+                                <h2 class="h6 mb-0 fw-bold">
                                     <i class="fas fa-users text-primary me-2"></i>Attendees
                                 </h2>
-                                <span id="attendeeCount" class="badge bg-primary rounded-pill">0</span>
+                                <span id="attendeeCount" class="badge bg-primary rounded-pill small">0</span>
                             </div>
                         </div>
                         <div class="card-body p-0">
-                            <div id="attendeesContainer" style="max-height: 400px; overflow-y: auto;"></div>
+                            <div id="attendeesContainer" style="max-height: 350px; overflow-y: auto;"></div>
                         </div>
                     </div>
 
                     <!-- Event Info Card -->
-                    <div class="card shadow-sm border-0">
-                        <div class="card-header bg-gradient text-white py-3" style="background: var(--gradient-primary);">
-                            <h3 class="h6 mb-0 fw-bold">
+                    <div class="card shadow-sm border-0 rounded-3">
+                        <div class="card-header bg-gradient text-white py-2" style="background: var(--gradient-primary);">
+                            <h3 class="small mb-0 fw-bold">
                                 <i class="fas fa-info-circle me-2"></i>Quick Info
                             </h3>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body p-3">
                             <div class="d-flex align-items-center justify-content-between py-2 border-bottom">
                                 <span class="text-muted small">Status</span>
                                 <span id="quickStatus"></span>
                             </div>
                             <div class="d-flex align-items-center justify-content-between py-2 border-bottom">
                                 <span class="text-muted small">Category</span>
-                                <span id="quickCategory" class="fw-semibold"></span>
+                                <span id="quickCategory" class="fw-semibold small"></span>
                             </div>
                             <div class="d-flex align-items-center justify-content-between py-2">
                                 <span class="text-muted small">Time Left</span>
-                                <span id="quickTimeLeft" class="fw-semibold"></span>
+                                <span id="quickTimeLeft" class="fw-semibold small"></span>
                             </div>
                         </div>
                     </div>
@@ -295,11 +295,11 @@ declare(strict_types=1);
             const imgContainer = document.getElementById('eventImage');
             if (evt.image_path) {
                 imgContainer.innerHTML = `
-                    <div class="position-relative" style="height: 400px; overflow: hidden;">
+                    <div class="position-relative" style="height: 300px; overflow: hidden;">
                         <img src="${evt.image_path}" alt="${evt.title}" class="w-100 h-100" style="object-fit: cover;">
-                        <div class="position-absolute bottom-0 start-0 end-0 p-4" style="background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.7) 100%);">
+                        <div class="position-absolute bottom-0 start-0 end-0 p-3" style="background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.7) 100%);">
                             <div class="text-white">
-                                <h2 class="h3 fw-bold mb-0">${evt.title}</h2>
+                                <h2 class="h4 fw-bold mb-0">${evt.title}</h2>
                             </div>
                         </div>
                     </div>
@@ -428,7 +428,7 @@ declare(strict_types=1);
             if (!mapInitialized) {
                 const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(evt.location || '')}&output=embed`;
                 document.getElementById('eventMap').innerHTML = `
-                    <iframe class="w-100 border-0" style="height: 350px;" src="${mapSrc}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                    <iframe class="w-100 border-0" style="height: 280px;" src="${mapSrc}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
                 `;
                 mapInitialized = true;
             }
@@ -443,20 +443,20 @@ declare(strict_types=1);
                 
                 if (!attendees.length) {
                     container.innerHTML = `
-                        <div class="text-center py-5 text-muted">
-                            <i class="fas fa-users fa-2x mb-3 opacity-25"></i>
+                        <div class="text-center py-4 text-muted">
+                            <i class="fas fa-users fa-lg mb-2 opacity-25"></i>
                             <p class="mb-0 small">No attendees yet</p>
                         </div>
                     `;
                 } else {
                     container.innerHTML = attendees.map((a, index) => `
-                        <div class="d-flex align-items-center gap-3 p-3 ${index !== attendees.length - 1 ? 'border-bottom' : ''}">
-                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px; font-weight: 600;">
+                        <div class="d-flex align-items-center gap-2 p-2 ${index !== attendees.length - 1 ? 'border-bottom' : ''}">
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 32px; height: 32px; font-weight: 600; font-size: 0.75rem;">
                                 ${a.username.substring(0, 2).toUpperCase()}
                             </div>
                             <div class="flex-grow-1 min-w-0">
-                                <div class="fw-semibold text-truncate">${a.username}</div>
-                                <div class="small text-muted">Attendee</div>
+                                <div class="fw-semibold small text-truncate">${a.username}</div>
+                                <div class="text-muted" style="font-size: 0.75rem;">Attendee</div>
                             </div>
                         </div>
                     `).join('');
@@ -518,20 +518,20 @@ declare(strict_types=1);
                     
                     if (!attendees.length) {
                         container.innerHTML = `
-                            <div class="text-center py-5 text-muted">
-                                <i class="fas fa-users fa-2x mb-3 opacity-25"></i>
+                            <div class="text-center py-4 text-muted">
+                                <i class="fas fa-users fa-lg mb-2 opacity-25"></i>
                                 <p class="mb-0 small">No attendees yet</p>
                             </div>
                         `;
                     } else {
                         container.innerHTML = attendees.map((a, index) => `
-                            <div class="d-flex align-items-center gap-3 p-3 ${index !== attendees.length - 1 ? 'border-bottom' : ''}">
-                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px; font-weight: 600;">
+                            <div class="d-flex align-items-center gap-2 p-2 ${index !== attendees.length - 1 ? 'border-bottom' : ''}">
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 32px; height: 32px; font-weight: 600; font-size: 0.75rem;">
                                     ${a.username.substring(0, 2).toUpperCase()}
                                 </div>
                                 <div class="flex-grow-1 min-w-0">
-                                    <div class="fw-semibold text-truncate">${a.username}</div>
-                                    <div class="small text-muted">Attendee</div>
+                                    <div class="fw-semibold small text-truncate">${a.username}</div>
+                                    <div class="text-muted" style="font-size: 0.75rem;">Attendee</div>
                                 </div>
                             </div>
                         `).join('');
