@@ -155,9 +155,9 @@ require_once __DIR__ . '/api/init.php';
                                         <div>
                                             <h4 class="h6 fw-bold mb-1" style="color: #1f2937;">Address</h4>
                                             <p class="small text-muted mb-0">
-                                                123 Event Street<br>
-                                                San Francisco, CA 94105<br>
-                                                United States
+                                                Street Name 123<br>
+                                                City, State 12345<br>
+                                                India
                                             </p>
                                         </div>
                                     </div>
@@ -170,7 +170,7 @@ require_once __DIR__ . '/api/init.php';
                                         <div>
                                             <h4 class="h6 fw-bold mb-1" style="color: #1f2937;">Phone</h4>
                                             <p class="small text-muted mb-0">
-                                                <a href="tel:+1-555-123-4567" class="text-decoration-none">+1 (555) 123-4567</a>
+                                                <a href="tel:+91-9876543210" class="text-decoration-none">+91 9876543210</a>
                                             </p>
                                         </div>
                                     </div>
