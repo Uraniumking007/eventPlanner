@@ -30,6 +30,11 @@
                         <i class="fas fa-calendar-alt me-2"></i>Events
                     </a>
                 </li>
+                <li class="nav-item" id="navMyEventsItem" style="display: none;">
+                    <a id="navMyEvents" class="nav-link px-3 py-2 rounded-3" href="/my-events.php">
+                        <i class="fas fa-ticket-alt me-2"></i>My Events
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a id="navProfile" class="nav-link px-3 py-2 rounded-3" href="/profile.php">
                         <i class="fas fa-user me-2"></i>Profile
@@ -57,6 +62,7 @@
             };
             setActive('navHome', path === '/' || path.endsWith('index.php'));
             setActive('navEvents', path.endsWith('events.php'));
+            setActive('navMyEvents', path.endsWith('my-events.php'));
             setActive('navProfile', path.endsWith('profile.php'));
         })();
 
@@ -74,6 +80,13 @@
                 if (user) {
                     const showDash = user.role === 'organizer';
                     const showAdmin = user.role === 'admin';
+                    const showMyEvents = user.role === 'attendee' || user.role === 'admin';
+                    
+                    // Show/hide My Events nav item
+                    const myEventsItem = document.getElementById('navMyEventsItem');
+                    if (myEventsItem) {
+                        myEventsItem.style.display = showMyEvents ? 'block' : 'none';
+                    }
                     const displayName = String(user.username || user.email || '').trim();
                     const initials = displayName.substring(0, 2).toUpperCase();
                     const avatarPath = user.avatar_path || '';
@@ -101,6 +114,7 @@
                                     </div>
                                 </li>
                                 <li><a class="dropdown-item py-2" href="/profile.php"><i class="fas fa-user me-2 text-primary"></i>Profile</a></li>
+                                ${showMyEvents ? '<li><a class="dropdown-item py-2" href="/my-events.php"><i class="fas fa-ticket-alt me-2" style="color: var(--primary-color);"></i>My Events</a></li>' : ''}
                                 ${showDash ? '<li><a class="dropdown-item py-2" href="/dashboard.php"><i class="fas fa-th-large me-2 text-success"></i>Dashboard</a></li>' : ''}
                                 ${showAdmin ? '<li><a class="dropdown-item py-2" href="/admin/index.php"><i class="fas fa-shield-alt me-2 text-warning"></i>Admin</a></li>' : ''}
                                 <li><a class="dropdown-item py-2" href="/events.php"><i class="fas fa-calendar-alt me-2 text-info"></i>Events</a></li>
@@ -134,6 +148,7 @@
                             <a class="list-group-item list-group-item-action d-flex align-items-center gap-2" href="/profile.php">
                                 <i class="fas fa-user text-primary"></i>Profile
                             </a>
+                            ${showMyEvents ? '<a class="list-group-item list-group-item-action d-flex align-items-center gap-2" href="/my-events.php"><i class="fas fa-ticket-alt" style="color: var(--primary-color);"></i>My Events</a>' : ''}
                             ${showDash ? '<a class="list-group-item list-group-item-action d-flex align-items-center gap-2" href="/dashboard.php"><i class="fas fa-th-large text-success"></i>Dashboard</a>' : ''}
                             ${showAdmin ? '<a class="list-group-item list-group-item-action d-flex align-items-center gap-2" href="/admin/index.php"><i class="fas fa-shield-alt text-warning"></i>Admin</a>' : ''}
                             <a class="list-group-item list-group-item-action d-flex align-items-center gap-2" href="/events.php">
