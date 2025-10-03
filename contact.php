@@ -270,7 +270,7 @@ require_once __DIR__ . '/api/init.php';
             const form = document.getElementById('contactForm');
             const successMessage = document.getElementById('successMessage');
             
-            form.addEventListener('submit', function(event) {
+            form.addEventListener('submit', async function(event) {
                 event.preventDefault();
                 event.stopPropagation();
                 
@@ -278,35 +278,36 @@ require_once __DIR__ . '/api/init.php';
                     const submitBtn = form.querySelector('button[type="submit"]');
                     const originalText = submitBtn.innerHTML;
                     
-                    // Show loading state
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
                     submitBtn.disabled = true;
                     
                     // Prepare form data
-                    const formData = new FormData(form);
-                    const data = {
-                        firstName: formData.get('firstName'),
-                        lastName: formData.get('lastName'),
-                        email: formData.get('email'),
-                        phone: formData.get('phone'),
-                        subject: formData.get('subject'),
-                        message: formData.get('message'),
-                        newsletter: formData.get('newsletter') === 'on'
+                    const formData = {
+                        firstName: document.getElementById('firstName').value.trim(),
+                        lastName: document.getElementById('lastName').value.trim(),
+                        email: document.getElementById('email').value.trim(),
+                        phone: document.getElementById('phone').value.trim(),
+                        subject: document.getElementById('subject').value,
+                        message: document.getElementById('message').value.trim(),
+                        newsletter: document.getElementById('newsletter').checked
                     };
                     
-                    // Submit to API
-                    fetch('/api/contact.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data)
-                    })
-                    .then(response => response.json())
-                    .then(result => {
-                        if (result.success) {
-                            // Show success message
+                    try {
+                        // Submit to API
+                        const response = await fetch('/api/contact.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(formData)
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (response.ok && result.success) {
+                            // Success
                             form.style.display = 'none';
+                            successMessage.innerHTML = '<i class="fas fa-check-circle me-2"></i><strong>Thank you!</strong> ' + result.message;
                             successMessage.style.display = 'block';
                             
                             // Reset form after 5 seconds
@@ -319,21 +320,18 @@ require_once __DIR__ . '/api/init.php';
                                 submitBtn.disabled = false;
                             }, 5000);
                         } else {
-                            // Show error message
-                            alert('Error: ' + (result.error || 'Failed to send message. Please try again.'));
-                            submitBtn.innerHTML = originalText;
-                            submitBtn.disabled = false;
+                            // Error from server
+                            throw new Error(result.error || result.message || 'Failed to send message');
                         }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Failed to send message. Please check your connection and try again.');
+                    } catch (error) {
+                        // Show error message
+                        alert('Error: ' + error.message + '\n\nPlease try again or contact us directly at hello@eventplanner.com');
                         submitBtn.innerHTML = originalText;
                         submitBtn.disabled = false;
-                    });
+                    }
+                } else {
+                    form.classList.add('was-validated');
                 }
-                
-                form.classList.add('was-validated');
             });
         })();
 
