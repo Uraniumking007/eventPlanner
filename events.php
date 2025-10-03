@@ -21,23 +21,23 @@
 
     <main class="flex-grow-1">
         <!-- Hero Header -->
-        <section class="hero-gradient text-white py-5">
+        <section class="hero-gradient text-white py-4">
             <div class="container hero-content">
                 <div class="row align-items-center">
                     <div class="col-lg-8">
-                        <span class="section-badge bg-white text-primary mb-3">
+                        <span class="section-badge bg-white text-primary mb-2">
                             <i class="fas fa-calendar-alt me-2"></i>Discover Events
                         </span>
-                        <h1 class="display-4 fw-bold mb-3">Find Your Next Experience</h1>
-                        <p class="lead mb-0 opacity-90">
+                        <h1 class="h2 fw-bold mb-2">Find Your Next Experience</h1>
+                        <p class="mb-0 opacity-90">
                             Browse through amazing events happening around you. From workshops to conferences, find what excites you.
                         </p>
                     </div>
                     <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                        <div class="badge bg-white bg-opacity-25 text-white px-4 py-3 rounded-pill">
+                        <div class="badge bg-white bg-opacity-25 text-white px-3 py-2 rounded-pill">
                             <i class="fas fa-ticket-alt me-2"></i>
-                            <span id="eventsCount" class="fw-bold fs-5">0</span>
-                            <span class="ms-1">events available</span>
+                            <span id="eventsCount" class="fw-bold">0</span>
+                            <span class="ms-1 small">events available</span>
                         </div>
                     </div>
                 </div>
@@ -45,22 +45,22 @@
         </section>
 
         <!-- Filters Section -->
-        <section class="py-4 bg-light border-bottom">
+        <section class="py-3 bg-light border-bottom">
             <div class="container">
                 <div class="card shadow-sm border-0">
-                    <div class="card-body p-4">
+                    <div class="card-body p-3">
                         <div class="row g-3">
                             <div class="col-12 col-md-4">
-                                <label for="searchInput" class="form-label fw-semibold small text-muted text-uppercase">
-                                    <i class="fas fa-search me-2"></i>Search Events
+                                <label for="searchInput" class="form-label fw-semibold small">
+                                    <i class="fas fa-search me-1"></i>Search Events
                                 </label>
-                                <input id="searchInput" type="text" placeholder="Type to search..." class="form-control form-control-lg">
+                                <input id="searchInput" type="text" placeholder="Type to search..." class="form-control">
                             </div>
                             <div class="col-12 col-md-4">
-                                <label for="categorySelect" class="form-label fw-semibold small text-muted text-uppercase">
-                                    <i class="fas fa-filter me-2"></i>Category
+                                <label for="categorySelect" class="form-label fw-semibold small">
+                                    <i class="fas fa-filter me-1"></i>Category
                                 </label>
-                                <select id="categorySelect" class="form-select form-select-lg">
+                                <select id="categorySelect" class="form-select">
                                     <option value="">All Categories</option>
                                     <option value="Corporate">Corporate</option>
                                     <option value="Social">Social</option>
@@ -69,10 +69,10 @@
                                 </select>
                             </div>
                             <div class="col-12 col-md-4">
-                                <label for="sortSelect" class="form-label fw-semibold small text-muted text-uppercase">
-                                    <i class="fas fa-sort me-2"></i>Sort By
+                                <label for="sortSelect" class="form-label fw-semibold small">
+                                    <i class="fas fa-sort me-1"></i>Sort By
                                 </label>
-                                <select id="sortSelect" class="form-select form-select-lg">
+                                <select id="sortSelect" class="form-select">
                                     <option value="date_asc">Date: Soonest First</option>
                                     <option value="date_desc">Date: Latest First</option>
                                     <option value="title_asc">Title: A-Z</option>
@@ -86,9 +86,9 @@
         </section>
 
         <!-- Events Grid -->
-        <section class="py-5">
+        <section class="py-4">
             <div class="container">
-                <div id="eventsList" class="row g-4"></div>
+                <div id="eventsList" class="row g-3"></div>
             </div>
         </section>
     </main>
@@ -180,60 +180,60 @@
 
             return `
                 <div class="col-12 col-sm-6 col-lg-4">
-                    <div class="card h-100 shadow-sm border-0 overflow-hidden event-card">
+                    <div class="card h-100 shadow-sm border-0 overflow-hidden event-card" style="border-radius: 12px;">
                         ${evt.image_path ? `
-                            <div class="position-relative overflow-hidden" style="height: 220px;">
+                            <div class="position-relative overflow-hidden" style="height: 180px;">
                                 <img src="${evt.image_path}" alt="${evt.title}" class="card-img-top w-100 h-100" style="object-fit: cover; transition: transform 0.3s ease;">
-                                <div class="position-absolute top-0 end-0 m-3">
+                                <div class="position-absolute top-0 end-0 m-2">
                                     ${statusBadge}
                                 </div>
                             </div>
                         ` : `
-                            <div class="position-relative" style="height: 220px; background: var(--gradient-primary);">
-                                <div class="position-absolute top-0 end-0 m-3">
+                            <div class="position-relative" style="height: 180px; background: var(--gradient-primary);">
+                                <div class="position-absolute top-0 end-0 m-2">
                                     ${statusBadge}
                                 </div>
                                 <div class="d-flex align-items-center justify-content-center h-100">
-                                    <i class="fas fa-calendar-alt text-white" style="font-size: 4rem; opacity: 0.3;"></i>
+                                    <i class="fas fa-calendar-alt text-white" style="font-size: 3rem; opacity: 0.3;"></i>
                                 </div>
                             </div>
                         `}
-                        <div class="card-body p-4">
-                            <div class="d-flex align-items-start justify-content-between mb-3">
-                                <h3 class="h5 fw-bold mb-0">${evt.title}</h3>
-                                ${evt.category ? `<span class="badge bg-light text-dark ms-2 flex-shrink-0">${evt.category}</span>` : ''}
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-start justify-content-between mb-2">
+                                <h3 class="h6 fw-bold mb-0">${evt.title}</h3>
+                                ${evt.category ? `<span class="badge bg-light text-dark ms-2 flex-shrink-0 small">${evt.category}</span>` : ''}
                             </div>
                             
-                            <div class="mb-3">
-                                <div class="d-flex align-items-center text-muted mb-2">
-                                    <i class="fas fa-calendar me-2 text-primary"></i>
+                            <div class="mb-2">
+                                <div class="d-flex align-items-center text-muted mb-1">
+                                    <i class="fas fa-calendar me-2 text-primary small"></i>
                                     <small class="fw-medium">${formatDate(evt.event_date)}</small>
                                     ${daysBadge ? `<span class="ms-2">${daysBadge}</span>` : ''}
                                 </div>
                                 <div class="d-flex align-items-center text-muted">
-                                    <i class="fas fa-map-marker-alt me-2 text-danger"></i>
+                                    <i class="fas fa-map-marker-alt me-2 text-danger small"></i>
                                     <small>${evt.location}</small>
                                 </div>
                             </div>
 
                             ${isSuspended && evt.suspend_reason ? `
-                                <div class="alert alert-warning py-2 px-3 small mb-3">
+                                <div class="alert alert-warning py-1 px-2 small mb-2">
                                     <strong>Suspended:</strong> ${evt.suspend_reason}
                                 </div>
                             ` : ''}
 
-                            <p class="text-muted small mb-3" style="line-height: 1.6;">
-                                ${(evt.description || 'No description available.').substring(0, 120)}${evt.description && evt.description.length > 120 ? '...' : ''}
+                            <p class="text-muted small mb-2" style="line-height: 1.5;">
+                                ${(evt.description || 'No description available.').substring(0, 100)}${evt.description && evt.description.length > 100 ? '...' : ''}
                             </p>
 
-                            <div class="d-flex align-items-center justify-content-between pt-3 border-top">
-                                <div class="d-flex align-items-center">
-                                    <i class="fas fa-users text-muted me-2"></i>
-                                    <span class="fw-semibold reg-count" data-event-id="${evt.id}">${count}</span>
-                                    <span class="text-muted small ms-1">registered</span>
+                            <div class="d-flex align-items-center justify-content-between pt-2 border-top">
+                                <div class="d-flex align-items-center gap-1">
+                                    <i class="fas fa-users text-muted small"></i>
+                                    <span class="fw-semibold small reg-count" data-event-id="${evt.id}">${count}</span>
+                                    <span class="text-muted" style="font-size: 0.75rem;">registered</span>
                                 </div>
-                                <a href="/event.php?id=${evt.id}" class="btn btn-sm btn-gradient px-3">
-                                    View Details <i class="fas fa-arrow-right ms-1"></i>
+                                <a href="/event.php?id=${evt.id}" class="btn btn-sm btn-gradient px-2">
+                                    Details <i class="fas fa-arrow-right ms-1"></i>
                                 </a>
                             </div>
                         </div>
