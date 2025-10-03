@@ -61,7 +61,7 @@ require_once __DIR__ . '/api/init.php';
                         <div class="card border-0 text-center" style="border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); transition: all 0.3s ease;">
                             <div class="card-body p-4">
                                 <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px; background: var(--gradient-primary);">
-                                    <i class="fas fa-code text-white fa-2x"></i>
+                                    <img src="https://bhaveshp.dev/bhaveshcloseup.jpg" alt="Bhavesh Patil" class="w-100 h-100 object-fit-cover rounded-circle">
                                 </div>
                                 <h4 class="h6 fw-bold mb-1" style="color: #1f2937;">Bhavesh Patil</h4>
                                 <p class="small text-muted mb-2">Fullstack Developer</p>
