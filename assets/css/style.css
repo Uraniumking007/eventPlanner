@@ -512,3 +512,96 @@ body {
 .min-w-0 {
     min-width: 0;
 }
+
+/* Auth pages - role button styles */
+.role-btn {
+    transition: all 0.3s ease;
+    position: relative;
+    border-width: 2px;
+}
+
+.role-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.role-btn.active {
+    background: var(--gradient-primary) !important;
+    border-color: transparent !important;
+    color: white !important;
+}
+
+.role-btn.active small {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Hover opacity utility */
+.hover-opacity-100:hover {
+    opacity: 1 !important;
+}
+
+/* Input focus improvements */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
+}
+
+/* Navbar enhancements */
+.navbar {
+    backdrop-filter: blur(10px);
+}
+
+.navbar .nav-link {
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.navbar .nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+.navbar .nav-link.active {
+    font-weight: 600;
+}
+
+.navbar .dropdown-menu {
+    border-radius: 12px;
+    animation: dropdownFadeIn 0.2s ease;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.navbar .dropdown-item {
+    transition: all 0.2s ease;
+}
+
+.navbar .dropdown-item:hover {
+    background-color: #f8f9fa;
+    padding-left: 1.5rem;
+}
+
+/* Footer link hover effects */
+footer a {
+    transition: all 0.2s ease;
+}
+
+footer .hover-link:hover {
+    color: white !important;
+    transform: translateX(4px);
+}
+
+footer .btn:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    transform: translateY(-2px);
+}
